@@ -6,15 +6,29 @@ package frc.robot.subsystems;
 
 import java.nio.channels.NetworkChannel;
 
+import com.ctre.phoenix6.configs.Slot0Configs;
+
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 import frc.robot.Robot;
 import frc.robot.MathUtils.Polynomials;
 import frc.robot.MathUtils.Vector3;
+import frc.robot.util.LoggedTalonFX;
 
 public class ShooterSubsystem extends SubsystemBase {
-  /** Creates a new ExampleSubsystem. */
-  public ShooterSubsystem() {}
+  private final LoggedTalonFX motor1, motor2;
+
+  private float targetSpeed = 0f;
+
+  public ShooterSubsystem() {
+    Slot0Configs s0c = new Slot0Configs().withKP(0).withKI(0).withKD(0);
+
+    motor1 = new LoggedTalonFX(Constants.Shooter.motor1Constants.port);
+    motor2 = new LoggedTalonFX(Constants.Shooter.motor2Constants.port);
+
+    
+  }
 
   /**
    * Example command factory method.

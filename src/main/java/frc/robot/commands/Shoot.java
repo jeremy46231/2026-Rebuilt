@@ -7,14 +7,14 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.MathUtils.Polynomials;
 import frc.robot.MathUtils.Vector3;
-import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
+
+// it will need to rotate swerve and move arm
 
 /** An example command that uses an example subsystem. */
 public class Shoot extends Command {
   @SuppressWarnings("PMD.UnusedPrivateField")
   private final ShooterSubsystem shooter;
-  private final ArmSubsystem arm;
   //private final SwerveSubsystem swerve;
 
   static final float MAX_TIME = 100f;
@@ -24,9 +24,8 @@ public class Shoot extends Command {
    *
    * @param subsystem The subsystem used by this command.
    */
-  public Shoot(ShooterSubsystem shooter, ArmSubsystem arm) {
+  public Shoot(ShooterSubsystem shooter) {
     this.shooter = shooter;
-    this.arm = arm;
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(shooter);
   }

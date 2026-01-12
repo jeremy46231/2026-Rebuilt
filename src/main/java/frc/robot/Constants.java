@@ -42,7 +42,12 @@ public final class Constants {
 
   }
 
-    public static final class Arm {
+  public static final class Shooter {
+    public static final MotorConstants motor1Constants = new MotorConstants(-1);
+    public static final MotorConstants motor2Constants = new MotorConstants(-1);
+  }
+
+  public static final class Arm {
     public static final double BUNDT_ANGLE = 20d;
     public static final double ARM_STATOR_CURRENT_LIMIT_AMPS = 20.0;
     public static final double DEFAULT_ARM_ANGLE = 56.12;
@@ -115,6 +120,14 @@ public final class Constants {
       INTERMAP.put(1.34 + Units.inchesToMeters(60), 27.8 + ARM_INTERMAP_OFFSET);
       INTERMAP.put(1.34 + Units.inchesToMeters(90), 31.339 + ARM_INTERMAP_OFFSET);
       INTERMAP.put(1.34 + Units.inchesToMeters(120), 32.67 + ARM_INTERMAP_OFFSET);
+    }
+  }
+
+  public static class MotorConstants {
+    public int port;
+
+    public MotorConstants(int port) {
+      this.port = port;
     }
   }
 }
