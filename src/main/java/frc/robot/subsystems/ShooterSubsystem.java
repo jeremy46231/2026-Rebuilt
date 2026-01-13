@@ -53,9 +53,9 @@ public class ShooterSubsystem extends SubsystemBase {
 
     Slot0Configs s0c = new Slot0Configs().withKP(.4).withKI(.1).withKD(0); 
 
-    motor1 = new LoggedTalonFX(Constants.Shooter.motor1Constants.port, Constants.Arm.CANBUS_NAME);
-    motor2 = new LoggedTalonFX(Constants.Shooter.motor2Constants.port, Constants.Arm.CANBUS_NAME);
-    preShooterMotor = new LoggedTalonFX(Constants.Shooter.preShooterConstants.port, Constants.Arm.CANBUS_NAME);
+    motor1 = new LoggedTalonFX(Constants.Shooter.motor1Constants.port, Constants.CANBUS_NAME);
+    motor2 = new LoggedTalonFX(Constants.Shooter.motor2Constants.port, Constants.CANBUS_NAME);
+    preShooterMotor = new LoggedTalonFX(Constants.Shooter.preShooterConstants.port, Constants.CANBUS_NAME);
 
     MotionMagicConfigs mmc = new MotionMagicConfigs();
     mmc.MotionMagicCruiseVelocity = targetSpeed;
