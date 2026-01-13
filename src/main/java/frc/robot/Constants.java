@@ -30,6 +30,7 @@ public final class Constants {
 
   public static class Vision {
 
+    // initializes cameras for use in VisionSubsystem
     public static enum Cameras {
       RIGHT_CAM("rightCam"),
       LEFT_CAM("leftCam");
@@ -45,6 +46,8 @@ public final class Constants {
       }
     }
 
+
+    // placeholder constants for now; will be updated once robot is delivered
     public static final double RIGHT_X = Units.inchesToMeters(1.0);
     public static final double RIGHT_Y = Units.inchesToMeters(1.0);
     public static final double RIGHT_Z = Units.inchesToMeters(1.0);
@@ -59,6 +62,8 @@ public final class Constants {
     public static final double LEFT_PITCH = Units.degreesToRadians(0.0);
     public static final double LEFT_YAW = Units.degreesToRadians(0.0);
 
+
+    // initializing Transform3d for use in future field visualization
     public static Transform3d getCameraTransform(Cameras camera) {
       switch (camera) {
         case RIGHT_CAM:
