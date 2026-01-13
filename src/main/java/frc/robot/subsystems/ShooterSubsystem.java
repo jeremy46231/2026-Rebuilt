@@ -26,12 +26,21 @@ import frc.robot.MathUtils.Vector3;
 import frc.robot.util.LoggedTalonFX;
 
 public class ShooterSubsystem extends SubsystemBase {
+  private static ShooterSubsystem instance;
+
   private static double tolerance = 0.1;
   private final LoggedTalonFX motor1, motor2;
 
   private float targetSpeed = 0f;
 
   private final DigitalInput objSensor;
+
+  public static ShooterSubsystem getInstance() {
+    if (instance == null) {
+      instance = new ShooterSubsystem();
+    }
+    return instance;
+  }
 
   public ShooterSubsystem() {
     CurrentLimitsConfigs clc =
