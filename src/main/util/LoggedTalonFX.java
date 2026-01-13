@@ -7,20 +7,17 @@ import dev.doglog.DogLog;
 import java.util.ArrayList;
 
 /**
- * Team 3501 Version of TalonFX class that automatically sets Current Limits and logs motor information.
+ * Team 3501 Version of TalonFX class that automatically sets Current Limits and logs motor
+ * information.
  */
 public class LoggedTalonFX extends TalonFX {
 
-  /**
-   * List of all LoggedTalonFX motors on our robot, defined.
-   */
+  /** List of all LoggedTalonFX motors on our robot, defined. */
   private static ArrayList<LoggedTalonFX> motors = new ArrayList<>();
 
-  /**
-   * Name of motor instance.
-   */
+  /** Name of motor instance. */
   private String name;
-  
+
   private String temperature,
       closedLoopError,
       closedLoopReference,
@@ -35,11 +32,12 @@ public class LoggedTalonFX extends TalonFX {
       error,
       reference,
       rotorPosition;
+
   /**
-   * 
-   * @param deviceName Designated name of this LoggedTalonFX 
+   * @param deviceName Designated name of this LoggedTalonFX
    * @param deviceId Motor ID of this LoggedTalonFX
-   * @param canbus Name of CAN Bus Associated with this LoggedTalonFX. Might be deprecated to identify CAN Bus through string. Check phoenix6 documentation for more details.
+   * @param canbus Name of CAN Bus Associated with this LoggedTalonFX. Might be deprecated to
+   *     identify CAN Bus through string. Check phoenix6 documentation for more details.
    */
   public LoggedTalonFX(String deviceName, int deviceId, String canbus) {
     super(deviceId, canbus);
@@ -48,8 +46,7 @@ public class LoggedTalonFX extends TalonFX {
   }
 
   /**
-   * 
-   * @param deviceName Designated name of this LoggedTalonFX 
+   * @param deviceName Designated name of this LoggedTalonFX
    * @param deviceId Motor ID of this LoggedTalonFX
    */
   public LoggedTalonFX(String deviceName, int deviceId) {
@@ -59,9 +56,9 @@ public class LoggedTalonFX extends TalonFX {
   }
 
   /**
-   * 
    * @param deviceId Motor ID of this LoggedTalonFX
-   * @param canbus Name of CAN Bus Associated with this LoggedTalonFX. Might be deprecated to identify CAN Bus through string. Check phoenix6 documentation for more details.
+   * @param canbus Name of CAN Bus Associated with this LoggedTalonFX. Might be deprecated to
+   *     identify CAN Bus through string. Check phoenix6 documentation for more details.
    */
   public LoggedTalonFX(int deviceId, String canbus) {
     super(deviceId, canbus);
@@ -70,7 +67,6 @@ public class LoggedTalonFX extends TalonFX {
   }
 
   /**
-   * 
    * @param deviceId Motor ID of this LoggedTalonFX
    */
   public LoggedTalonFX(int deviceId) {
@@ -79,9 +75,7 @@ public class LoggedTalonFX extends TalonFX {
     init();
   }
 
-  /**
-   * Initializes strings that will be outputted through the LoggedTalonFX class.
-   */
+  /** Initializes strings that will be outputted through the LoggedTalonFX class. */
   public void init() {
     motors.add(this);
     this.getConfigurator().apply(new TalonFXConfiguration());
@@ -99,7 +93,7 @@ public class LoggedTalonFX extends TalonFX {
     this.error = name + "/closedloop/error";
     this.reference = name + "/closedloop/reference";
     this.rotorPosition = name + "/closedloop/rotorPosition";
-    
+
     // Applying current limits
     CurrentLimitsConfigs clc =
         new CurrentLimitsConfigs()
@@ -125,7 +119,9 @@ public class LoggedTalonFX extends TalonFX {
   // For some reason Robot.java doesn't recognize the static method here
   // when there is another method with the same name
   /**
-   * This method will run the periodic() method for each of the motors and take care of the logging. You must call LoggedTalonFX.periodic_static() in a periodic method in the code in order for this to work.
+   * This method will run the periodic() method for each of the motors and take care of the logging.
+   * You must call LoggedTalonFX.periodic_static() in a periodic method in the code in order for
+   * this to work.
    */
   public static void periodic_static() {
     for (LoggedTalonFX l : motors) {
