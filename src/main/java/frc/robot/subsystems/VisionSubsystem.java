@@ -93,12 +93,24 @@ public class VisionSubsystem extends SubsystemBase {
     // initialize new poseEstimator
     PhotonPoseEstimator estimator = poseEstimator;
 
-    //check if camera has targets visible and log
+    // check if camera has targets visible and log
     if (latestVisionResult == null || latestVisionResult.getTargets().isEmpty()) {
       DogLog.log("Vision/" + cameraTitle + "/HasTargets", false);
       return;
     }
     DogLog.log("Vision/" + cameraTitle + "/HasTargets", true);
+
+    // distance to closest april tag
+    double minDistance = latestVisionResult.getTargets().stream()
+      .mapToDouble(t -> t.getBestCameraToTarget().getTranslation().getNorm())
+      .min()
+      .orElse(Double.NaN);
+
+    // average distance to all visible april tags
+    double averageDistance = latestVisionResult.getTargets().stream()
+      .mapToDouble(t -> t.getBestCameraToTarget().getTranslation().getNorm())
+      .average()
+      .orElse(Double.NaN);    
   }
 
   // to be completed; method aims to combine final pose estimate with odometry for accurate estimation
