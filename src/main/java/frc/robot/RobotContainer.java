@@ -9,10 +9,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
-import frc.robot.commands.Autos;
-import frc.robot.commands.ExampleCommand;
 import frc.robot.commands.Shoot;
-import frc.robot.subsystems.ExampleSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 
 /**
@@ -47,12 +44,11 @@ public class RobotContainer {
   private void configureBindings() {
     // Schedule `ExampleCommand` when `exampleCondition` changes to `true`
     m_driverController.x().whileTrue(new Shoot(lebron));
-    lebron.setDefaultCommand(new InstantCommand(
-      () -> {
-        lebron.stopAll();
-      }
-    )
-    );
+    lebron.setDefaultCommand(
+        new InstantCommand(
+            () -> {
+              lebron.stopAll();
+            }));
 
     // Schedule `exampleMethodCommand` when the Xbox controller's B button is pressed,
     // cancelling on release.
@@ -65,6 +61,6 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     // An example command will be run in autonomous
-    return new InstantCommand();//Autos.exampleAuto();
+    return new InstantCommand(); // Autos.exampleAuto();
   }
 }

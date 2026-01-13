@@ -4,24 +4,8 @@
 
 package frc.robot;
 
-import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
-import com.ctre.phoenix6.configs.MotionMagicConfigs;
-import com.ctre.phoenix6.configs.MotorOutputConfigs;
-import com.ctre.phoenix6.configs.Slot0Configs;
-import com.ctre.phoenix6.configs.TalonFXConfigurator;
-import com.ctre.phoenix6.controls.Follower;
-import com.ctre.phoenix6.controls.MotionMagicVoltage;
-import com.ctre.phoenix6.signals.MotorAlignmentValue;
-import com.ctre.phoenix6.signals.NeutralModeValue;
-import dev.doglog.DogLog;
-import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj.DutyCycleEncoder;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants;
-import frc.robot.util.LoggedTalonFX;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
@@ -42,7 +26,6 @@ public final class Constants {
   public static class Landmarks {
 
     public static final double MIDLINE_X = 0;
-
   }
 
   public static final class Shooter {
@@ -85,8 +68,14 @@ public final class Constants {
         ABSOLUTE_ARM_CONVERSION_FACTOR
             * INTEGRATED_ABSOLUTE_CONVERSION_FACTOR; // 130.63563333333335;
 
-    public static final double MOTIONMAGIC_CRUISE_VELOCITY = 134.0 * INTEGRATED_ARM_CONVERSION_FACTOR / 360f; // MotionMagic Cruise Velocity in RPS of the arm
-    public static final double MOTIONMAGIC_ACCEL = 200.0 * INTEGRATED_ARM_CONVERSION_FACTOR / 360f; // MotionMagic Acceleration in RPS^2 of the arm
+    public static final double MOTIONMAGIC_CRUISE_VELOCITY =
+        134.0
+            * INTEGRATED_ARM_CONVERSION_FACTOR
+            / 360f; // MotionMagic Cruise Velocity in RPS of the arm
+    public static final double MOTIONMAGIC_ACCEL =
+        200.0
+            * INTEGRATED_ARM_CONVERSION_FACTOR
+            / 360f; // MotionMagic Acceleration in RPS^2 of the arm
 
     public static final double ABSOLUTE_ENCODER_HORIZONTAL = 0.6655; // 0.6547
     public static final double ABSOLUTE_HORIZONTAL_OFFSET = 0.05; // 0.05
@@ -102,7 +91,7 @@ public final class Constants {
       // if (Constants.Pooer.SHOOTER == ShooterType.PETER) {
       //   UPDATE_INTERMAP_PETER();
       // } else {
-        UPDATE_INTERMAP_PIPER();
+      UPDATE_INTERMAP_PIPER();
       // }
     }
 

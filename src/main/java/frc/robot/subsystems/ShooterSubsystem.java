@@ -4,28 +4,19 @@
 
 package frc.robot.subsystems;
 
-import java.nio.channels.NetworkChannel;
-import java.nio.file.LinkPermission;
-
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.MotionMagicConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.MotionMagicVelocityVoltage;
 import com.ctre.phoenix6.controls.VelocityVoltage;
-import com.ctre.phoenix6.controls.compound.Diff_MotionMagicVoltage_Velocity;
 import com.ctre.phoenix6.signals.MotorAlignmentValue;
-
 import dev.doglog.DogLog;
 import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
-import frc.robot.Robot;
-import frc.robot.MathUtils.Polynomials;
-import frc.robot.MathUtils.Vector3;
-import frc.robot.util.LoggedTalonFX;
 import frc.robot.commands.*;
+import frc.robot.util.LoggedTalonFX;
 
 public class ShooterSubsystem extends SubsystemBase {
   private static ShooterSubsystem instance;
@@ -47,15 +38,14 @@ public class ShooterSubsystem extends SubsystemBase {
 
   public ShooterSubsystem() {
     CurrentLimitsConfigs clc =
-        new CurrentLimitsConfigs()
-        .withStatorCurrentLimit(30)
-        .withSupplyCurrentLimit(30);
+        new CurrentLimitsConfigs().withStatorCurrentLimit(30).withSupplyCurrentLimit(30);
 
-    Slot0Configs s0c = new Slot0Configs().withKP(.4).withKI(.1).withKD(0); 
+    Slot0Configs s0c = new Slot0Configs().withKP(.4).withKI(.1).withKD(0);
 
     motor1 = new LoggedTalonFX(Constants.Shooter.motor1Constants.port, Constants.CANBUS_NAME);
     motor2 = new LoggedTalonFX(Constants.Shooter.motor2Constants.port, Constants.CANBUS_NAME);
-    preShooterMotor = new LoggedTalonFX(Constants.Shooter.preShooterConstants.port, Constants.CANBUS_NAME);
+    preShooterMotor =
+        new LoggedTalonFX(Constants.Shooter.preShooterConstants.port, Constants.CANBUS_NAME);
 
     MotionMagicConfigs mmc = new MotionMagicConfigs();
     mmc.MotionMagicCruiseVelocity = targetSpeed;
@@ -99,7 +89,7 @@ public class ShooterSubsystem extends SubsystemBase {
     stopShooters();
   }
 
-  public boolean atSpeed() {  
+  public boolean atSpeed() {
     return Math.abs(motor1.getVelocity().getValueAsDouble() - targetSpeed) <= tolerance;
   }
 
