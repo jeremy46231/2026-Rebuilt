@@ -17,7 +17,9 @@ public class Shoot extends Command {
   private final ShooterSubsystem shooter;
   //private final SwerveSubsystem swerve;
 
-  static final float MAX_TIME = 100f;
+  static final float MAX_TIME = 10f;
+
+  float timer;
 
   /**
    * Creates a new ExampleCommand.
@@ -46,14 +48,13 @@ public class Shoot extends Command {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    shooter.stop();
-    shooter.runPreShooterAtRPS(0);
+    shooter.stopAll();
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return !shooter.objDetected();
+    return false;
   }
 
   protected Vector3 positionToTarget() {

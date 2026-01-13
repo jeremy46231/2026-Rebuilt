@@ -25,6 +25,7 @@ import frc.robot.Robot;
 import frc.robot.MathUtils.Polynomials;
 import frc.robot.MathUtils.Vector3;
 import frc.robot.util.LoggedTalonFX;
+import frc.robot.commands.*;
 
 public class ShooterSubsystem extends SubsystemBase {
   private static ShooterSubsystem instance;
@@ -85,12 +86,21 @@ public class ShooterSubsystem extends SubsystemBase {
     preShooterMotor.setControl(m_velocityControl);
   }
 
-  public void stop() {
+  public void stopShooters() {
     motor1.setControl(new VelocityVoltage(0));
   }
 
+  public void stopPreShooter() {
+    preShooterMotor.setControl(new VelocityVoltage(0));
+  }
+
+  public void stopAll() {
+    stopPreShooter();
+    stopShooters();
+  }
+
   public boolean atSpeed() {  
-    return motor1.getVelocity().getValueAsDouble() - targetSpeed <= tolerance;
+    return Math.abs(motor1.getVelocity().getValueAsDouble() - targetSpeed) <= tolerance;
   }
 
   public boolean objDetected() {
