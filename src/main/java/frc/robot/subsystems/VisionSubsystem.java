@@ -38,18 +38,9 @@ public class VisionSubsystem extends SubsystemBase {
           1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25,
           26, 27, 28, 29, 30, 31, 32);
 
-
-
-
-
-
   // NOTE FOR SID/SAKETH: come back to ln 57-70 in 2025 repo
 
   private double maxDistance = 15.0; // meters, beyond which readings are dropped
-
-
-
-
 
   // normalization maximums
   private double maximumRobotSpeed = 5d;
@@ -71,7 +62,6 @@ public class VisionSubsystem extends SubsystemBase {
 
   public static final double timestampDiffThreshold = 0.5;
   public static final double timestampFPGACorrection = -0.03;
-
 
   // constructor for VisionSubsystem
   public VisionSubsystem(Constants.Vision.Cameras cameraID, BooleanSupplier isRedSide) {
@@ -137,17 +127,19 @@ public class VisionSubsystem extends SubsystemBase {
             .orElse(Double.NaN);
 
     // average distance to all visible april tags
-    double averageDistance = latestVisionResult.getTargets().stream()
-      .mapToDouble(t -> t.getBestCameraToTarget().getTranslation().getNorm())
-      .average()
-      .orElse(Double.NaN);
+    double averageDistance =
+        latestVisionResult.getTargets().stream()
+            .mapToDouble(t -> t.getBestCameraToTarget().getTranslation().getNorm())
+            .average()
+            .orElse(Double.NaN);
 
-    // 2025-reefscape has a validTags list on lines 160-166, replacing it with a list of all tags for 26
+    // 2025-reefscape has a validTags list on lines 160-166, replacing it with a list of all tags
+    // for 26
 
     // creates a list of all detected tags and logs for debugging
-    List<PhotonTrackedTarget> tags = latestVisionResult.getTargets().stream()
-      .collect(Collectors.toList());
-    
+    List<PhotonTrackedTarget> tags =
+        latestVisionResult.getTargets().stream().collect(Collectors.toList());
+
     // log area and yaw for all detected april tags
     for (PhotonTrackedTarget tag : tags) {
       DogLog.log("Vision/" + cameraTitle + "/Area", tag.getArea());
@@ -223,22 +215,25 @@ public class VisionSubsystem extends SubsystemBase {
       double distance,
       double robotSpeed,
       int tagCount) {
-    
-    
+
     // Tag count factor (cap at 4 - diminishing returns)
-    int effectiveTags = Math.min(tagCount,  4);
+    int effectiveTags = Math.min(tagCount, 4);
     double tagFactor = 1d / Math.sqrt(effectiveTags);
-    
+
     // distance term (d^2)
     // if distance less than field size cap the distrust, otherwise don't
-    double distanceFactor = (distance < (17.548 + 0.67))
-        ? Math.min(baseNoise + distanceExponentialCoefficient * Math.pow(distanceExponentialBase, distance),
-            1.167)
-        : (baseNoise + distanceExponentialCoefficient * Math.pow(distanceExponentialBase, distance));
-    
+    double distanceFactor =
+        (distance < (17.548 + 0.67))
+            ? Math.min(
+                baseNoise
+                    + distanceExponentialCoefficient * Math.pow(distanceExponentialBase, distance),
+                1.167)
+            : (baseNoise
+                + distanceExponentialCoefficient * Math.pow(distanceExponentialBase, distance));
+
     // Speed term (quadratic)
     double vNorm = Math.min(robotSpeed, maximumRobotSpeed) / maximumRobotSpeed;
-    double speedFactor = 1d + speedCoefficient * (vNorm*vNorm);
+    double speedFactor = 1d + speedCoefficient * (vNorm * vNorm);
     DogLog.log("Vision/calibrationFactor", calibrationFactor);
     DogLog.log("Vision/tagFactor", tagFactor);
     DogLog.log("Vision/distanceFactor", distanceFactor);
@@ -249,16 +244,16 @@ public class VisionSubsystem extends SubsystemBase {
   }
 
   private double computeNoiseHeading(
-        double baseNoise,
-        double distanceCoefficient,
-        double angleCoefficient,
-        double speedCoefficient,
-        double distance,
-        double robotSpeed,
-        int tagCount) {
+      double baseNoise,
+      double distanceCoefficient,
+      double angleCoefficient,
+      double speedCoefficient,
+      double distance,
+      double robotSpeed,
+      int tagCount) {
 
     // Tag count factor (cap at 4 - diminishing returns)
-    int effectiveTags = Math.min(tagCount,  4);
+    int effectiveTags = Math.min(tagCount, 4);
     double tagFactor = 1d / Math.sqrt(effectiveTags);
 
     // Distance term (d^2)
@@ -270,6 +265,4 @@ public class VisionSubsystem extends SubsystemBase {
     double computedStdDevs = calibrationFactor * tagFactor * distanceFactor * speedFactor;
     return computedStdDevs;
   }
-
-
 }

@@ -76,7 +76,5 @@ public final class Constants {
           throw new IllegalArgumentException("Unknown camera ID: " + camera);
       }
     }
-
-    
   }
 }
