@@ -67,6 +67,12 @@ public class VisionSubsystem extends SubsystemBase {
   private final BooleanSupplier isRedSide;
   private final AprilTagFieldLayout fieldLayout;
 
+  public final double acceptableYawThreshold = 60d;
+
+  public static final double timestampDiffThreshold = 0.5;
+  public static final double timestampFPGACorrection = -0.03;
+
+
   // constructor for VisionSubsystem
   public VisionSubsystem(Constants.Vision.Cameras cameraID, BooleanSupplier isRedSide) {
     this.isRedSide = isRedSide;
@@ -192,8 +198,8 @@ public class VisionSubsystem extends SubsystemBase {
     double fpgaTimestamp = Timer.getFPGATimestamp();
     double timestampDiff = Math.abs(timestamp - fpgaTimestamp);
     double chosenTimestamp =
-        (timestampDiff > Constants.Vision.TIMESTAMP_DIFF_THRESHOLD)
-            ? fpgaTimestamp + Constants.Vision.TIMESTAMP_FPGA_CORRECTION
+        (timestampDiff > timestampDiffThreshold)
+            ? fpgaTimestamp + timestampFPGACorrection
             : timestamp;
 
     // swerveDrive.addVisionMeasurement(measuredPose...) check ln 279
@@ -201,11 +207,11 @@ public class VisionSubsystem extends SubsystemBase {
 
   // prev. year had isTagOnActiveSide but not relevant this year
 
-  private boolean yawAcceptable(double yaw) {
-    boolean acceptable = Math.abs(yaw) < Constants.Vision.ACCEPTABLE_YAW;
-    DogLog.log("Vision/acceptableYaw", acceptable);
+  private boolean acceptableYaw(double yaw) {
+    boolean yawIsAcceptable = Math.abs(yaw) < acceptableYawThreshold;
+    DogLog.log("Vision/acceptableYaw", yawIsAcceptable);
 
-    return acceptable;
+    return yawIsAcceptable;
   }
 
   private double computeNoiseXY(

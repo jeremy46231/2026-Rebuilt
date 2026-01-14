@@ -77,8 +77,6 @@ public final class Constants {
       }
     }
 
-    public static final double TIMESTAMP_DIFF_THRESHOLD = 0.5;
-    public static final double TIMESTAMP_FPGA_CORRECTION = -0.03;
-    public static final double ACCEPTABLE_YAW = 60d;
+    
   }
 }
