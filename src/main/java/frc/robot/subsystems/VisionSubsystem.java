@@ -208,14 +208,14 @@ public class VisionSubsystem extends SubsystemBase {
   }
 
   private double computeNoiseXY(
-      double baseNoise,
-      double distanceExponentialCoefficient,
-      double distanceExponentialBase,
-      double angleCoefficient,
-      double speedCoefficient,
-      double distance,
-      double robotSpeed,
-      int tagCount) {
+    double baseNoise,
+    double distanceExponentialCoefficient,
+    double distanceExponentialBase,
+    double angleCoefficient,
+    double speedCoefficient,
+    double distance,
+    double robotSpeed,
+    int tagCount) {
 
     // Tag count factor (cap at 4 - diminishing returns)
     int effectiveTags = Math.min(tagCount, 4);
@@ -245,13 +245,13 @@ public class VisionSubsystem extends SubsystemBase {
   }
 
   private double computeNoiseHeading(
-      double baseNoise,
-      double distanceCoefficient,
-      double angleCoefficient,
-      double speedCoefficient,
-      double distance,
-      double robotSpeed,
-      int tagCount) {
+    double baseNoise,
+    double distanceCoefficient,
+    double angleCoefficient,
+    double speedCoefficient,
+    double distance,
+    double robotSpeed,
+    int tagCount) {
 
     // Tag count factor (cap at 4 - diminishing returns)
     int effectiveTags = Math.min(tagCount, 4);
