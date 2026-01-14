@@ -1,7 +1,3 @@
-// Copyright (c) FIRST and other WPILib contributors.
-// Open Source Software; you can modify and/or share it under the terms of
-// the WPILib BSD license file in the root directory of this project.
-
 package frc.robot.commands;
 
 import com.ctre.phoenix6.swerve.utility.LinearPath;
@@ -11,21 +7,25 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import java.util.function.Supplier;
 
-/** An example command that uses an example subsystem. */
+/**
+ * This Command drives the robot in a linear path to a specific pose.
+ */
 public class DriveToPose extends Command {
   @SuppressWarnings("PMD.UnusedPrivateField")
   private final CommandSwerveDrivetrain m_swerve;
 
+  // Initialize the LinearPath and the LinearPath.State to a null value
   private LinearPath m_path = null;
   private LinearPath.State m_pathState = null;
 
+  // Initialize the Target Pose and the Target Pose Supplier to a null value
   private Pose2d m_targetPose = null;
   private Supplier<Pose2d> m_targetPoseSupplier = null;
 
   /**
-   * Creates a new ExampleCommand.
-   *
-   * @param subsystem The subsystem used by this command.
+   * 
+   * @param swerve Swerve Subsystem.
+   * @param targetPose Target Pose (static).
    */
   public DriveToPose(CommandSwerveDrivetrain swerve, Pose2d targetPose) {
     // Use addRequirements() here to declare subsystem dependencies.
@@ -35,6 +35,11 @@ public class DriveToPose extends Command {
     addRequirements(swerve);
   }
 
+  /**
+   * 
+   * @param swerve Swerve Subsystem.
+   * @param targetPoseSupplier Target Pose Supplier (for changing values of pose not just runtime)
+   */
   public DriveToPose(CommandSwerveDrivetrain swerve, Supplier<Pose2d> targetPoseSupplier) {
     // Use addRequirements() here to declare subsystem dependencies.
     m_swerve = swerve;
