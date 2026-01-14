@@ -13,7 +13,9 @@ public class DriveToPose extends Command {
   private final CommandSwerveDrivetrain m_swerve;
   private final LinearPath m_path;
   private LinearPath.State m_pathState;
-  private Pose2d m_targetPose;
+
+  private Pose2d m_targetPose = null;
+  private Supplier<Pose2d> m_targetPoseSupplier = null;
 
   /**
    * Creates a new ExampleCommand.
@@ -24,6 +26,15 @@ public class DriveToPose extends Command {
     // Use addRequirements() here to declare subsystem dependencies.
     m_swerve = swerve;
     m_targetPose = targetPose;
+
+    addRequirements(swerve);
+  }
+
+  public DriveToPose(CommandSwerveDrivetrain swerve, Suppler<Pose2d> targetPoseSupplier) {
+    // Use addRequirements() here to declare subsystem dependencies.
+    m_swerve = swerve;
+    m_targetPoseSupplier = targetPoseSupplier;
+    m_targetPose = m_targetPoseSupplier.get();
 
     addRequirements(swerve);
   }
