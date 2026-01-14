@@ -43,7 +43,7 @@ public class VisionSubsystem extends SubsystemBase {
 
 
 
-  // NOTE FOR SID/SAKETH: come back to ln 49-75 in 2025 repo
+  // NOTE FOR SID/SAKETH: come back to ln 57-70 in 2025 repo
 
   private double maxDistance = 15.0; // meters, beyond which readings are dropped
 
