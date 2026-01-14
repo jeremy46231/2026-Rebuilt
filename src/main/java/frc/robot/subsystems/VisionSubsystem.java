@@ -92,6 +92,7 @@ public class VisionSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
+    DogLog.log("Vision/isRunning", true);
     // confirm that all cameras are connected and update cameraConnected respectively
     boolean cameraConnected = photonCamera.isConnected();
     if (!cameraConnected) {

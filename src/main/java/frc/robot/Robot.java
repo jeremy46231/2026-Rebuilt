@@ -37,7 +37,8 @@ public class Robot extends TimedRobot {
         VisionSubsystem.getInstance(
             Constants.Vision.Cameras.RIGHT_CAM,()->true);
     visionLeft =
-        VisionSubsystem.getInstance(Constants.Vision.Cameras.LEFT_CAM,()->true);
+        VisionSubsystem.getInstance(
+          Constants.Vision.Cameras.LEFT_CAM,()->true);
   }
 
   /**
