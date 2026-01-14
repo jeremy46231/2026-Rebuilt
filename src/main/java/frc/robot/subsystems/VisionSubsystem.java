@@ -12,7 +12,11 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.BooleanSupplier;
+import java.util.stream.Collectors;
+
+import org.photonvision.EstimatedRobotPose;
 import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonPoseEstimator;
 import org.photonvision.PhotonPoseEstimator.PoseStrategy;
@@ -117,11 +121,51 @@ public class VisionSubsystem extends SubsystemBase {
             .orElse(Double.NaN);
 
     // average distance to all visible april tags
-    double averageDistance =
-        latestVisionResult.getTargets().stream()
-            .mapToDouble(t -> t.getBestCameraToTarget().getTranslation().getNorm())
-            .average()
-            .orElse(Double.NaN);
+    double averageDistance = latestVisionResult.getTargets().stream()
+      .mapToDouble(t -> t.getBestCameraToTarget().getTranslation().getNorm())
+      .average()
+      .orElse(Double.NaN);
+
+    // 2025-reefscape has a validTags list on lines 160-166, replacing it with a list of all tags for 26
+
+    // creates a list of all detected tags and logs for debugging
+    List<PhotonTrackedTarget> tags = latestVisionResult.getTargets().stream()
+      .collect(Collectors.toList());
+    
+    // log area and yaw for all detected april tags
+    for (PhotonTrackedTarget tag : tags) {
+      DogLog.log("Vision/" + cameraTitle + "/Area", tag.getArea());
+      DogLog.log("Vision/" + cameraTitle + "/Yaw", tag.getYaw());
+    }
+
+    if (tags.isEmpty()) {
+      DogLog.log("Vision/" + cameraTitle + "/Tags", false);
+      return;
+    }
+    DogLog.log("Vision/" + cameraTitle + "/Tags", true);
+
+    // do nothing if no minDistance detected or if minDistance is too large
+    if (Double.isNaN(minDistance) || minDistance > maxDistance) {
+      DogLog.log("Vision/" + cameraTitle + "/ThrownOutDistance", true);
+      return;
+    }
+    DogLog.log("Vision/" + cameraTitle + "/ThrownOutDistance", false);
+
+    // TODO: re-implement lines 200-205 in 2025 repo
+
+    // check for and get pose from PhotonVision
+    Optional<EstimatedRobotPose> maybePose = estimator.update(latestVisionResult);
+    if (maybePose.isEmpty()) {
+      DogLog.log("Vision/" + cameraTitle + "/AvailablePose", false);
+      return;
+    }
+    DogLog.log("Vision/" + cameraTitle + "/AvailablePose", true);
+
+    // get estimatedPose and convert it to Pose2d
+    EstimatedRobotPose estimatedPose = maybePose.get();
+    Pose2d measuredPose = estimatedPose.estimatedPose.toPose2d();
+
+    // TODO: re-implement lines 218-281 in 2025 repo
   }
 
   // to be completed; method aims to combine final pose estimate with odometry for accurate
