@@ -5,13 +5,14 @@ import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfigurator;
 import com.ctre.phoenix6.controls.VelocityVoltage;
+import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import dev.doglog.DogLog;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.util.LoggedTalonFX;
 
 public class IntakeSubsystem extends SubsystemBase {
-  private double targetSpeed = 20d * 2;
+  private double targetSpeed = 200d;
   private static IntakeSubsystem instance;
   private LoggedTalonFX motor;
 
@@ -23,7 +24,8 @@ public class IntakeSubsystem extends SubsystemBase {
 
     Slot0Configs s0c = new Slot0Configs().withKP(.1).withKI(0).withKD(0);
 
-    MotorOutputConfigs moc = new MotorOutputConfigs().withNeutralMode(NeutralModeValue.Brake);
+    MotorOutputConfigs moc = new MotorOutputConfigs().withNeutralMode(NeutralModeValue.Brake)
+        .withInverted(InvertedValue.Clockwise_Positive);
 
     motor.updateCurrentLimits(30, 30);
 
@@ -34,12 +36,13 @@ public class IntakeSubsystem extends SubsystemBase {
   }
 
   public static IntakeSubsystem getInstance() {
-    if (instance == null) instance = new IntakeSubsystem();
+    if (instance == null)
+      instance = new IntakeSubsystem();
     return instance;
   }
 
-  public void setSpeed(double speed) {
-    motor.setControl(velocityRequest.withVelocity(speed * -2d));
+  public void run() {
+    motor.setControl(velocityRequest.withVelocity(targetSpeed * 2d));
   }
 
   public void stop() {
