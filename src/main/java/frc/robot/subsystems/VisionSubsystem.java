@@ -72,12 +72,13 @@ public class VisionSubsystem extends SubsystemBase {
     Transform3d cameraToRobot = Constants.Vision.getCameraTransform(cameraID);
 
     // load field layout
+    // TODO: update to 2026 when they release the update
     this.fieldLayout = AprilTagFieldLayout.loadField(AprilTagFields.k2025ReefscapeWelded);
 
     // initialize poseEstimator
+    // PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,
     poseEstimator =
-        new PhotonPoseEstimator(
-            fieldLayout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, cameraToRobot);
+        new PhotonPoseEstimator(fieldLayout,cameraToRobot);
 
     cameraTitle = cameraID.getLoggingName();
     latestVisionResult = null;
