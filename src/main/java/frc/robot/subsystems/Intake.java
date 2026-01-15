@@ -59,6 +59,7 @@ public class Intake extends SubsystemBase {
 
   public void runDutyCycle(double dutyCycle) {
     forwardMotor.setControl(m_dutyCycle.withOutput(dutyCycle));
+    oppositeMotor.setControl(m_dutyCycle.withOutput(dutyCycle));
   }
 
   public void runVoltage(double voltage) {
