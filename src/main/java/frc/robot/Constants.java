@@ -41,6 +41,8 @@ public final class Constants {
     public static final double armKV = 2.49;
 
     public static final double statorCurrentLimit = 40.0;
+
+    public static final double armConversionFactor = 130.63563333333335;
   }
 
   public static class MotorConstants {
