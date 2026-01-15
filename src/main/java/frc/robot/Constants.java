@@ -46,6 +46,22 @@ public final class Constants {
       }
     }
 
+    // Constants for noise calculation
+    public static final double DISTANCE_EXPONENTIAL_COEFFICIENT_X = 0.00046074;
+    public static final double DISTANCE_EXPONENTIAL_BASE_X = 2.97294;
+    public static final double DISTANCE_EXPONENTIAL_COEFFICIENT_Y = 0.0046074;
+    public static final double DISTANCE_EXPONENTIAL_BASE_Y = 2.97294;
+
+    public static final double DISTANCE_COEFFICIENT_THETA = 0.9;
+
+    public static final double ANGLE_COEFFICIENT_X = 0.5; // noise growth per radian of viewing angle
+    public static final double ANGLE_COEFFICIENT_Y = 0.5;
+    public static final double ANGLE_COEFFICIENT_THETA = 0.5;
+
+    public static final double SPEED_COEFFICIENT_X = 0.5; // noise growth per fraction of max speed
+    public static final double SPEED_COEFFICIENT_Y = 0.5;
+    public static final double SPEED_COEFFICIENT_THETA = 0.5;
+
     // placeholder constants for now; will be updated once robot is delivered
     public static final double RIGHT_X = Units.inchesToMeters(8.867);
     public static final double RIGHT_Y = Units.inchesToMeters(-12.4787);

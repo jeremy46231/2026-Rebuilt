@@ -4,6 +4,7 @@ import dev.doglog.DogLog;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.Matrix;
+import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.numbers.N1;
@@ -21,6 +22,7 @@ import org.photonvision.PhotonPoseEstimator;
 import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.PhotonTrackedTarget;
+
 
 public class VisionSubsystem extends SubsystemBase {
   // static member that contains array of all VisionSubsytem cameras
@@ -160,6 +162,11 @@ public class VisionSubsystem extends SubsystemBase {
 
     // TODO: re-implement lines 200-205 in 2025 repo
 
+    int tagCount = tags.size();
+
+    // get from swerve
+    double currentSpeed = 0d;
+
     // check for and get pose from PhotonVision
     Optional<EstimatedRobotPose> poseEstimationUpdate = estimator.update(latestVisionResult);
     if (poseEstimationUpdate.isEmpty()) {
@@ -172,6 +179,54 @@ public class VisionSubsystem extends SubsystemBase {
     EstimatedRobotPose estimatedPose = poseEstimationUpdate.get();
     Pose2d measuredPose = estimatedPose.estimatedPose.toPose2d();
     DogLog.log("Vision/" + cameraTitle + "/Pose2d", measuredPose);
+
+    double nX = computeNoiseXY(
+      baseNoiseX,
+      Constants.Vision.DISTANCE_EXPONENTIAL_COEFFICIENT_X,
+      Constants.Vision.DISTANCE_EXPONENTIAL_BASE_X,
+      Constants.Vision.ANGLE_COEFFICIENT_X,
+      Constants.Vision.SPEED_COEFFICIENT_X,
+      averageDistance,
+      currentSpeed,
+      tagCount);
+
+    double nY = computeNoiseXY(
+      baseNoiseY,
+      Constants.Vision.DISTANCE_EXPONENTIAL_COEFFICIENT_Y,
+      Constants.Vision.DISTANCE_EXPONENTIAL_BASE_Y,
+      Constants.Vision.ANGLE_COEFFICIENT_Y,
+      Constants.Vision.SPEED_COEFFICIENT_Y,
+      averageDistance,
+      currentSpeed,
+      tagCount);
+
+    double nTH  = computeNoiseHeading(
+      baseNoiseTheta,
+      Constants.Vision.DISTANCE_COEFFICIENT_THETA,
+      Constants.Vision.ANGLE_COEFFICIENT_THETA,
+      Constants.Vision.SPEED_COEFFICIENT_THETA,
+      averageDistance,
+      currentSpeed,
+      tagCount);
+
+    Matrix<N3, N1> noiseVector = VecBuilder.fill(nX, nY, nTH);
+
+    processPoseEstimate(
+      measuredPose,
+      averageDistance,
+      currentSpeed,
+      tagCount,
+      latestVisionResult.getTimestampSeconds(),
+      noiseVector);
+    
+    if (poseEstimationUpdate.isPresent()) {
+      EstimatedRobotPose estimatedRobotPose = poseEstimationUpdate.get();
+      Pose2d visionPose = estimatedRobotPose.estimatedPose.toPose2d();
+
+      DogLog.log("Vision/VisionPoseEstimate", visionPose);
+    }
+
+    
 
     // TODO: re-implement lines 218-281 in 2025 repo
   }
