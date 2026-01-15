@@ -1,104 +1,112 @@
+// Copyright (c) FIRST and other WPILib contributors.
+// Open Source Software; you can modify and/or share it under the terms of
+// the WPILib BSD license file in the root directory of this project.
+
 package frc.robot.subsystems;
-
-import java.net.ContentHandler;
-
-import org.opencv.core.Mat;
 
 import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.MotionMagicConfigs;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
-import com.ctre.phoenix6.configs.TalonFXConfigurator;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
-import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.MotorAlignmentValue;
-import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import dev.doglog.DogLog;
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.util.LoggedTalonFX;
 
+
 public class ArmSubsystem extends SubsystemBase {
-  private LoggedTalonFX topLeft, topRight, bottomLeft, bottomRight, master;
-  private ArmFeedforward armff;
-  private DutyCycleEncoder revEncoder;
+
+  private final LoggedTalonFX topLeft, topRight, bottomLeft, bottomRight, master;
+  private DutyCycleEncoder encoder;
+  private static ArmSubsystem instance;
+  CANBus canbus = new CANBus("Patrice the Pineapple");
+
+  private MotionMagicConfigs mmc;
+  private MotionMagicVoltage mmv= new MotionMagicVoltage(0);
+
+  private double targetDegrees = 0;
+
+  private final double tolerance  = 1;
 
   public ArmSubsystem() {
-    CurrentLimitsConfigs clc = new CurrentLimitsConfigs()
-        .withStatorCurrentLimitEnable(true)
-        .withStatorCurrentLimit(Constants.Arm.statorCurrentLimit);
-    MotorOutputConfigs moc = new MotorOutputConfigs().withNeutralMode(NeutralModeValue.Brake);
-    Slot0Configs s0c = new Slot0Configs().withKP(1).withKI(0).withKD(0).withKG(Constants.Arm.armKG)
-        .withKS(Constants.Arm.armKS).withKV(Constants.Arm.armKV);
-
-    CANBus canbus = new CANBus("Patrice the Pineapple");
-
     topLeft = new LoggedTalonFX(Constants.Arm.topLeftMotor.port, canbus);
-    topRight = new LoggedTalonFX(Constants.Arm.topRightMotor.port, canbus);
-    bottomLeft = new LoggedTalonFX(Constants.Arm.bottomLeftMotor.port, canbus);
+    topRight = new LoggedTalonFX(Constants.Arm.topRightMotor.port, canbus);  
     bottomRight = new LoggedTalonFX(Constants.Arm.bottomRightMotor.port, canbus);
-
-    // define followers
-    Follower follower = new Follower(Constants.Arm.topLeftMotor.port, MotorAlignmentValue.Aligned);
-    Follower invertedFollower = new Follower(Constants.Arm.topLeftMotor.port, MotorAlignmentValue.Opposed);
-    topRight.setControl(follower);
-    bottomRight.setControl(follower);
-    bottomLeft.setControl(invertedFollower);
-
+    bottomLeft = new LoggedTalonFX(Constants.Arm.bottomRightMotor.port, canbus);
     master = topLeft;
 
-    TalonFXConfigurator masterConfig = master.getConfigurator();
-    TalonFXConfigurator topRightConfig = topRight.getConfigurator();
-    TalonFXConfigurator bottomLeftConfig = bottomLeft.getConfigurator();
-    TalonFXConfigurator bottomRightConfig = bottomRight.getConfigurator();
+    Follower alignedFollower = new Follower(master.getDeviceID(), MotorAlignmentValue.Aligned);
+    Follower opposedFollower = new Follower(master.getDeviceID(), MotorAlignmentValue.Opposed);
+    topRight.setControl(alignedFollower);
+    bottomRight.setControl(alignedFollower);
+    bottomLeft.setControl(opposedFollower);
 
-    masterConfig.apply(moc);
-    topRightConfig.apply(moc);
-    bottomLeftConfig.apply(moc);
-    bottomRightConfig.apply(moc);
+    encoder = new DutyCycleEncoder(Constants.Arm.ENCODER_PORT);
 
-    masterConfig.apply(clc);
-    topRightConfig.apply(clc);
-    bottomLeftConfig.apply(clc);
-    bottomRightConfig.apply(clc);
+    CurrentLimitsConfigs clc = new CurrentLimitsConfigs().withStatorCurrentLimit(Constants.Arm.STATOR_CURRENT_LIMIT).withSupplyCurrentLimit(Constants.Arm.SUPPLY_CURRENT_LIMIT);
+    
+    Slot0Configs s0c = new Slot0Configs().withKP(0.35).withKI(0).withKD(0).withKV(Constants.Arm.armKV).withKG(Constants.Arm.armKG).withKS(Constants.Arm.armKS);
 
-    MotionMagicConfigs mmc = new MotionMagicConfigs();
-    mmc.MotionMagicCruiseVelocity = Constants.Arm.armConversionFactor;
-    mmc.MotionMagicAcceleration = 2.2 * Constants.Arm.armConversionFactor;
+    MotorOutputConfigs moc =  new MotorOutputConfigs();
 
-    masterConfig.apply(s0c);
-    masterConfig.apply(mmc);
+    master.getConfigurator().apply(s0c);
+    master.getConfigurator().apply(moc);
+    master.getConfigurator().apply(clc);
 
-    revEncoder = new DutyCycleEncoder(0);
+    mmc = new MotionMagicConfigs().withMotionMagicAcceleration(Constants.Arm.MOTIONMAGIC_KA).withMotionMagicCruiseVelocity(Constants.Arm.MOTIONMAGIC_KV);
   }
 
-  private double getEncoderPos() {
-    return (revEncoder.get() + 0.3845) % 1;
-  }
-
-  private double getPosDegrees() {
-    return (master.getPosition().getValueAsDouble() / Constants.Arm.armConversionFactor) * 360d;
+  public static ArmSubsystem getInstance() {
+    if (instance == null) {
+      instance = new ArmSubsystem();
+    }
+    return instance;
   }
 
   public void setPosition(double degrees) {
-    degrees = MathUtil.clamp(degrees, 3, 110);
-    double rawDegrees = (master.getPosition().getValueAsDouble() / Constants.Arm.armConversionFactor) * 360d;
-    master.setControl(
-        new MotionMagicVoltage(
-            490));
+    targetDegrees = MathUtil.clamp(degrees, 3, 110);
+
+    master.setControl(mmv.withPosition(targetDegrees / 360 * Constants.Arm.ARM_CONVERSION_FACTOR));
+  }
+  
+  public void resetPosition() {
+    if (encoder.isConnected()) {
+      master.setPosition(
+          (getAbsolutePosition()) * Constants.Arm.ARM_CONVERSION_FACTOR);
+    }
+  }
+
+  private double getAbsolutePosition() {
+    // uses the absolute encoder rotations to get the absolute position
+
+    return (encoder.get() // revEncoder.getAbsolutePosition()
+            - Constants.Arm.ABSOLUTE_ENCODER_HORIZONTAL
+            + Constants.Arm.ABSOLUTE_HORIZONTAL_OFFSET
+            + 1d)
+        % 1;
+  }
+
+  public boolean atTarget() {
+    return Math.abs(master.getPosition().getValueAsDouble() / Constants.Arm.ARM_CONVERSION_FACTOR * 360 - (Constants.Arm.ABSOLUTE_HORIZONTAL_OFFSET * 360) - targetDegrees) <= tolerance;
+  }
+
+
+  
+  @Override
+  public void periodic() {
+    DogLog.log("Doglog/arm/targetDegrees", targetDegrees);
   }
 
   @Override
-  public void periodic() {
-    DogLog.log("DogLog/arm/encoderPosition", getPosDegrees());
-    DogLog.log("DogLog/arm/motorSpeed", master.getVelocity().getValueAsDouble());
-    DogLog.log("DogLog/arm/targetPosition", 10);
-
+  public void simulationPeriodic() {
+    // This method will be called once per scheduler run during simulation
   }
 }

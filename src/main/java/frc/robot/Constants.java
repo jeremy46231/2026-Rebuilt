@@ -35,14 +35,22 @@ public final class Constants {
     public static final MotorConstants topRightMotor = new MotorConstants(14);
     public static final MotorConstants bottomLeftMotor = new MotorConstants(11);
     public static final MotorConstants bottomRightMotor = new MotorConstants(13);
+    public static final int ENCODER_PORT = 0;
 
     public static final double armKS = 0.16969;
     public static final double armKG = 0.34;
     public static final double armKV = 2.49;
 
-    public static final double statorCurrentLimit = 40.0;
+    public static final double MOTIONMAGIC_KV = 1;
+    public static final double MOTIONMAGIC_KA = 2.2;
 
-    public static final double armConversionFactor = 130.63563333333335;
+    public static final double STATOR_CURRENT_LIMIT = 40.0;
+    public static final double SUPPLY_CURRENT_LIMIT = 30.0;
+
+    public static final double ARM_CONVERSION_FACTOR = 130.63563333333335;
+
+    public static final double ABSOLUTE_ENCODER_HORIZONTAL = 0.6655; // 0.6547
+    public static final double ABSOLUTE_HORIZONTAL_OFFSET = 0.05; // 0.05
   }
 
   public static class MotorConstants {
