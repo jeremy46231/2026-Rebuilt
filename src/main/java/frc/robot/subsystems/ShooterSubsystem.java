@@ -5,18 +5,11 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
-import com.ctre.phoenix6.configs.MotionMagicConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
-import com.ctre.phoenix6.controls.ControlRequest;
 import com.ctre.phoenix6.controls.Follower;
-import com.ctre.phoenix6.controls.MotionMagicVelocityVoltage;
-import com.ctre.phoenix6.controls.StaticBrake;
 import com.ctre.phoenix6.controls.VelocityVoltage;
-import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.signals.MotorAlignmentValue;
 import dev.doglog.DogLog;
-import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.util.LoggedTalonFX;
@@ -29,7 +22,6 @@ public class ShooterSubsystem extends SubsystemBase {
   private final LoggedTalonFX preShooterMotor;
 
   private float targetSpeed = 57f;
-
 
   public static ShooterSubsystem getInstance() {
     if (instance == null) {
@@ -48,9 +40,8 @@ public class ShooterSubsystem extends SubsystemBase {
 
     motor1 = new LoggedTalonFX(Constants.Shooter.motor1Constants.port);
     motor2 = new LoggedTalonFX(Constants.Shooter.motor2Constants.port);
-    preShooterMotor =
-        new LoggedTalonFX(Constants.Shooter.preShooterConstants.port);
-        
+    preShooterMotor = new LoggedTalonFX(Constants.Shooter.preShooterConstants.port);
+
     motor1.getConfigurator().apply(s0c);
     motor2.getConfigurator().apply(s0c);
     motor1.getConfigurator().apply(clc);
@@ -64,8 +55,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
   // spin the shooter up to speed before the game piece goes through it
   public void rampUp() {
-    VelocityVoltage m_velocityControl =
-        new VelocityVoltage(targetSpeed * 24d / 18d);
+    VelocityVoltage m_velocityControl = new VelocityVoltage(targetSpeed * 24d / 18d);
     motor1.setControl(m_velocityControl);
   }
 
@@ -92,8 +82,6 @@ public class ShooterSubsystem extends SubsystemBase {
   public boolean atSpeed() {
     return Math.abs(motor1.getVelocity().getValueAsDouble() - targetSpeed * 24d / 18d) <= tolerance;
   }
-
-
 
   @Override
   public void periodic() {

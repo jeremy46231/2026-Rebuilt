@@ -42,7 +42,7 @@ public class Preshooter extends Command {
     DogLog.log("ShooterSubsystem/Preshootering", true);
 
     // only load the game piece into the shooter (run the preshooter) if shooter is at speed
-      shooter.runPreShooterAtRPS(20);
+    shooter.runPreShooterAtRPS(20);
   }
 
   // Called once the command ends or is interrupted.

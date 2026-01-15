@@ -12,34 +12,32 @@ import frc.robot.subsystems.ShooterSubsystem;
 public class RunIntakeUntilDetection extends Command {
   @SuppressWarnings("PMD.UnusedPrivateField")
   private final IntakeSubsystem intakeSubsystem;
+
   private final ShooterSubsystem shooterSubsystem;
 
-  public RunIntakeUntilDetection(IntakeSubsystem intakeSubsystem, ShooterSubsystem shooterSubsystem) {
+  public RunIntakeUntilDetection(
+      IntakeSubsystem intakeSubsystem, ShooterSubsystem shooterSubsystem) {
     this.intakeSubsystem = intakeSubsystem;
     this.shooterSubsystem = shooterSubsystem;
-    
+
     addRequirements(intakeSubsystem, shooterSubsystem);
   }
 
-  
   @Override
   public void initialize() {}
 
-  
   @Override
   public void execute() {
     intakeSubsystem.run(100);
     shooterSubsystem.runPreShooterAtRPS(20);
   }
 
-  
   @Override
   public void end(boolean interrupted) {
     intakeSubsystem.stop();
     shooterSubsystem.stopPreShooter();
   }
 
-  
   @Override
   public boolean isFinished() {
     return intakeSubsystem.beamBroken();

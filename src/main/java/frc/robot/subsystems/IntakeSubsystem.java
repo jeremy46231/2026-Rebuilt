@@ -1,13 +1,11 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
-import com.ctre.phoenix6.configs.MotionMagicConfigs;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfigurator;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.signals.InvertedValue;
-import com.ctre.phoenix6.signals.NeutralModeValue;
 import dev.doglog.DogLog;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -22,7 +20,6 @@ public class IntakeSubsystem extends SubsystemBase {
   private LoggedTalonFX motor;
   private final DigitalInput beamBreak;
 
-
   public IntakeSubsystem() {
     // change ports as needed
     motor = new LoggedTalonFX(Constants.Intake.intakeMotor.port);
@@ -30,11 +27,14 @@ public class IntakeSubsystem extends SubsystemBase {
 
     Slot0Configs s0c = new Slot0Configs().withKP(0.1).withKI(0).withKD(0);
 
-    MotorOutputConfigs moc = new MotorOutputConfigs()
-        .withInverted(InvertedValue.Clockwise_Positive);
+    MotorOutputConfigs moc =
+        new MotorOutputConfigs().withInverted(InvertedValue.Clockwise_Positive);
 
-    CurrentLimitsConfigs clc = new CurrentLimitsConfigs().withStatorCurrentLimitEnable(true)
-        .withStatorCurrentLimit(Constants.Intake.STATOR_CURRENT_LIMIT).withSupplyCurrentLimit(Constants.Intake.SUPPLY_CURRENT_LIMIT);
+    CurrentLimitsConfigs clc =
+        new CurrentLimitsConfigs()
+            .withStatorCurrentLimitEnable(true)
+            .withStatorCurrentLimit(Constants.Intake.STATOR_CURRENT_LIMIT)
+            .withSupplyCurrentLimit(Constants.Intake.SUPPLY_CURRENT_LIMIT);
 
     TalonFXConfigurator mConfig = motor.getConfigurator();
 
@@ -44,8 +44,7 @@ public class IntakeSubsystem extends SubsystemBase {
   }
 
   public static IntakeSubsystem getInstance() {
-    if (instance == null)
-      instance = new IntakeSubsystem();
+    if (instance == null) instance = new IntakeSubsystem();
     return instance;
   }
 
