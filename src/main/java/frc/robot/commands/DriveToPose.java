@@ -1,7 +1,10 @@
 package frc.robot.commands;
 
 import com.ctre.phoenix6.swerve.utility.LinearPath;
+
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
@@ -19,6 +22,10 @@ public class DriveToPose extends Command {
   // Initialize the Target Pose and the Target Pose Supplier to a null value
   private Pose2d targetPose = null;
   private Supplier<Pose2d> targetPoseSupplier = null;
+
+  private final PIDController xController = new PIDController(2.0, 0.0, 0.0);
+  private final PIDController yController = new PIDController(2.0, 0.0, 0.0);
+  private final PIDController headingController = new PIDController(1.5, 0.0, 0.0);
 
   /**
    * @param swerve Swerve Subsystem.
@@ -61,7 +68,15 @@ public class DriveToPose extends Command {
     if (pathState != null) {
       pathState = path.calculate(3.0, pathState, targetPose);
 
-      swerve.applyFieldSpeeds(pathState.speeds);
+      // Generate the next speeds for the robot
+      ChassisSpeeds speeds = new ChassisSpeeds(
+          pathState.speeds.vxMetersPerSecond + xController.calculate(swerve.getCurrentState().Pose.getX(), pathState.pose.getX()),
+          pathState.speeds.vyMetersPerSecond + yController.calculate(swerve.getCurrentState().Pose.getY(), pathState.pose.getX()),
+          pathState.speeds.omegaRadiansPerSecond + headingController.calculate(swerve.getCurrentState().Pose.getRotation().getRadians(), pathState.pose.getRotation().getRadians())
+      );
+
+      // Apply the generated speeds
+      swerve.applyFieldSpeeds(speeds);
     }
   }
 
