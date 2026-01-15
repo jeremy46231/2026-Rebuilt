@@ -15,6 +15,7 @@ import dev.doglog.DogLog;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.commands.*;
 import frc.robot.util.LoggedTalonFX;
 
 public class ShooterSubsystem extends SubsystemBase {
@@ -24,7 +25,7 @@ public class ShooterSubsystem extends SubsystemBase {
   private final LoggedTalonFX motor1, motor2;
   private final LoggedTalonFX preShooterMotor;
 
-  private float targetSpeed = 0f;
+  private float targetSpeed = 10f;
 
   private final DigitalInput beamBreak;
 
@@ -36,6 +37,7 @@ public class ShooterSubsystem extends SubsystemBase {
   }
 
   public ShooterSubsystem() {
+    // curr limits, motor configs, motionmagic configs, sensor initialization
     CurrentLimitsConfigs clc =
         new CurrentLimitsConfigs().withStatorCurrentLimit(30).withSupplyCurrentLimit(30);
 
@@ -43,7 +45,8 @@ public class ShooterSubsystem extends SubsystemBase {
 
     motor1 = new LoggedTalonFX(Constants.Shooter.motor1Constants.port);
     motor2 = new LoggedTalonFX(Constants.Shooter.motor2Constants.port);
-    preShooterMotor = new LoggedTalonFX(Constants.Shooter.preShooterConstants.port);
+    preShooterMotor =
+        new LoggedTalonFX(Constants.Shooter.preShooterConstants.port);
 
     MotionMagicConfigs mmc = new MotionMagicConfigs();
     mmc.MotionMagicCruiseVelocity = targetSpeed;
@@ -64,6 +67,7 @@ public class ShooterSubsystem extends SubsystemBase {
     beamBreak = new DigitalInput(Constants.Shooter.ObjectDetectorPort);
   }
 
+  // spin the shooter up to speed before the game piece goes through it
   public void rampUp() {
     motor1.setControl(new MotionMagicVelocityVoltage(targetSpeed));
   }
@@ -74,14 +78,25 @@ public class ShooterSubsystem extends SubsystemBase {
     preShooterMotor.setControl(m_velocityControl);
   }
 
-  public void stop() {
+  public void stopShooters() {
     motor1.setControl(new VelocityVoltage(0));
   }
 
-  public boolean atSpeed() {
-    return motor1.getVelocity().getValueAsDouble() - targetSpeed <= tolerance;
+  public void stopPreShooter() {
+    preShooterMotor.setControl(new VelocityVoltage(0));
   }
 
+  public void stopAll() {
+    stopPreShooter();
+    stopShooters();
+  }
+
+  // returns if your speed error is within the tolerance
+  public boolean atSpeed() {
+    return Math.abs(motor1.getVelocity().getValueAsDouble() - targetSpeed) <= tolerance;
+  }
+
+  // is beambreak sensor true/false
   public boolean objDetected() {
     return beamBreak.get();
   }

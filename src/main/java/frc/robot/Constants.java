@@ -4,6 +4,9 @@
 
 package frc.robot;
 
+import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
+import edu.wpi.first.math.util.Units;
+
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
  * constants. This class should not be used for any other purpose. All constants should be declared
@@ -13,6 +16,9 @@ package frc.robot;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
+  // TODO: Is our canbus still called this
+  public static final String CANBUS_NAME = "Patrice the Pineapple";
+
   public static class OperatorConstants {
     public static final int kDriverControllerPort = 0;
   }
@@ -23,8 +29,8 @@ public final class Constants {
   }
 
   public static final class Shooter {
-    public static final MotorConstants motor1Constants = new MotorConstants(30);
-    public static final MotorConstants motor2Constants = new MotorConstants(31);
+    public static final MotorConstants motor1Constants = new MotorConstants(35);
+    public static final MotorConstants motor2Constants = new MotorConstants(34);
     public static final MotorConstants preShooterConstants = new MotorConstants(32);
 
     public static final int ObjectDetectorPort = 1;
