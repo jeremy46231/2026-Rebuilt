@@ -49,6 +49,9 @@ public final class Constants {
 
   public static final class Intake {
     public static final int ObjectDetectorPort = 1;
+    public static final MotorConstants intakeMotor = new MotorConstants(33);
+    public static final double SUPPLY_CURRENT_LIMIT = 30.0;
+    public static final double STATOR_CURRENT_LIMIT = 50.0;
   }
 
   public static class MotorConstants {

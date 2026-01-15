@@ -25,7 +25,7 @@ public class IntakeSubsystem extends SubsystemBase {
 
   public IntakeSubsystem() {
     // change ports as needed
-    motor = new LoggedTalonFX(33);
+    motor = new LoggedTalonFX(Constants.Intake.intakeMotor.port);
     beamBreak = new DigitalInput(Constants.Intake.ObjectDetectorPort);
 
     Slot0Configs s0c = new Slot0Configs().withKP(0.1).withKI(0).withKD(0);
@@ -34,7 +34,7 @@ public class IntakeSubsystem extends SubsystemBase {
         .withInverted(InvertedValue.Clockwise_Positive);
 
     CurrentLimitsConfigs clc = new CurrentLimitsConfigs().withStatorCurrentLimitEnable(true)
-        .withStatorCurrentLimit(50.0);
+        .withStatorCurrentLimit(Constants.Intake.STATOR_CURRENT_LIMIT).withSupplyCurrentLimit(Constants.Intake.SUPPLY_CURRENT_LIMIT);
 
     TalonFXConfigurator mConfig = motor.getConfigurator();
 
