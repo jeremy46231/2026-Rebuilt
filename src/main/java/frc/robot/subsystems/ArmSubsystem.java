@@ -107,6 +107,7 @@ public class ArmSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
+    setPosition(targetDegrees);
     DogLog.log("Doglog/arm/targetDegrees", targetDegrees);
     DogLog.log("Doglog/arm/atPosition", atTarget());
     DogLog.log("Doglog/arm/motorlogs/topleftdegree", getCurrentDegreePosPerMotor(topLeft));
