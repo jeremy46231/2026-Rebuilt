@@ -13,6 +13,7 @@ import java.util.function.Supplier;
 
 /** This Command drives the robot in a linear path to a specific pose. */
 public class DriveToPose extends Command {
+  @SuppressWarnings("PMD.UnusedPrivateField")
   private final CommandSwerveDrivetrain swerve;
 
   // Initialize the LinearPath and the LinearPath.State to a null value
@@ -27,9 +28,12 @@ public class DriveToPose extends Command {
   private final PIDController yController = new PIDController(5.0, 0.0, 0.0);
   private final PIDController headingController = new PIDController(5, 0.0, 0.0);
 
-  double currentTime = Utils.getCurrentTimeSeconds();
+  double startTime;
 
-  /** - @param swerve Swerve Subsystem. - @param targetPose Target Pose (static). */
+  /**
+   * @param swerve Swerve Subsystem.
+   * @param targetPose Target Pose (static).
+   */
   public DriveToPose(CommandSwerveDrivetrain swerve, Pose2d targetPose) {
     // Use addRequirements() here to declare subsystem dependencies.
     this.swerve = swerve;
@@ -39,8 +43,8 @@ public class DriveToPose extends Command {
   }
 
   /**
-   * - @param swerve Swerve Subsystem. - @param targetPoseSupplier Target Pose Supplier (for
-   * changing values of pose not just runtime)
+   * @param swerve Swerve Subsystem.
+   * @param targetPoseSupplier Target Pose Supplier (for changing values of pose not just runtime)
    */
   public DriveToPose(CommandSwerveDrivetrain swerve, Supplier<Pose2d> targetPoseSupplier) {
     // Use addRequirements() here to declare subsystem dependencies.
@@ -54,12 +58,7 @@ public class DriveToPose extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    DogLog.log("Init Current Pose", swerve.getCurrentState().Pose);
-    DogLog.log("Init Target Pose", targetPose);
-    DogLog.log("Init Linear Path", path.toString());
-    DogLog.log("Init Linear Path State", pathState.toString());
-    DogLog.log("Init Target Pose", targetPose);
-    DogLog.log("Init Target Pose Supplier", targetPoseSupplier.toString());
+    startTime = Utils.getCurrentTimeSeconds();
 
     if (targetPoseSupplier != null) {
       targetPose = targetPoseSupplier.get();
@@ -70,12 +69,17 @@ public class DriveToPose extends Command {
             new TrapezoidProfile.Constraints(1, 1), new TrapezoidProfile.Constraints(0.2, 0.2));
     pathState =
         new LinearPath.State(swerve.getCurrentState().Pose, swerve.getCurrentState().Speeds);
+
+    DogLog.log("Init Current Pose", swerve.getCurrentState().Pose);
+    DogLog.log("Init Target Pose", targetPose);
+    DogLog.log("Init Path created", path != null);
+    DogLog.log("Init Path state", pathState != null);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    double currTime = Utils.getCurrentTimeSeconds() - currentTime;
+    double currTime = Utils.getCurrentTimeSeconds() - startTime;
 
     if (pathState != null) {
       pathState = path.calculate(currTime, pathState, targetPose);
@@ -88,7 +92,7 @@ public class DriveToPose extends Command {
                       swerve.getCurrentState().Pose.getX(), pathState.pose.getX()),
               pathState.speeds.vyMetersPerSecond
                   + yController.calculate(
-                      swerve.getCurrentState().Pose.getY(), pathState.pose.getX()),
+                      swerve.getCurrentState().Pose.getY(), pathState.pose.getY()),
               pathState.speeds.omegaRadiansPerSecond
                   + headingController.calculate(
                       swerve.getCurrentState().Pose.getRotation().getRadians(),
@@ -98,13 +102,12 @@ public class DriveToPose extends Command {
       swerve.applyFieldSpeeds(speeds);
     }
 
-    DogLog.log("Current Pose", swerve.getCurrentState().toString());
+    DogLog.log("Current Pose", swerve.getCurrentState().Pose);
     DogLog.log("Target Pose", targetPose);
     DogLog.log("Curr time", currTime);
     DogLog.log("Path created", path != null);
     DogLog.log("Path state", pathState != null);
-    DogLog.log("Init Target Pose", targetPose);
-    DogLog.log("Init Target Pose Supplier", targetPoseSupplier.toString());
+    // DogLog.log("Init Target Pose Supplier", targetPoseSupplier.toString());
   }
 
   // Called once the command ends or is interrupted.
@@ -114,11 +117,10 @@ public class DriveToPose extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    // if (path.isFinished(0)) {
-    //   pathState = null;
-    //   return true;
-    // }
-    // return false;
+    if (path.isFinished(Utils.getCurrentTimeSeconds() - startTime)) {
+      // pathState = null;
+      return true;
+    }
     return false;
   }
 }
