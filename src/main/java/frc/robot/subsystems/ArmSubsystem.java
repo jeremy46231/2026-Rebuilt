@@ -41,8 +41,10 @@ public class ArmSubsystem extends SubsystemBase {
     Follower alignedFollower = new Follower(master.getDeviceID(), MotorAlignmentValue.Aligned);
     Follower opposedFollower = new Follower(master.getDeviceID(), MotorAlignmentValue.Opposed);
     topRight.setControl(alignedFollower);
-    bottomRight.setControl(alignedFollower);
+    bottomRight.setControl(opposedFollower);
     bottomLeft.setControl(opposedFollower);
+
+    
 
     CurrentLimitsConfigs clc =
         new CurrentLimitsConfigs()
@@ -51,7 +53,7 @@ public class ArmSubsystem extends SubsystemBase {
 
     Slot0Configs s0c =
         new Slot0Configs()
-            .withKP(0.1)
+            .withKP(1)
             .withKI(0)
             .withKD(0)
             .withKV(Constants.Arm.armKV)
@@ -85,11 +87,11 @@ public class ArmSubsystem extends SubsystemBase {
   }
 
   public void stopArm() {
-    master.setControl(controlRequest.withPosition(0));
+    master.setControl(controlRequest.withPosition(master.getPosition().getValueAsDouble()));
   }
 
   public void resetPositionToZero() {
-    master.setPosition(0);
+    setPosition(0);
   }
 
   public double getCurrentDegreePosPerMotor(LoggedTalonFX motor) {

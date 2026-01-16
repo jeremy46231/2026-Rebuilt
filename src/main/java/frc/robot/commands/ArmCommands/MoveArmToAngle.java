@@ -1,5 +1,6 @@
 package frc.robot.commands.ArmCommands;
 
+import dev.doglog.DogLog;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.ArmSubsystem;
 
@@ -22,11 +23,13 @@ public class MoveArmToAngle extends Command {
   @Override
   public void execute() {
     armSubsystem.setPosition(20);
+    DogLog.log("Doglog/arm/inEndCommand", false);
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
+    DogLog.log("Doglog/arm/inEndCommand", true);
     armSubsystem.stopArm();
   }
 
