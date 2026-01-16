@@ -12,33 +12,28 @@ import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.signals.MotorAlignmentValue;
-
 import dev.doglog.DogLog;
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.wpilibj.DutyCycleEncoder;
-import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.util.LoggedTalonFX;
 
-
 public class ArmSubsystem extends SubsystemBase {
 
   private final LoggedTalonFX topLeft, topRight, bottomLeft, bottomRight, master;
-  private DutyCycleEncoder encoder;
   private static ArmSubsystem instance;
   CANBus canbus = new CANBus("Patrice the Pineapple");
 
   private MotionMagicConfigs mmc;
-  private MotionMagicVoltage mmv= new MotionMagicVoltage(0);
+  private MotionMagicVoltage controlRequest = new MotionMagicVoltage(0);
 
   private double targetDegrees = 0;
 
-  private final double tolerance  = 1;
+  private final double tolerance = 1;
 
   public ArmSubsystem() {
     topLeft = new LoggedTalonFX(Constants.Arm.topLeftMotor.port, canbus);
-    topRight = new LoggedTalonFX(Constants.Arm.topRightMotor.port, canbus);  
+    topRight = new LoggedTalonFX(Constants.Arm.topRightMotor.port, canbus);
     bottomRight = new LoggedTalonFX(Constants.Arm.bottomRightMotor.port, canbus);
     bottomLeft = new LoggedTalonFX(Constants.Arm.bottomRightMotor.port, canbus);
     master = topLeft;
@@ -49,19 +44,30 @@ public class ArmSubsystem extends SubsystemBase {
     bottomRight.setControl(alignedFollower);
     bottomLeft.setControl(opposedFollower);
 
-    encoder = new DutyCycleEncoder(Constants.Arm.ENCODER_PORT);
+    CurrentLimitsConfigs clc =
+        new CurrentLimitsConfigs()
+            .withStatorCurrentLimit(Constants.Arm.STATOR_CURRENT_LIMIT)
+            .withSupplyCurrentLimit(Constants.Arm.SUPPLY_CURRENT_LIMIT);
 
-    CurrentLimitsConfigs clc = new CurrentLimitsConfigs().withStatorCurrentLimit(Constants.Arm.STATOR_CURRENT_LIMIT).withSupplyCurrentLimit(Constants.Arm.SUPPLY_CURRENT_LIMIT);
-    
-    Slot0Configs s0c = new Slot0Configs().withKP(0.35).withKI(0).withKD(0).withKV(Constants.Arm.armKV).withKG(Constants.Arm.armKG).withKS(Constants.Arm.armKS);
+    Slot0Configs s0c =
+        new Slot0Configs()
+            .withKP(0.1)
+            .withKI(0)
+            .withKD(0)
+            .withKV(Constants.Arm.armKV)
+            .withKG(Constants.Arm.armKG)
+            .withKS(Constants.Arm.armKS);
 
-    MotorOutputConfigs moc =  new MotorOutputConfigs();
+    MotorOutputConfigs moc = new MotorOutputConfigs();
 
     master.getConfigurator().apply(s0c);
     master.getConfigurator().apply(moc);
     master.getConfigurator().apply(clc);
 
-    mmc = new MotionMagicConfigs().withMotionMagicAcceleration(Constants.Arm.MOTIONMAGIC_KA).withMotionMagicCruiseVelocity(Constants.Arm.MOTIONMAGIC_KV);
+    mmc =
+        new MotionMagicConfigs()
+            .withMotionMagicAcceleration(Constants.Arm.MOTIONMAGIC_KA)
+            .withMotionMagicCruiseVelocity(Constants.Arm.MOTIONMAGIC_KV);
   }
 
   public static ArmSubsystem getInstance() {
@@ -74,35 +80,41 @@ public class ArmSubsystem extends SubsystemBase {
   public void setPosition(double degrees) {
     targetDegrees = MathUtil.clamp(degrees, 3, 110);
 
-    master.setControl(mmv.withPosition(targetDegrees / 360 * Constants.Arm.ARM_CONVERSION_FACTOR));
-  }
-  
-  public void resetPosition() {
-    if (encoder.isConnected()) {
-      master.setPosition(
-          (getAbsolutePosition()) * Constants.Arm.ARM_CONVERSION_FACTOR);
-    }
+    master.setControl(
+        controlRequest.withPosition(targetDegrees / 360 * Constants.Arm.ARM_CONVERSION_FACTOR));
   }
 
-  private double getAbsolutePosition() {
-    // uses the absolute encoder rotations to get the absolute position
+  public void stopArm() {
+    master.setControl(controlRequest.withPosition(0));
+  }
 
-    return (encoder.get() // revEncoder.getAbsolutePosition()
-            - Constants.Arm.ABSOLUTE_ENCODER_HORIZONTAL
-            + Constants.Arm.ABSOLUTE_HORIZONTAL_OFFSET
-            + 1d)
-        % 1;
+  public void resetPositionToZero() {
+    master.setPosition(0);
+  }
+
+  public double getCurrentDegreePosPerMotor(LoggedTalonFX motor) {
+    return motor.getPosition().getValueAsDouble() / 360 * Constants.Arm.ARM_CONVERSION_FACTOR;
   }
 
   public boolean atTarget() {
-    return Math.abs(master.getPosition().getValueAsDouble() / Constants.Arm.ARM_CONVERSION_FACTOR * 360 - (Constants.Arm.ABSOLUTE_HORIZONTAL_OFFSET * 360) - targetDegrees) <= tolerance;
+    return Math.abs(
+            master.getPosition().getValueAsDouble() / 360 * Constants.Arm.ARM_CONVERSION_FACTOR
+                - targetDegrees)
+        <= tolerance;
   }
 
-
-  
   @Override
   public void periodic() {
     DogLog.log("Doglog/arm/targetDegrees", targetDegrees);
+    DogLog.log("Doglog/arm/atPosition", atTarget());
+    DogLog.log("Doglog/arm/motorlogs/topleftdegree", getCurrentDegreePosPerMotor(topLeft));
+    DogLog.log("Doglog/arm/motorlogs/toprightdegree", getCurrentDegreePosPerMotor(topRight));
+    DogLog.log("Doglog/arm/motorlogs/bottomleftdegree", getCurrentDegreePosPerMotor(bottomLeft));
+    DogLog.log("Doglog/arm/motorlogs/bottomrightdegree", getCurrentDegreePosPerMotor(bottomRight));
+    DogLog.log("Doglog/arm/motorlogs/topleftspeed", topLeft.getVelocity().getValueAsDouble());
+    DogLog.log("Doglog/arm/motorlogs/toprightspeed", topRight.getVelocity().getValueAsDouble());
+    DogLog.log("Doglog/arm/motorlogs/bottomleftspeed", bottomLeft.getVelocity().getValueAsDouble());
+    DogLog.log("Doglog/arm/motorlogs/bottomRightspeed", bottomRight.getVelocity().getValueAsDouble());
   }
 
   @Override

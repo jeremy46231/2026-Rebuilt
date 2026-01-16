@@ -47,7 +47,7 @@ public final class Constants {
     public static final double STATOR_CURRENT_LIMIT = 40.0;
     public static final double SUPPLY_CURRENT_LIMIT = 30.0;
 
-    public static final double ARM_CONVERSION_FACTOR = 130.63563333333335;
+    public static final double ARM_CONVERSION_FACTOR = (42d / 18d) * 55.9867; // 130.63563333333335
 
     public static final double ABSOLUTE_ENCODER_HORIZONTAL = 0.6655; // 0.6547
     public static final double ABSOLUTE_HORIZONTAL_OFFSET = 0.05; // 0.05

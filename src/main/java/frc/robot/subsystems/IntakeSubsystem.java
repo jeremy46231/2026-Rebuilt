@@ -1,13 +1,11 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
-import com.ctre.phoenix6.configs.MotionMagicConfigs;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfigurator;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.signals.InvertedValue;
-import com.ctre.phoenix6.signals.NeutralModeValue;
 import dev.doglog.DogLog;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.util.LoggedTalonFX;
@@ -23,11 +21,11 @@ public class IntakeSubsystem extends SubsystemBase {
     motor = new LoggedTalonFX(33);
     Slot0Configs s0c = new Slot0Configs().withKP(0.1).withKI(0).withKD(0);
 
-    MotorOutputConfigs moc = new MotorOutputConfigs()
-        .withInverted(InvertedValue.Clockwise_Positive);
+    MotorOutputConfigs moc =
+        new MotorOutputConfigs().withInverted(InvertedValue.Clockwise_Positive);
 
-    CurrentLimitsConfigs clc = new CurrentLimitsConfigs().withStatorCurrentLimitEnable(true)
-        .withStatorCurrentLimit(50.0);
+    CurrentLimitsConfigs clc =
+        new CurrentLimitsConfigs().withStatorCurrentLimitEnable(true).withStatorCurrentLimit(50.0);
 
     TalonFXConfigurator mConfig = motor.getConfigurator();
 
@@ -37,8 +35,7 @@ public class IntakeSubsystem extends SubsystemBase {
   }
 
   public static IntakeSubsystem getInstance() {
-    if (instance == null)
-      instance = new IntakeSubsystem();
+    if (instance == null) instance = new IntakeSubsystem();
     return instance;
   }
 
