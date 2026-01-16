@@ -2,7 +2,6 @@ package frc.robot.commands;
 
 import com.ctre.phoenix6.Utils;
 import com.ctre.phoenix6.swerve.utility.LinearPath;
-
 import dev.doglog.DogLog;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -74,8 +73,6 @@ public class DriveToPose extends Command {
             new TrapezoidProfile.Constraints(1, 1), new TrapezoidProfile.Constraints(0.2, 0.2));
     pathState =
         new LinearPath.State(swerve.getCurrentState().Pose, swerve.getCurrentState().Speeds);
-
-    
   }
 
   // Called every time the scheduler runs while the command is scheduled.
