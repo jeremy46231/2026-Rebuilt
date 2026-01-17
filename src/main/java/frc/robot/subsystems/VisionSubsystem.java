@@ -71,8 +71,7 @@ public class VisionSubsystem extends SubsystemBase {
     Transform3d cameraToRobot = Constants.Vision.getCameraTransform(cameraID);
 
     // load field layout
-    // TODO: update to 2026 when they release the update
-    this.fieldLayout = AprilTagFieldLayout.loadField(AprilTagFields.k2025ReefscapeWelded);
+    this.fieldLayout = AprilTagFieldLayout.loadField(AprilTagFields.k2026RebuiltWelded);
 
     // initialize poseEstimator
     poseEstimator = new PhotonPoseEstimator(fieldLayout, cameraToRobot);
