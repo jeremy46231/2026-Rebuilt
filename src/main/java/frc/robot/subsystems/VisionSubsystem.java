@@ -75,7 +75,6 @@ public class VisionSubsystem extends SubsystemBase {
     this.fieldLayout = AprilTagFieldLayout.loadField(AprilTagFields.k2025ReefscapeWelded);
 
     // initialize poseEstimator
-    // PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,
     poseEstimator = new PhotonPoseEstimator(fieldLayout, cameraToRobot);
 
     cameraTitle = cameraID.getLoggingName();
