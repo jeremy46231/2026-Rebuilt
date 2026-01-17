@@ -5,14 +5,12 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.ArmSubsystem;
 
 /** An example command that uses an example subsystem. */
-public class MoveArmToAngle extends Command {
+public class ResetArm extends Command {
   @SuppressWarnings("PMD.UnusedPrivateField")
   private final ArmSubsystem armSubsystem;
-  private final double degrees;
 
-  public MoveArmToAngle(ArmSubsystem armSubsystem, double degrees) {
+  public ResetArm(ArmSubsystem armSubsystem) {
     this.armSubsystem = armSubsystem;
-    this.degrees = degrees;
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(armSubsystem);
   }
@@ -24,20 +22,18 @@ public class MoveArmToAngle extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    armSubsystem.setPosition(degrees);
-    DogLog.log("Doglog/arm/inEndCommand", false);
+    armSubsystem.zeroArm();
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    DogLog.log("Doglog/arm/inEndCommand", true);
-    armSubsystem.stopArm();
+    
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return armSubsystem.atTarget();
+    return false;
   }
 }

@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.ArmCommands.MoveArmToAngle;
+import frc.robot.commands.ArmCommands.ResetArm;
 import frc.robot.commands.RunIntake;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
@@ -48,7 +49,8 @@ public class RobotContainer {
     // Schedule `exampleMethodCommand` when the Xbox controller's B button is pressed,
     // cancelling on release.
     m_driverController.rightBumper().whileTrue(new RunIntake(intakeSubsystem));
-    m_driverController.leftBumper().whileTrue(new MoveArmToAngle(armSubsystem));
+    m_driverController.leftBumper().whileTrue(new MoveArmToAngle(armSubsystem, 15));
+    m_driverController.x().onTrue(new ResetArm(armSubsystem));
   }
 
   /**
