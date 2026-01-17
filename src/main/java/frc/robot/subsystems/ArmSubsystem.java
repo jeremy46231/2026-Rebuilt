@@ -68,7 +68,7 @@ public class ArmSubsystem extends SubsystemBase {
             .withKG(Constants.Arm.armKG)
             .withKS(Constants.Arm.armKS);
 
-    MotorOutputConfigs moc = new MotorOutputConfigs().withNeutralMode(NeutralModeValue.Brake);
+    MotorOutputConfigs moc = new MotorOutputConfigs().withNeutralMode(NeutralModeValue.Coast);
 
     mmc =
         new MotionMagicConfigs()
@@ -115,7 +115,7 @@ public class ArmSubsystem extends SubsystemBase {
     targetDegrees = MathUtil.clamp(degrees, 3, 110);
 
     master.setControl(
-        controlRequest.withPosition(targetDegrees / 360 * Constants.Arm.ARM_CONVERSION_FACTOR));
+        controlRequest.withPosition(targetDegrees / 360 * Constants.Arm.MOTOR_TO_ARM_CONVERSION_FACTOR));
   }
 
   public void stopArm() {
@@ -127,12 +127,12 @@ public class ArmSubsystem extends SubsystemBase {
   }
 
   public double getCurrentDegreePosPerMotor(LoggedTalonFX motor) {
-    return motor.getPosition().getValueAsDouble() / 360 * Constants.Arm.ARM_CONVERSION_FACTOR;
+    return motor.getPosition().getValueAsDouble() / 360 * Constants.Arm.MOTOR_TO_ARM_CONVERSION_FACTOR;
   }
 
   public void zeroArm() {
     if (revEncoder.isConnected()) {
-      master.setPosition(getAbsolutePos() * Constants.Arm.ARM_CONVERSION_FACTOR);
+      master.setPosition(getAbsolutePos() * Constants.Arm.MOTOR_TO_ARM_CONVERSION_FACTOR);
     }
   }
 
@@ -142,7 +142,7 @@ public class ArmSubsystem extends SubsystemBase {
 
   public boolean atTarget() {
     return Math.abs(
-            master.getPosition().getValueAsDouble() * Constants.Arm.ARM_CONVERSION_FACTOR
+            master.getPosition().getValueAsDouble() * Constants.Arm.MOTOR_TO_ARM_CONVERSION_FACTOR
                 - targetDegrees)
         <= tolerance;
   }
@@ -167,10 +167,13 @@ public class ArmSubsystem extends SubsystemBase {
     DogLog.log("Doglog/arm/integratedConversion", master.getPosition().getValueAsDouble() * 130.63563333333335);
     DogLog.log("Doglog/arm/absoluteConversion", master.getPosition().getValueAsDouble() * (42d / 18d));
 
-    DogLog.log("Doglog/arm/targetDegreesConverted", targetDegrees * Constants.Arm.ARM_CONVERSION_FACTOR);
+    DogLog.log("Doglog/arm/targetDegreesConverted", targetDegrees * Constants.Arm.MOTOR_TO_ARM_CONVERSION_FACTOR);
     DogLog.log("Doglog/arm/getPosition", master.getPosition().getValueAsDouble());
 
     DogLog.log("Doglog/arm/encoderPos", revEncoder.get());
+
+    DogLog.log("Doglog/arm/req", 15d / 360d * Constants.Arm.MOTOR_TO_ARM_CONVERSION_FACTOR);
+    DogLog.log("Doglog/arm/pos", master.getPosition().getValueAsDouble());
   }
 
   @Override
