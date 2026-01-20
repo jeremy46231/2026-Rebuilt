@@ -74,17 +74,18 @@ public final class Constants {
       }
     }
 
-    // public static enum BumperThickness {
-    //   SERRANO(Inches.of(2.625)), // thickness
-    //   PROTO(Inches.of(2.625)), // thickness
-    //   JAMES_HARDEN(Inches.of(3.313)), // thickness
-    //   COBRA(Inches.of(3.313)); // thickness
-    //   public final Distance thickness;
+    public static enum BumperThickness {
+      SERRANO(Inches.of(2.625)), // thickness
+      PROTO(Inches.of(2.625)), // thickness
+      JAMES_HARDEN(Inches.of(3.313)), // thickness
+      COBRA(Inches.of(0)); // thickness
 
-    //   BumperThickness(Distance thickness) {
-    //     this.thickness = thickness;
-    //   }
-    // }
+      public final Distance thickness;
+
+      BumperThickness(Distance thickness) {
+        this.thickness = thickness;
+      }
+    }
 
     public static enum SwerveType {
       SERRANO(
@@ -96,8 +97,8 @@ public final class Constants {
           SwerveDrivePIDValues.SERRANO,
           SwerveSteerPIDValues.SERRANO,
           RobotDimensions.SERRANO,
-          "Patrice the Pineapple"),
-      // BumperThickness.SERRANO),
+          "Patrice the Pineapple",
+          BumperThickness.SERRANO),
       PROTO(
           Rotations.of(0.3876953125), // front left
           Rotations.of(0.159912109375), // front right
@@ -107,8 +108,8 @@ public final class Constants {
           SwerveDrivePIDValues.PROTO,
           SwerveSteerPIDValues.PROTO,
           RobotDimensions.PROTO,
-          "rio"),
-      // BumperThickness.PROTO),
+          "rio",
+          BumperThickness.PROTO),
       JAMES_HARDEN(
           Rotations.of(-0.0834960938), // front left
           Rotations.of(-0.4912109375), // front right
@@ -118,8 +119,8 @@ public final class Constants {
           SwerveDrivePIDValues.JAMES_HARDEN,
           SwerveSteerPIDValues.JAMES_HARDEN,
           RobotDimensions.JAMES_HARDEN,
-          "JamesHarden"),
-      // BumperThickness.JAMES_HARDEN),
+          "JamesHarden",
+          BumperThickness.JAMES_HARDEN),
       COBRA(
           Rotations.of(0.096923828125), // front left, 21
           Rotations.of(0.03271484375), // front right, 22
@@ -129,9 +130,8 @@ public final class Constants {
           SwerveDrivePIDValues.COBRA,
           SwerveSteerPIDValues.COBRA,
           RobotDimensions.COBRA,
-          "Viper");
-      // BumperThickness.COBRA);
-
+          "Viper",
+          BumperThickness.COBRA);
       public final Angle FRONT_LEFT_ENCODER_OFFSET,
           FRONT_RIGHT_ENCODER_OFFSET,
           BACK_LEFT_ENCODER_OFFSET,
@@ -142,7 +142,7 @@ public final class Constants {
       public final RobotDimensions ROBOT_DIMENSIONS;
       public final String CANBUS_NAME;
 
-      // public final BumperThickness BUMPER_THICKNESS;
+      public final BumperThickness BUMPER_THICKNESS;
 
       SwerveType(
           Angle fl,
@@ -153,8 +153,8 @@ public final class Constants {
           SwerveDrivePIDValues swerveDrivePIDValues,
           SwerveSteerPIDValues swerveSteerPIDValues,
           RobotDimensions robotDimensions,
-          String canbus_name) {
-        // BumperThickness thickness
+          String canbus_name,
+          BumperThickness thickness) {
         FRONT_LEFT_ENCODER_OFFSET = fl;
         FRONT_RIGHT_ENCODER_OFFSET = fr;
         BACK_LEFT_ENCODER_OFFSET = bl;
@@ -164,7 +164,7 @@ public final class Constants {
         SWERVE_STEER_PID_VALUES = swerveSteerPIDValues;
         ROBOT_DIMENSIONS = robotDimensions;
         CANBUS_NAME = canbus_name;
-        // BUMPER_THICKNESS = thickness;
+        BUMPER_THICKNESS = thickness;
       }
     }
   }
