@@ -19,6 +19,7 @@ import java.util.stream.Collectors;
 import org.photonvision.EstimatedRobotPose;
 import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonPoseEstimator;
+import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.PhotonTrackedTarget;
 
@@ -105,6 +106,7 @@ public class VisionSubsystem extends SubsystemBase {
 
     // Go through all results (if there are any) and update the latest result with the last
     for (var result : results) latestVisionResult = result;
+
   }
 
   public void addFilteredPose() {
@@ -141,6 +143,8 @@ public class VisionSubsystem extends SubsystemBase {
     // creates a list of all detected tags and logs for debugging
     List<PhotonTrackedTarget> tags =
         latestVisionResult.getTargets().stream().collect(Collectors.toList());
+
+    DogLog.log("Vision/tagsLength", tags.size());
 
     // log area and yaw for all detected april tags
     for (PhotonTrackedTarget tag : tags) {
@@ -180,7 +184,7 @@ public class VisionSubsystem extends SubsystemBase {
     // get estimatedPose and convert it to Pose2d
     EstimatedRobotPose estimatedPose = poseEstimationUpdate.get();
     Pose2d measuredPose = estimatedPose.estimatedPose.toPose2d();
-    DogLog.log("Vision/" + cameraTitle + "/Pose2d", measuredPose);
+    DogLog.log("Vision/Pose2dOne", measuredPose);
 
     double nX =
         computeNoiseXY(
@@ -224,15 +228,18 @@ public class VisionSubsystem extends SubsystemBase {
         latestVisionResult.getTimestampSeconds(),
         noiseVector);
 
-    if (poseEstimationUpdate.isPresent()) {
-      EstimatedRobotPose estimatedRobotPose = poseEstimationUpdate.get();
-      Pose2d visionPose = estimatedRobotPose.estimatedPose.toPose2d();
-      DogLog.log("Vision/PoseEstimationAvailable", true);
-
-      DogLog.log("Vision/VisionPoseEstimate", visionPose);
-    } else {
+    if (poseEstimationUpdate.isEmpty()) {
       DogLog.log("Vision/PoseEstimationAvailable", false);
-    }
+      return;
+    } 
+
+
+    EstimatedRobotPose estimatedRobotPose = poseEstimationUpdate.get();
+    Pose2d visionPose = estimatedRobotPose.estimatedPose.toPose2d();
+    DogLog.log("Vision/PoseEstimationAvailable", true);
+
+    DogLog.log("Vision/VisionPoseEstimate", visionPose);
+
 
     // TODO: re-implement lines 218-281 in 2025 repo
   }
@@ -284,8 +291,18 @@ public class VisionSubsystem extends SubsystemBase {
     // distance term (d^2)
     // Changed from last year: Purely distrust based on distance (as opposed to capping distrust for
     // closer tags)
+    //double distanceFactor =
+        //baseNoise + distanceExponentialCoefficient * Math.pow(distanceExponentialBase, distance);
+
     double distanceFactor =
-        baseNoise + distanceExponentialCoefficient * Math.pow(distanceExponentialBase, distance);
+        (distance < (17.548 + 0.67))
+            ? Math.min(
+                baseNoise
+                    + distanceExponentialCoefficient * Math.pow(distanceExponentialBase, distance),
+                1.167)
+            : (baseNoise
+                + distanceExponentialCoefficient * Math.pow(distanceExponentialBase, distance));
+
 
     // Speed term (quadratic)
     double vNorm = Math.min(robotSpeed, maximumRobotSpeed) / maximumRobotSpeed;
