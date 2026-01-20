@@ -154,7 +154,6 @@ public class DriveToPose extends Command {
      // pathState = null;
      return true;
    }
-   // return atPosition();
    return false;
  }
 }
