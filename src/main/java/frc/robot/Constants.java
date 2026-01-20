@@ -4,12 +4,18 @@
 
 package frc.robot;
 
+import com.ctre.phoenix6.CANBus;
+
 /**
- * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
- * constants. This class should not be used for any other purpose. All constants should be declared
+ * The Constants class provides a convenient place for teams to hold robot-wide
+ * numerical or boolean
+ * constants. This class should not be used for any other purpose. All constants
+ * should be declared
  * globally (i.e. public static). Do not put anything functional in this class.
  *
- * <p>It is advised to statically import this class (or one of its inner classes) wherever the
+ * <p>
+ * It is advised to statically import this class (or one of its inner classes)
+ * wherever the
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
@@ -37,11 +43,15 @@ public final class Constants {
     public static final MotorConstants bottomLeftMotor = new MotorConstants(11);
     public static final MotorConstants bottomRightMotor = new MotorConstants(13);
 
-    public static final double armKS = 0.16969;
-    public static final double armKG = 0.34;
-    public static final double armKV = 2.49;
+    public static final double conversionFactor = 130.63563333333335;
+    public static final CANBus canbus = new CANBus("Patrice the Pineapple");
 
-    public static final double statorCurrentLimit = 40.0;
+    public static double armKP = 1.0;
+    public static double armKI = 0.0;
+    public static double armKD = 0.0;
+
+    public static final double absoluteEncoderHorizontal = 0.6655;
+    public static final double absoluteHorizontalOffset = 0.05;
   }
 
   public static final class Intake {

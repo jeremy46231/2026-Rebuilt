@@ -7,8 +7,11 @@ package frc.robot;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
+import frc.robot.commands.IntakeCommands.RunIntake;
 import frc.robot.commands.IntakeCommands.RunIntakeUntilDetection;
 import frc.robot.commands.Shoot;
+import frc.robot.commands.ArmCommands.ResetArm;
+import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 
@@ -24,6 +27,8 @@ public class RobotContainer {
 
   // lebron is the name of the shootersubsystem bc why not?
   private final ShooterSubsystem lebron = ShooterSubsystem.getInstance();
+
+  private final ArmSubsystem armSubsystem = ArmSubsystem.getInstance();
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
   private final CommandXboxController m_driverController =
@@ -49,10 +54,12 @@ public class RobotContainer {
 
     // Schedule `exampleMethodCommand` when the Xbox controller's B button is pressed,
     // cancelling on release.
+    m_driverController.b().whileTrue(new RunIntake(intakeSubsystem));
     m_driverController
         .rightBumper()
         .whileTrue(new RunIntakeUntilDetection(intakeSubsystem, lebron));
     m_driverController.x().whileTrue(new Shoot(lebron));
+    m_driverController.y().whileTrue(new ResetArm(armSubsystem));
     // m_driverController.a().whileTrue(new Preshooter(lebron));
     // default state of shootersubsystem is to be stopped. Do we need this because end of all
     // commands is lebron stopping already?
