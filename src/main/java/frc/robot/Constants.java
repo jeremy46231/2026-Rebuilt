@@ -92,6 +92,7 @@ public final class Constants {
         this.width = width;
       }
     }
+
     // public static enum BumperThickness {
     //   SERRANO(Inches.of(2.625)), // thickness
     //   PROTO(Inches.of(2.625)), // thickness
@@ -148,7 +149,7 @@ public final class Constants {
           SwerveSteerPIDValues.COBRA,
           RobotDimensions.COBRA,
           "Viper");
-      //BumperThickness.COBRA);
+      // BumperThickness.COBRA);
 
       public final Angle FRONT_LEFT_ENCODER_OFFSET,
           FRONT_RIGHT_ENCODER_OFFSET,
