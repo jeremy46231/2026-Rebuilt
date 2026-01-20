@@ -1,7 +1,3 @@
-// Copyright (c) FIRST and other WPILib contributors.
-// Open Source Software; you can modify and/or share it under the terms of
-// the WPILib BSD license file in the root directory of this project.
-
 package frc.robot;
 
 import static edu.wpi.first.units.Units.*;
@@ -9,22 +5,6 @@ import static edu.wpi.first.units.Units.*;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Distance;
 
-// import frc.robot.Constants.Swerve.RobotDimensions;
-// import frc.robot.Constants.Swerve.SwerveDrivePIDValues;
-// import frc.robot.Constants.Swerve.SwerveLevel;
-// import frc.robot.Constants.Swerve.SwerveSteerPIDValues;
-// import edu.wpi.first.math.util.Units;
-// import com.ctre.phoenix6.swerve.*;
-// import com.ctre.phoenix6.swerve.SwerveModuleConstants.*;
-
-/**
- * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
- * constants. This class should not be used for any other purpose. All constants should be declared
- * globally (i.e. public static). Do not put anything functional in this class.
- *
- * <p>It is advised to statically import this class (or one of its inner classes) wherever the
- * constants are needed, to reduce verbosity.
- */
 public final class Constants {
   public static class OperatorConstants {
     public static final int kDriverControllerPort = 0;
@@ -36,7 +16,7 @@ public final class Constants {
     public static enum SwerveLevel {
       L2(6.75, 21.428571428571427),
       L3(6.12, 21.428571428571427),
-      FN_L3(5.2734375, 26.09090909091);
+      FIVEN_L3(5.2734375, 26.09090909091);
       public final double DRIVE_GEAR_RATIO, STEER_GEAR_RATIO;
 
       SwerveLevel(double drive, double steer) {
@@ -145,7 +125,7 @@ public final class Constants {
           Rotations.of(0.03271484375), // front right, 22
           Rotations.of(0.02587890625), // back left, 20
           Rotations.of(-0.09765625), // back right, 23
-          SwerveLevel.FN_L3,
+          SwerveLevel.FIVEN_L3,
           SwerveDrivePIDValues.COBRA,
           SwerveSteerPIDValues.COBRA,
           RobotDimensions.COBRA,
