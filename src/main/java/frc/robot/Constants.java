@@ -35,7 +35,8 @@ public final class Constants {
 
     public static enum SwerveLevel {
       L2(6.75, 21.428571428571427),
-      L3(6.12, 21.428571428571427);
+      L3(6.12, 21.428571428571427),
+      FN_L3(5.2734375, 26.09090909091);
       public final double DRIVE_GEAR_RATIO, STEER_GEAR_RATIO;
 
       SwerveLevel(double drive, double steer) {
@@ -144,7 +145,7 @@ public final class Constants {
           Rotations.of(0.03271484375), // front right, 22
           Rotations.of(0.02587890625), // back left, 20
           Rotations.of(-0.09765625), // back right, 23
-          SwerveLevel.L3,
+          SwerveLevel.FN_L3,
           SwerveDrivePIDValues.COBRA,
           SwerveSteerPIDValues.COBRA,
           RobotDimensions.COBRA,
