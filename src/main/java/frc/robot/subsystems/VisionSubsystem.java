@@ -182,7 +182,7 @@ public class VisionSubsystem extends SubsystemBase {
     // get estimatedPose and convert it to Pose2d
     EstimatedRobotPose estimatedPose = poseEstimationUpdate.get();
     Pose2d measuredPose = estimatedPose.estimatedPose.toPose2d();
-    DogLog.log("Vision/Pose2dOne", measuredPose);
+    DogLog.log("Vision/testPose", measuredPose);
 
     double nX =
         computeNoiseXY(
