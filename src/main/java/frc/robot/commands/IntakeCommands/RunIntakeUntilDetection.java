@@ -28,8 +28,8 @@ public class RunIntakeUntilDetection extends Command {
 
   @Override
   public void execute() {
-    intakeSubsystem.run(100);
-    shooterSubsystem.runPreShooterAtRPS(20);
+    intakeSubsystem.run(80);
+    shooterSubsystem.runPreShooterAtRPS(15);
   }
 
   @Override

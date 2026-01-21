@@ -7,6 +7,7 @@ package frc.robot;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
+import frc.robot.commandGroups.Intake;
 import frc.robot.commands.IntakeCommands.RunIntake;
 import frc.robot.commands.IntakeCommands.RunIntakeUntilDetection;
 import frc.robot.commands.Shoot;
@@ -58,7 +59,7 @@ public class RobotContainer {
     m_driverController.b().whileTrue(new RunIntake(intakeSubsystem));
     m_driverController
         .rightBumper()
-        .whileTrue(new RunIntakeUntilDetection(intakeSubsystem, lebron));
+        .whileTrue(new Intake(intakeSubsystem, lebron));
     m_driverController.x().whileTrue(new Shoot(lebron));
     m_driverController.y().whileTrue(new ResetArm(armSubsystem));
     m_driverController.rightTrigger().whileTrue(new ArmToTarget(armSubsystem));

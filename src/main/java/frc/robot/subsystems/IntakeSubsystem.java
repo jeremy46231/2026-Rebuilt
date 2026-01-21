@@ -62,7 +62,7 @@ public class IntakeSubsystem extends SubsystemBase {
 
   // is beambreak sensor true/false
   public boolean beamBroken() {
-    return beamBreak.get();
+    return !beamBreak.get();
   }
 
   @Override

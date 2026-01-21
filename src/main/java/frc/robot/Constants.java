@@ -53,7 +53,7 @@ public final class Constants {
     public static final double armKG = 0.34;
     public static final double armKV = 2.49;
 
-    public static final double absoluteEncoderHorizontal = 0.6655;
+    public static final double absoluteEncoderHorizontal = 0.6400;
     public static final double absoluteHorizontalOffset = 0.05;
   }
 
