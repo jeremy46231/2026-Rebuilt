@@ -330,6 +330,10 @@ public class VisionSubsystem extends SubsystemBase {
     return computedStdDevs;
   }
 
+
+
+  // object detection
+  
   public Optional<PhotonTrackedTarget> getLargestBlob() {
     if (latestVisionResult == null) return Optional.empty();
     List<PhotonTrackedTarget> targets = latestVisionResult.getTargets();
