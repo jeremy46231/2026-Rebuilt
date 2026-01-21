@@ -6,7 +6,12 @@ import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.swerve.SwerveDrivetrainConstants;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants;
 import com.ctre.phoenix6.swerve.SwerveRequest;
+
+import choreo.Choreo.TrajectoryLogger;
+import choreo.auto.AutoFactory;
+import choreo.trajectory.SwerveSample;
 import edu.wpi.first.math.Matrix;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.numbers.N1;
@@ -34,6 +39,10 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
   private static final Rotation2d kRedAlliancePerspectiveRotation = Rotation2d.k180deg;
   /* Keep track if we've ever applied the operator perspective before or not */
   private boolean m_hasAppliedOperatorPerspective = false;
+
+  private final PIDController m_pathXController = new PIDController(2, 0, 0);
+  private final PIDController m_pathYController = new PIDController(2, 0, 0);
+  private final PIDController m_pathThetaController = new PIDController(5, 0, 0);
 
   private SwerveDriveState currentState;
 
@@ -174,6 +183,37 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     }
     */
   }
+
+  public AutoFactory createAutoFactory() {
+    return createAutoFactory((sample, isStart) -> {});
+  }
+
+  public AutoFactory createAutoFactory(TrajectoryLogger<SwerveSample> trajLogger) {
+    return new AutoFactory(() -> getCurrentState().Pose, this::resetPose, this::followPath, true, this, trajLogger); //getState().pose
+  }
+
+  public void followPath(SwerveSample sample) {
+      m_pathThetaController.enableContinuousInput(-Math.PI, Math.PI);
+
+      var pose = getState().Pose;
+
+      var targetSpeeds = sample.getChassisSpeeds();
+      targetSpeeds.vxMetersPerSecond += m_pathXController.calculate(
+          pose.getX(), sample.x
+      );
+      targetSpeeds.vyMetersPerSecond += m_pathYController.calculate(
+          pose.getY(), sample.y
+      );
+      targetSpeeds.omegaRadiansPerSecond += m_pathThetaController.calculate(
+          pose.getRotation().getRadians(), sample.heading
+      );
+
+      setControl(
+          m_pathApplyFieldSpeeds.withSpeeds(targetSpeeds)
+              .withWheelForceFeedforwardsX(sample.moduleForcesX())
+              .withWheelForceFeedforwardsY(sample.moduleForcesY())
+      );
+    }
 
   /**
    * Returns a command that applies the specified control request to this swerve drivetrain.
