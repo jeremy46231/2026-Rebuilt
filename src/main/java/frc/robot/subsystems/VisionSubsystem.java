@@ -12,10 +12,13 @@ import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.BooleanSupplier;
 import java.util.stream.Collectors;
+import java.util.stream.DoubleStream;
 import org.photonvision.EstimatedRobotPose;
 import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonPoseEstimator;
@@ -107,7 +110,6 @@ public class VisionSubsystem extends SubsystemBase {
     List<PhotonPipelineResult> results = photonCamera.getAllUnreadResults();
 
     // Go through all results (if there are any) and update the latest result with the last
-    for (var result : results) latestVisionResult = result;
   }
 
   public void addFilteredPose() {
@@ -121,6 +123,8 @@ public class VisionSubsystem extends SubsystemBase {
     }
     DogLog.log("Vision/" + cameraTitle + "/HasTargets", true);
 
+
+
     // distance to closest april tag
     double minDistance =
         latestVisionResult.getTargets().stream()
@@ -130,13 +134,36 @@ public class VisionSubsystem extends SubsystemBase {
 
     DogLog.log("Vision/closestTagDistance", minDistance);
 
-    // average distance to all visible april tags
+    var nearestTarget =
+    latestVisionResult.getTargets().stream()
+        .min(Comparator.comparingDouble(
+            t -> t.getBestCameraToTarget().getTranslation().getNorm()
+        ))
+        .orElse(null);
+
+    if (nearestTarget == null) {
+      DogLog.log("ProtoVision/Distance", Double.NaN);
+      DogLog.log("ProtoVision/X", Double.NaN);
+      DogLog.log("ProtoVision/Y", Double.NaN);
+    }
+
+    var camToTag = nearestTarget.getBestCameraToTarget();
+
+    double distance = camToTag.getTranslation().getNorm();
+    double x = camToTag.getX();
+    double y = camToTag.getZ();
+
+    DogLog.log("ProtoVision/Distance", distance);
+    DogLog.log("ProtoVision/X", x);
+    DogLog.log("ProtoVision/Y", y);
+
     double averageDistance =
         latestVisionResult.getTargets().stream()
             .mapToDouble(t -> t.getBestCameraToTarget().getTranslation().getNorm())
             .average()
             .orElse(Double.NaN);
     DogLog.log("Vision/averageTagDistance", averageDistance);
+
 
     // 2025-reefscape has a validTags list on lines 160-166, replacing it with a list of all tags
     // for 26

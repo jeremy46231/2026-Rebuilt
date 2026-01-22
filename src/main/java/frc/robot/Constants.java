@@ -181,9 +181,8 @@ public final class Constants {
 
     // initializes cameras for use in VisionSubsystem
     public static enum Cameras {
-      RIGHT_CAM("rightCam"),
-      LEFT_CAM("leftCam");
-
+      MAIN_CAM("mainCam");
+      
       private String loggingName;
 
       Cameras(String name) {
@@ -230,14 +229,11 @@ public final class Constants {
     // initializing Transform3d for use in future field visualization
     public static Transform3d getCameraTransform(Cameras camera) {
       switch (camera) {
-        case RIGHT_CAM:
+        case MAIN_CAM:
           return new Transform3d(
               new Translation3d(RIGHT_X, RIGHT_Y, RIGHT_Z),
               new Rotation3d(RIGHT_ROLL, RIGHT_PITCH, RIGHT_YAW));
-        case LEFT_CAM:
-          return new Transform3d(
-              new Translation3d(LEFT_X, LEFT_Y, LEFT_Z),
-              new Rotation3d(LEFT_ROLL, LEFT_PITCH, LEFT_YAW));
+        
         default:
           throw new IllegalArgumentException("Unknown camera ID: " + camera);
       }
