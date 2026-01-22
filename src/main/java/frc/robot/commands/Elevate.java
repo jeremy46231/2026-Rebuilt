@@ -5,10 +5,11 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.Constants.ClimberConstants.ClimberPositions;
 import frc.robot.subsystems.ClimberSubsystem;
 
 /** An example command that uses an example subsystem. */
-public class ExampleCommand extends Command {
+public class Elevate extends Command {
   @SuppressWarnings("PMD.UnusedPrivateField")
   private final ClimberSubsystem m_subsystem;
 
@@ -17,7 +18,7 @@ public class ExampleCommand extends Command {
    *
    * @param subsystem The subsystem used by this command.
    */
-  public ExampleCommand(ClimberSubsystem subsystem) {
+  public Elevate(ClimberSubsystem subsystem) {
     m_subsystem = subsystem;
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(subsystem);
@@ -29,7 +30,9 @@ public class ExampleCommand extends Command {
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
-  public void execute() {}
+  public void execute() {
+    m_subsystem.setClimbTo(ClimberPositions.L1);
+  }
 
   // Called once the command ends or is interrupted.
   @Override
