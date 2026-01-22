@@ -69,7 +69,7 @@ public class VisionSubsystem extends SubsystemBase {
   public VisionSubsystem(Constants.Vision.Cameras cameraID, BooleanSupplier isRedSide) {
     this.isRedSide = isRedSide;
     this.cameraID = cameraID;
-    photonCamera = new PhotonCamera(cameraID.toString());
+    photonCamera = new PhotonCamera(cameraID.getLoggingName());
     Transform3d cameraToRobot = Constants.Vision.getCameraTransform(cameraID);
 
     // load field layout
