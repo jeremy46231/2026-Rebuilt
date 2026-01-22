@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import com.ctre.phoenix6.CANBus;
+
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
  * constants. This class should not be used for any other purpose. All constants should be declared
@@ -17,7 +19,11 @@ public final class Constants {
     public static final int kDriverControllerPort = 0;
   }
 
+  public static final String CANBUS_NAME = "JamesHarden";
+
   public static class ClimberConstants {
+  public static final CANBus canbus = new CANBus("JamesHarden");
+
     public static final int MOTOR1_PORT = 11;
     public static final int MOTOR2_PORT = 12;
     public static final int CANRANGE_PORT = 41;
@@ -39,9 +45,10 @@ public final class Constants {
     public static final double CONVERSOIN_DISTANCE_TO_ROTATIONS = 12d / ((1.751 * Math.PI) * 0.0254); // sproket gear ratio divided by sproket circum inches * 0.0254
 
     public static enum ClimberPositions {
-      L1(1, 0),
-      L2(2, 0),
-      L3(3, 0);
+      Rest(0, 0.057),
+      L1(1, 0.6858),
+      L2(2, 0.4572),
+      L3(3, 0.4572);
 
 
       public final int position;

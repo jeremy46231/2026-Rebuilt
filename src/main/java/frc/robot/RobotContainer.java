@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.Autos;
+import frc.robot.commands.DefaultClimber;
 import frc.robot.commands.Elevate;
 import frc.robot.subsystems.ClimberSubsystem;
 
@@ -42,6 +43,7 @@ public class RobotContainer {
    * joysticks}.
    */
   private void configureBindings() {
+    climberSubsystem.setDefaultCommand(new DefaultClimber(climberSubsystem));
     m_driverController.a().onTrue(new Elevate(climberSubsystem));
     
   }

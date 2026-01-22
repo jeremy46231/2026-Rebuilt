@@ -35,9 +35,10 @@ public class ClimberSubsystem extends SubsystemBase {
   private final MotionMagicVoltage controlRequest = new MotionMagicVoltage(0);
 
 
+
   public ClimberSubsystem() {
-    motor1 = new LoggedTalonFX(Constants.ClimberConstants.MOTOR1_PORT);
-    motor2 = new LoggedTalonFX(Constants.ClimberConstants.MOTOR2_PORT);
+    motor1 = new LoggedTalonFX(Constants.ClimberConstants.MOTOR1_PORT, Constants.ClimberConstants.canbus);
+    motor2 = new LoggedTalonFX(Constants.ClimberConstants.MOTOR2_PORT, Constants.ClimberConstants.canbus);
     master = motor1;
 
     Follower follower = new Follower(Constants.ClimberConstants.MOTOR1_PORT, MotorAlignmentValue.Opposed);
