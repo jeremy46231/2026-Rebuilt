@@ -73,8 +73,12 @@ public class VisionSubsystem extends SubsystemBase {
     // load field layout
     this.fieldLayout = AprilTagFieldLayout.loadField(AprilTagFields.k2026RebuiltWelded);
 
-    // initialize poseEstimator - changes on ln 77 (breaks on new), 175 (breaks on new), 229,
+    // initialize poseEstimator - changes on ln 77 (breaks on new), 177
     poseEstimator = new PhotonPoseEstimator(fieldLayout, cameraToRobot);
+    if (poseEstimator != null) {
+      DogLog.log("Vision/PoseEstimator", true);
+    }
+    DogLog.log("Vision/PoseEstimator", false);
 
     cameraTitle = cameraID.getLoggingName();
     latestVisionResult = null;
