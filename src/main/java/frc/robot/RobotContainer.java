@@ -45,19 +45,42 @@ public class RobotContainer {
 
     public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
 
+<<<<<<< HEAD
     private final AutoFactory autoFactory;
     private final AutoRoutines autoRoutines;
     private final AutoChooser autoChooser = new AutoChooser();
+    private final Command choreoCommand;
 
     public RobotContainer() {
         autoFactory = drivetrain.createAutoFactory();
         autoRoutines = new AutoRoutines(autoFactory);
+=======
+  private final AutoFactory autoFactory;
+  private final AutoRoutines autoRoutines;
+
+  private final AutoChooser autoChooser = new AutoChooser();
+
+  private final Command choreoCommand;
+
+  public RobotContainer() {
+    autoFactory = drivetrain.createAutoFactory();
+    autoRoutines = new AutoRoutines(autoFactory);
+    
+>>>>>>> bdce9d83beca71c0644c7987a6523b7f93480361
 
         autoChooser.addRoutine("CristianoRonaldo", autoRoutines::simplePathAuto);
         SmartDashboard.putData("Auto Chooser", autoChooser);
 
-        configureBindings();
-    }
+<<<<<<< HEAD
+    choreoCommand = autoRoutines.getPathAsCommand(); 
+    configureBindings();
+  }
+=======
+    choreoCommand = autoRoutines.getPathAsCommand();
+
+    configureBindings();
+  }
+>>>>>>> bdce9d83beca71c0644c7987a6523b7f93480361
 
   private void configureBindings() {
     // Note that X is defined as forward according to WPILib convention,
@@ -97,10 +120,19 @@ public class RobotContainer {
     joystick.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
 
 
+    //dtp
+    // joystick.x().whileTrue(new DriveToPose(drivetrain, () -> MiscUtils.plus(drivetrain.getCurrentState().Pose, new Translation2d(1, 0))));
 
+
+    //choreo
+    joystick.x().onTrue(choreoCommand);
 
     //Auto sequence
+<<<<<<< HEAD
     joystick.x().whileTrue(new SequentialCommandGroup(new DriveToPose(drivetrain, () -> MiscUtils.plus(drivetrain.getCurrentState().Pose, new Translation2d(2, 2))), new InstantCommand(() -> drivetrain.applyFieldSpeeds(new ChassisSpeeds()))));
+=======
+    // joystick.x().whileTrue(new SequentialCommandGroup(new DriveToPose(drivetrain, () -> MiscUtils.plus(drivetrain.getCurrentState().Pose, new Translation2d(0, 1))), autoRoutines.getPathAsCommand()));
+>>>>>>> bdce9d83beca71c0644c7987a6523b7f93480361
 
     drivetrain.registerTelemetry(logger::telemeterize);
   }
