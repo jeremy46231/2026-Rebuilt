@@ -46,16 +46,22 @@ public class RobotContainer {
 
   public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
 
-    private final AutoFactory autoFactory;
-    private final AutoRoutines autoRoutines;
+  private final AutoFactory autoFactory;
+  private final AutoRoutines autoRoutines;
+
   private final AutoChooser autoChooser = new AutoChooser();
+
+  private final Command choreoCommand;
 
   public RobotContainer() {
     autoFactory = drivetrain.createAutoFactory();
     autoRoutines = new AutoRoutines(autoFactory);
+    
 
     autoChooser.addRoutine("CristianoRonaldo", autoRoutines::simplePathAuto);
     SmartDashboard.putData("Auto Chooser", autoChooser);
+
+    choreoCommand = autoRoutines.getPathAsCommand();
 
     configureBindings();
   }
@@ -97,10 +103,15 @@ public class RobotContainer {
     joystick.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
 
 
+    //dtp
+    // joystick.x().whileTrue(new DriveToPose(drivetrain, () -> MiscUtils.plus(drivetrain.getCurrentState().Pose, new Translation2d(1, 0))));
 
+
+    //choreo
+    joystick.x().onTrue(choreoCommand);
 
     //Auto sequence
-    joystick.x().whileTrue(new SequentialCommandGroup(new DriveToPose(drivetrain, () -> MiscUtils.plus(drivetrain.getCurrentState().Pose, new Translation2d(2, 2))), ));
+    // joystick.x().whileTrue(new SequentialCommandGroup(new DriveToPose(drivetrain, () -> MiscUtils.plus(drivetrain.getCurrentState().Pose, new Translation2d(0, 1))), autoRoutines.getPathAsCommand()));
 
     drivetrain.registerTelemetry(logger::telemeterize);
   }
