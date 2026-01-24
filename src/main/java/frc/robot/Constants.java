@@ -17,6 +17,11 @@ public final class Constants {
     public static final int kDriverControllerPort = 0;
   }
 
+  public static class Intake {
+    public static final int MOTOR1_PORT = 0; // motor 1 port
+    public static final int MOTOR2_PORT  = 0; // motor 2 port 
+  }
+
   public static enum SwerveDrivePIDValues {
     SERRANO(0.18014, 0d, 0d, -0.023265, 0.12681, 0.058864),
     PROTO(0.053218, 0d, 0d, 0.19977, 0.11198, 0.0048619),
