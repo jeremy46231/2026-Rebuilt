@@ -39,14 +39,18 @@ public class ClimberSubsystem extends SubsystemBase {
             .withStatorCurrentLimit(Constants.Climber.SitUp.CURRENT_STATOR_LIMIT)
             .withSupplyCurrentLimit(Constants.Climber.SitUp.CURRENT_SUPPLY_LIMIT);
 
-    Slot0Configs s0c = new Slot0Configs();
+    Slot0Configs s0c =
+        new Slot0Configs()
+            .withKP(Constants.Climber.KP)
+            .withKI(Constants.Climber.KI)
+            .withKD(Constants.Climber.KD);
 
-    muscleUpMotor = new LoggedTalonFX(-1);
+    muscleUpMotor = new LoggedTalonFX(Constants.Climber.MuscleUp.MOTOR_PORT);
 
-    sitUpMotor = new LoggedTalonFX(-1);
+    sitUpMotor = new LoggedTalonFX(Constants.Climber.SitUp.MOTOR_PORT);
 
-    pullUpMotorR = new LoggedTalonFX(-1);
-    pullUpMotorL = new LoggedTalonFX(-1);
+    pullUpMotorR = new LoggedTalonFX(Constants.Climber.PullUp.MOTOR_PORT_R);
+    pullUpMotorL = new LoggedTalonFX(Constants.Climber.PullUp.MOTOR_PORT_L);
     pullUpMotorL.setControl(new Follower(pullUpMotorR.getDeviceID(), MotorAlignmentValue.Opposed));
 
     muscleUpMotor.getConfigurator().apply(s0c);

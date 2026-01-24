@@ -173,12 +173,18 @@ public final class Constants {
     public static final double mmcV = 80; // TODO: acquire good ones
     public static final double mmcA = 80;
 
+    public static final double KP = .4;
+    public static final double KI = 0;
+    public static final double KD = 0;
+
     public static class MuscleUp {
       public static final double MOTOR_ROTS_TO_ARM_ROTS = 1d / 250d;
       public static final double MOTOR_ROTS_TO_DEGREES_OF_ARM_ROT = MOTOR_ROTS_TO_ARM_ROTS * 360d;
 
       public static final double MUSCLE_UP_FORWARD = 0; // TODO: get vals
       public static final double MUSCLE_UP_BACK = 0; // TODO: get vals
+
+      public static final int MOTOR_PORT = -1; // TODO: get vals
     }
 
     public static class SitUp {
@@ -190,6 +196,8 @@ public final class Constants {
 
       public static final double SIT_UP_ANGLE = 0; // TODO: get vals
       public static final double SIT_BACK_ANGLE = 0; // TODO: get vals
+
+      public static final int MOTOR_PORT = -1; // TODO: get vals
     }
 
     public static class PullUp {
@@ -200,6 +208,9 @@ public final class Constants {
 
       public static final double REACH_POS = 0; // TODO: get vals
       public static final double PULL_DOWN_POS = 0; // TODO: get vals
+
+      public static final int MOTOR_PORT_L = -1; // TODO: get vals
+      public static final int MOTOR_PORT_R = -1; // TODO: get vals
     }
   }
 }
