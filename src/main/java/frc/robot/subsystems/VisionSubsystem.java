@@ -150,7 +150,6 @@ public class VisionSubsystem extends SubsystemBase {
       return;
     }
 
-
     // Start section of logging position of april tag (PROTO)
     var camToTag = nearestTarget.getBestCameraToTarget().getTranslation();
 
