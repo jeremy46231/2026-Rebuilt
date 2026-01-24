@@ -179,6 +179,10 @@ public final class Constants {
     public static final double TARGET_PULLEY_SPEED_FT_PER_SEC = 6d;
     public static final double TARGET_PULLEY_SPEED_M_PER_SEC = Units.feetToMeters(TARGET_PULLEY_SPEED_FT_PER_SEC);
 
-    public static final int MOTOR_PORT = -1;
+    public static final int MOTOR_PORT = -1; //TODO: put actual port
+
+    public static final double kP = .4; //TODO: get actual vals
+    public static final double kI = 0;
+    public static final double kD = 0;
   }
 }

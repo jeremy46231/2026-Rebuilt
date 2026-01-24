@@ -33,7 +33,7 @@ public class HopperSubsystem extends SubsystemBase {
     CurrentLimitsConfigs clc =
         new CurrentLimitsConfigs().withStatorCurrentLimit(30).withSupplyCurrentLimit(30);
 
-    Slot0Configs s0c = new Slot0Configs().withKP(.4).withKI(.1).withKD(0);
+    Slot0Configs s0c = new Slot0Configs().withKP(Constants.Hopper.kP).withKI(Constants.Hopper.kI).withKD(Constants.Hopper.kD);
 
     motor = new LoggedTalonFX(Constants.Hopper.MOTOR_PORT);
 
