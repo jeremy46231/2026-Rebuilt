@@ -15,7 +15,6 @@ import frc.robot.Constants;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.BooleanSupplier;
-import java.util.stream.Collectors;
 import org.photonvision.EstimatedRobotPose;
 import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonPoseEstimator;
@@ -103,7 +102,7 @@ public class VisionSubsystem extends SubsystemBase {
     latestVisionResult = null;
 
     for (PhotonPipelineResult result : photonCamera.getAllUnreadResults()) {
-      latestVisionResult = result;  
+      latestVisionResult = result;
       visionEst = poseEstimator.estimateCoprocMultiTagPose(result);
       if (visionEst.isEmpty()) {
         visionEst = poseEstimator.estimateLowestAmbiguityPose(result);
@@ -112,7 +111,6 @@ public class VisionSubsystem extends SubsystemBase {
 
     DogLog.log("Vision/" + cameraTitle + "/HasEstimate", visionEst.isPresent());
   }
-
 
   public void addFilteredPose() {
     // Ensure we have a valid pose estimate and vision result from periodic()
@@ -216,14 +214,12 @@ public class VisionSubsystem extends SubsystemBase {
 
     DogLog.log("Vision/VisionPoseEstimate", measuredPose);
 
-    if(measuredPose == null) {
+    if (measuredPose == null) {
       DogLog.log("Vision/measuredPoseAvailable", false);
-    }
-    else {
+    } else {
       DogLog.log("Vision/measuredPoseAvailable", true);
     }
   }
-
 
   // to be completed; method aims to combine final pose estimate with odometry for accurate
   // estimation
