@@ -176,7 +176,7 @@ public class TunerConstants {
   // private static final Distance kBackLeftXPos = Inches.of(-11.26);
   private static final Distance kBackLeftXPos = Constants.Swerve.WHICH_SWERVE_ROBOT.ROBOT_DIMENSIONS.length.div(-2.0);//Inches.of(-14.5);
   // private static final Distance kBackLeftYPos = Inches.of(11.417);
-  private static final Distance kBackLeftYPos = Constants.Swerve.WHICH_SWERVE_ROBOT.ROBOT_DIMENSIONS.length.div(2.0);//Inches.of(13);
+  private static final Distance kBackLeftYPos = Constants.Swerve.WHICH_SWERVE_ROBOT.ROBOT_DIMENSIONS.width.div(2.0);//Inches.of(13);
 
   // Back Right
   private static final int kBackRightDriveMotorId = 8;
@@ -190,7 +190,7 @@ public class TunerConstants {
   // private static final Distance kBackRightXPos = Inches.of(-11.26);
   // private static final Distance kBackRightYPos = Inches.of(-11.417);
   private static final Distance kBackRightXPos = Constants.Swerve.WHICH_SWERVE_ROBOT.ROBOT_DIMENSIONS.length.div(-2.0);//Inches.of(-14.5);
-  private static final Distance kBackRightYPos = Constants.Swerve.WHICH_SWERVE_ROBOT.ROBOT_DIMENSIONS.length.div(-2.0);//Inches.of(-13);
+  private static final Distance kBackRightYPos = Constants.Swerve.WHICH_SWERVE_ROBOT.ROBOT_DIMENSIONS.width.div(-2.0);//Inches.of(-13);
 
   public static final SwerveModuleConstants<
           TalonFXConfiguration, TalonFXConfiguration, CANcoderConfiguration>
