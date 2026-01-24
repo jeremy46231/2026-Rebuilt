@@ -33,6 +33,9 @@ public class ShooterSubsystem extends SubsystemBase {
 
     Follower follower =
         new Follower(Constants.Shooter.warmUpMotor1.port, MotorAlignmentValue.Aligned);
+    warmUpMotor1.setControl(follower);
+    warmUpMotor2.setControl(follower);
+    warmUpMotor3.setControl(follower);
     master = warmUpMotor1;
 
     Slot0Configs s0c =
@@ -67,19 +70,27 @@ public class ShooterSubsystem extends SubsystemBase {
     return instance;
   }
 
-  public double calculate(double speed) {
-    return speed / (3 * Math.PI / 12) * 1.25;
+  public double calculateFtToRPS(double speed) {
+    return speed
+        / (Constants.Shooter.SHOOTER_WHEEL_DIAMETER * Math.PI / 12)
+        * Constants.Shooter.SHOOTER_WHEEL_GEAR_RATIO;
     // from surface speed in ft/sec to rps
+  }
+
+  public double calculateRPSToFt(double rps) {
+    return rps
+        * (Constants.Shooter.SHOOTER_WHEEL_DIAMETER * Math.PI / 12)
+        / Constants.Shooter.SHOOTER_WHEEL_GEAR_RATIO;
   }
 
   // speed based on shooter wheel which is the one flinging the ball with a max of 52.36 and a min
   // of 35.60 ft/sec
   // input the speed you want the ball to go at (ft/sec); it will be divided by 2 because that's
   // what Jeff said that relationship is
-  // so now max is 104.72 and min of 71.2
+  // so now max is 104.72 and min is 71.2
   public void setSpeed(double speed) {
     targetSpeed = speed / 2;
-    master.setControl(velocityRequest.withVelocity(calculate(targetSpeed)));
+    master.setControl(velocityRequest.withVelocity(calculateFtToRPS(targetSpeed)));
   }
 
   public void stop() {
@@ -87,16 +98,17 @@ public class ShooterSubsystem extends SubsystemBase {
   }
 
   public boolean isAtSpeed() {
-    return Math.abs(calculate(targetSpeed) - master.getVelocity().getValueAsDouble()) <= tolerance;
+    return Math.abs(calculateFtToRPS(targetSpeed) - master.getVelocity().getValueAsDouble())
+        <= tolerance;
   }
 
   public double getCurrentSpeed() {
-    return master.getVelocity().getValueAsDouble();
+    return calculateRPSToFt(master.getVelocity().getValueAsDouble());
   }
 
   @Override
   public void periodic() {
-    DogLog.log("Doglog/shooter/targetSpeed", calculate(targetSpeed));
+    DogLog.log("Doglog/shooter/targetSpeed", targetSpeed);
     DogLog.log("Doglog/shooter/isAtSpeed", isAtSpeed());
     DogLog.log("Doglog.shooter/currentSpeed", getCurrentSpeed());
   }
