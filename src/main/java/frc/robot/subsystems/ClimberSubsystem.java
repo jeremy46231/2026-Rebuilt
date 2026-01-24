@@ -6,11 +6,8 @@ import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
-import com.ctre.phoenix6.controls.VelocityVoltage;
-import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.MotorAlignmentValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
-
 import dev.doglog.DogLog;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -38,7 +35,9 @@ public class ClimberSubsystem extends SubsystemBase {
         new CurrentLimitsConfigs().withStatorCurrentLimit(30).withSupplyCurrentLimit(30);
 
     CurrentLimitsConfigs specialClc =
-        new CurrentLimitsConfigs().withStatorCurrentLimit(Constants.Climber.SitUp.CURRENT_STATOR_LIMIT).withSupplyCurrentLimit(Constants.Climber.SitUp.CURRENT_SUPPLY_LIMIT);
+        new CurrentLimitsConfigs()
+            .withStatorCurrentLimit(Constants.Climber.SitUp.CURRENT_STATOR_LIMIT)
+            .withSupplyCurrentLimit(Constants.Climber.SitUp.CURRENT_SUPPLY_LIMIT);
 
     Slot0Configs s0c = new Slot0Configs();
 
@@ -67,7 +66,10 @@ public class ClimberSubsystem extends SubsystemBase {
     pullUpMotorR.getConfigurator().apply(moc);
     pullUpMotorL.getConfigurator().apply(moc);
 
-    MotionMagicConfigs mmc = new MotionMagicConfigs().withMotionMagicCruiseVelocity(Constants.Climber.mmcV).withMotionMagicAcceleration(Constants.Climber.mmcA);
+    MotionMagicConfigs mmc =
+        new MotionMagicConfigs()
+            .withMotionMagicCruiseVelocity(Constants.Climber.mmcV)
+            .withMotionMagicAcceleration(Constants.Climber.mmcA);
 
     muscleUpMotor.getConfigurator().apply(mmc);
     sitUpMotor.getConfigurator().apply(mmc);
@@ -86,27 +88,49 @@ public class ClimberSubsystem extends SubsystemBase {
   }
 
   public void setPullUpPosition(double metersFromZero) {
-    pullUpTargetPosition = metersFromZero / Constants.Climber.PullUp.MOTOR_ROTS_TO_METERS_OF_BELT_TRAVERSAL;
+    pullUpTargetPosition =
+        metersFromZero / Constants.Climber.PullUp.MOTOR_ROTS_TO_METERS_OF_BELT_TRAVERSAL;
     pullUpMotorR.setControl(new MotionMagicVoltage(pullUpTargetPosition));
   }
 
   public boolean isSitUpAtPosition() {
-    return Math.abs(sitUpMotor.getPosition().getValueAsDouble() * Constants.Climber.SitUp.MOTOR_ROTS_TO_DEGREES_OF_ARM_ROT - sitUpTargetDeg) <= sitUpTolerance;
+    return Math.abs(
+            sitUpMotor.getPosition().getValueAsDouble()
+                    * Constants.Climber.SitUp.MOTOR_ROTS_TO_DEGREES_OF_ARM_ROT
+                - sitUpTargetDeg)
+        <= sitUpTolerance;
   }
 
   public boolean isMuscleUpAtPosition() {
-    return Math.abs(muscleUpMotor.getPosition().getValueAsDouble() * Constants.Climber.SitUp.MOTOR_ROTS_TO_DEGREES_OF_ARM_ROT - muscleUpTargetDeg) <= muscleUpTolerance;
+    return Math.abs(
+            muscleUpMotor.getPosition().getValueAsDouble()
+                    * Constants.Climber.SitUp.MOTOR_ROTS_TO_DEGREES_OF_ARM_ROT
+                - muscleUpTargetDeg)
+        <= muscleUpTolerance;
   }
-  
+
   public boolean isPullUpAtPosition() {
-    return Math.abs(pullUpMotorR.getPosition().getValueAsDouble() * Constants.Climber.SitUp.MOTOR_ROTS_TO_DEGREES_OF_ARM_ROT - pullUpTargetPosition) <= pullUpTolerance;
+    return Math.abs(
+            pullUpMotorR.getPosition().getValueAsDouble()
+                    * Constants.Climber.SitUp.MOTOR_ROTS_TO_DEGREES_OF_ARM_ROT
+                - pullUpTargetPosition)
+        <= pullUpTolerance;
   }
 
   @Override
   public void periodic() {
-    DogLog.log("Climber/SitUpPosition", sitUpMotor.getPosition().getValueAsDouble() * Constants.Climber.SitUp.MOTOR_ROTS_TO_DEGREES_OF_ARM_ROT);
-    DogLog.log("Climber/MuscleUpPosition", muscleUpMotor.getPosition().getValueAsDouble() * Constants.Climber.MuscleUp.MOTOR_ROTS_TO_DEGREES_OF_ARM_ROT);
-    DogLog.log("Climber/PullUpPosition", pullUpMotorR.getPosition().getValueAsDouble() * Constants.Climber.PullUp.MOTOR_ROTS_TO_METERS_OF_BELT_TRAVERSAL);
+    DogLog.log(
+        "Climber/SitUpPosition",
+        sitUpMotor.getPosition().getValueAsDouble()
+            * Constants.Climber.SitUp.MOTOR_ROTS_TO_DEGREES_OF_ARM_ROT);
+    DogLog.log(
+        "Climber/MuscleUpPosition",
+        muscleUpMotor.getPosition().getValueAsDouble()
+            * Constants.Climber.MuscleUp.MOTOR_ROTS_TO_DEGREES_OF_ARM_ROT);
+    DogLog.log(
+        "Climber/PullUpPosition",
+        pullUpMotorR.getPosition().getValueAsDouble()
+            * Constants.Climber.PullUp.MOTOR_ROTS_TO_METERS_OF_BELT_TRAVERSAL);
   }
 
   @Override

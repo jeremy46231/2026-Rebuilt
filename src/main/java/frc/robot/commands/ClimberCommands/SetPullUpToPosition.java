@@ -1,12 +1,11 @@
 package frc.robot.commands.ClimberCommands;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.Constants;
 import frc.robot.subsystems.ClimberSubsystem;
 
 public class SetPullUpToPosition extends Command {
 
-  ClimberSubsystem climber;  
+  ClimberSubsystem climber;
   double position;
 
   public SetPullUpToPosition(ClimberSubsystem climber, double position) {
