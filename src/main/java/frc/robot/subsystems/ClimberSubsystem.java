@@ -23,7 +23,6 @@ public class ClimberSubsystem extends SubsystemBase {
 
   private final LoggedTalonFX muscleUpMotor, sitUpMotor, pullUpMotorR, pullUpMotorL;
   private double sitUpTargetDeg, muscleUpTargetDeg, pullUpTargetPosition;
-
   private final DutyCycleEncoder muscleUpEncoder, sitUpEncoder;
 
   public static ClimberSubsystem getInstance() {
@@ -150,12 +149,8 @@ public class ClimberSubsystem extends SubsystemBase {
         pullUpMotorR.getPosition().getValueAsDouble()
             * Constants.Climber.PullUp.MOTOR_ROTS_TO_METERS_OF_BELT_TRAVERSAL);
 
-    DogLog.log(
-        "Climber/SitUpPositionFromEncoderRots",
-        getSitUpPosInRotationsFromEncoder());
-    DogLog.log(
-        "Climber/MuscleUpPositionFromEncoderRots",
-        getMuscleUpPosInRotationsFromEncoder());
+    DogLog.log("Climber/SitUpPositionFromEncoderRots", getSitUpPosInRotationsFromEncoder());
+    DogLog.log("Climber/MuscleUpPositionFromEncoderRots", getMuscleUpPosInRotationsFromEncoder());
   }
 
   @Override
