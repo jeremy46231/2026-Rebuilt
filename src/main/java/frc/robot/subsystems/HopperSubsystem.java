@@ -47,7 +47,7 @@ public class HopperSubsystem extends SubsystemBase {
     motor.setControl(
         new VelocityVoltage(
             Constants.Hopper.TARGET_PULLEY_SPEED_M_PER_SEC
-                * Constants.Hopper.MOTOR_ROTS_TO_METERS_OF_PULLEY_TRAVERSAL));
+                / Constants.Hopper.MOTOR_ROTS_TO_METERS_OF_PULLEY_TRAVERSAL));
   }
 
   public void stop() {
