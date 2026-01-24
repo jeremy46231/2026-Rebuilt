@@ -152,6 +152,7 @@ public final class Constants {
       public final double COUPLE_RATIO;
       public final BumperThickness BUMPER_THICKNESS;
       public final boolean INVERTED_MODULES;
+
       SwerveType(
           Angle fl,
           Angle fr,
