@@ -98,7 +98,8 @@ public final class Constants {
           SwerveSteerPIDValues.SERRANO,
           RobotDimensions.SERRANO,
           "Patrice the Pineapple",
-          BumperThickness.SERRANO),
+          BumperThickness.SERRANO,
+          3.5714285714285716),
       PROTO(
           Rotations.of(0.3876953125), // front left
           Rotations.of(0.159912109375), // front right
@@ -121,7 +122,8 @@ public final class Constants {
           SwerveSteerPIDValues.JAMES_HARDEN,
           RobotDimensions.JAMES_HARDEN,
           "JamesHarden",
-          BumperThickness.JAMES_HARDEN),
+          BumperThickness.JAMES_HARDEN,
+          3.5714285714285716),
       COBRA(
           Rotations.of(0.096923828125), // front left, 21
           Rotations.of(0.03271484375), // front right, 22
@@ -132,7 +134,8 @@ public final class Constants {
           SwerveSteerPIDValues.COBRA,
           RobotDimensions.COBRA,
           "Viper",
-          BumperThickness.COBRA);
+          BumperThickness.COBRA,
+          3.375);
       public final Angle FRONT_LEFT_ENCODER_OFFSET,
           FRONT_RIGHT_ENCODER_OFFSET,
           BACK_LEFT_ENCODER_OFFSET,
