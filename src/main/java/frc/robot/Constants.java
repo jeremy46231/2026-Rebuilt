@@ -4,6 +4,7 @@ import static edu.wpi.first.units.Units.*;
 
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Distance;
+import edu.wpi.first.math.util.Units;
 
 public final class Constants {
   public static class OperatorConstants {
@@ -167,5 +168,17 @@ public final class Constants {
         BUMPER_THICKNESS = thickness;
       }
     }
+  }
+
+  public static class Hopper {
+    public static final double MOTOR_ROTS_TO_PULLEY_ROTS = .2d; //MRD
+    private static final double PULLEY_LENGTH_MM = 220d * 5d; //220 teeth, 5mm per
+    private static final double PULLEY_LENGTH_M = PULLEY_LENGTH_MM / 1000d;
+    public static final double MOTOR_ROTS_TO_METERS_OF_PULLEY_TRAVERSAL = MOTOR_ROTS_TO_PULLEY_ROTS * PULLEY_LENGTH_M;
+
+    public static final double TARGET_PULLEY_SPEED_FT_PER_SEC = 6d;
+    public static final double TARGET_PULLEY_SPEED_M_PER_SEC = Units.feetToMeters(TARGET_PULLEY_SPEED_FT_PER_SEC);
+
+    public static final int MOTOR_PORT = -1;
   }
 }
