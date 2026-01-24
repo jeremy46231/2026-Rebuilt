@@ -63,8 +63,8 @@ public class HopperSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
-    DogLog.log("ShooterSubsystem/Speed", motor.getVelocity().getValueAsDouble());
-    DogLog.log("ShooterSubsystem/AtSpeed", atSpeed());
+    DogLog.log("HopperSubsystem/Speed", motor.getVelocity().getValueAsDouble());
+    DogLog.log("HopperSubsystem/AtSpeed", atSpeed());
   }
 
   @Override
