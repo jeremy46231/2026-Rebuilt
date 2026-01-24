@@ -181,6 +181,10 @@ public final class Constants {
     public static final double SHOOTER_KA = 0.0; // TODO
     public static final double STATOR_CURRENT_LIMIT = 30.0;
     public static final double SUPPLY_CURRENT_LIMIT = 30.0;
+
+    public static final double SHOOTER_WHEEL_GEAR_RATIO = 1.25;
+    public static final double SHOOTER_WHEEL_DIAMETER = 3.0;
+    public static final double SHOOT_FOR_AUTO = 104.72;
   }
 
   public static class MotorConstants {
