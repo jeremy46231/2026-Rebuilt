@@ -47,17 +47,17 @@ public class RobotContainer {
 
   public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
 
-  private final AutoFactory autoFactory;
-  private final AutoRoutines autoRoutines;
+//   private final AutoFactory autoFactory;
+//   private final AutoRoutines autoRoutines;
 
   private final AutoChooser autoChooser = new AutoChooser();
 
   public RobotContainer() {
-    autoFactory = drivetrain.createAutoFactory();
-    autoRoutines = new AutoRoutines(autoFactory);
+    // autoFactory = drivetrain.createAutoFactory();
+    // autoRoutines = new AutoRoutines(autoFactory);
 
-    autoChooser.addRoutine("CristianoRonaldo", autoRoutines::moveForwardAuto);
-    SmartDashboard.putData("Auto Chooser", autoChooser);
+    // autoChooser.addRoutine("CristianoRonaldo", autoRoutines::moveForwardAuto);
+    // SmartDashboard.putData("Auto Chooser", autoChooser);
 
     configureBindings();
   }
@@ -109,7 +109,7 @@ public class RobotContainer {
     //             () -> MiscUtils.plus(drivetrain.getCurrentState().Pose, new Translation2d(1, 0))));
 
     // choreo
-    joystick.x().whileTrue(autoRoutines.getPathAsCommand());
+    // joystick.x().whileTrue(autoRoutines.getPathAsCommand());
 
     // Auto sequence
     // joystick.x().whileTrue(new SequentialCommandGroup(new DriveToPose(drivetrain, () ->
