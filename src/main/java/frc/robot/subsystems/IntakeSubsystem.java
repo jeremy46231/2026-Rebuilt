@@ -86,6 +86,10 @@ public class IntakeSubsystem extends SubsystemBase {
   }
 
   public double getAbsolutePosition() {
+    return encoder.get() / Constants.Intake.encoderRotsToIntakeRots;
+  }
+
+  public double getAbsolutePositionRaw() {
     return encoder.get();
   }
 
@@ -101,6 +105,7 @@ public class IntakeSubsystem extends SubsystemBase {
     DogLog.log("Intake/targetSpeed", Constants.Intake.intakeTargetSpeed);
     DogLog.log("Intake/atSpeed", atSpeed());
     DogLog.log("Intake/motorCurrent", intakeMotor.getStatorCurrent().getValueAsDouble());
-    DogLog.log("Intake/absEncoderPos", encoder.get());
+    DogLog.log("Intake/absEncoderPos", getAbsolutePosition());
+    DogLog.log("Intake/absEncoderPosRaw", getAbsolutePositionRaw());
   }
 }

@@ -42,6 +42,7 @@ public final class Constants {
     public static final MotorConstants intakeMotor = new MotorConstants(33);
 
     public static final double motorRotsToIntakeRots = 1d / 2.6667;
+    public static final double encoderRotsToIntakeRots = 2.666;
 
     public static final double intakeKV = 0.14;
     public static final double intakeKP = 0.1;
