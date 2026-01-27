@@ -80,7 +80,6 @@ public class VisionSubsystem extends SubsystemBase {
       poseEstimator = null; // color camera does not need pose estimation
     }
 
-
     cameraTitle = cameraID.getLoggingName();
     latestVisionResult = null;
   }
@@ -114,15 +113,12 @@ public class VisionSubsystem extends SubsystemBase {
     // log yaw and area of blob if present
     Optional<PhotonTrackedTarget> blob = getLargestBlob();
     blob.ifPresentOrElse(
-      b -> {
-        DogLog.log("Vision/BlobPresent", true);
-        DogLog.log("Vision/BlobYaw", b.getYaw());
-        DogLog.log("Vision/BlobArea", b.getArea());
-      },
-      () -> DogLog.log("Vision/BlobPresent", false)
-    );
-
-
+        b -> {
+          DogLog.log("Vision/BlobPresent", true);
+          DogLog.log("Vision/BlobYaw", b.getYaw());
+          DogLog.log("Vision/BlobArea", b.getArea());
+        },
+        () -> DogLog.log("Vision/BlobPresent", false));
   }
 
   public void addFilteredPose() {
@@ -161,11 +157,13 @@ public class VisionSubsystem extends SubsystemBase {
 
     // skip AprilTag pose estimation for color cameras
     if (cameraID == Constants.Vision.Cameras.COLOR_CAM) {
-      getLargestBlob().ifPresent(blob -> {
-        DogLog.log("Vision/BlobPresent", true);
-        DogLog.log("Vision/BlobYaw", blob.getYaw());
-        DogLog.log("Vision/BlobArea", blob.getArea());
-      });
+      getLargestBlob()
+          .ifPresent(
+              blob -> {
+                DogLog.log("Vision/BlobPresent", true);
+                DogLog.log("Vision/BlobYaw", blob.getYaw());
+                DogLog.log("Vision/BlobArea", blob.getArea());
+              });
       return;
     }
 
@@ -354,18 +352,15 @@ public class VisionSubsystem extends SubsystemBase {
     return computedStdDevs;
   }
 
-
-
   // object detection
-  
+
   public Optional<PhotonTrackedTarget> getLargestBlob() {
     if (latestVisionResult == null) return Optional.empty();
     List<PhotonTrackedTarget> targets = latestVisionResult.getTargets();
     if (targets.isEmpty()) return Optional.empty();
 
     // returns the largest by area
-    return targets.stream()
-      .max((a, b) -> Double.compare(a.getArea(), b.getArea()));
+    return targets.stream().max((a, b) -> Double.compare(a.getArea(), b.getArea()));
   }
 
   public Optional<Double> getYawToBlob() {
@@ -375,5 +370,4 @@ public class VisionSubsystem extends SubsystemBase {
   public Optional<Double> getAreaOfBlob() {
     return getLargestBlob().map(PhotonTrackedTarget::getArea);
   }
-
 }
