@@ -18,7 +18,8 @@ public class DriveToPose extends Command {
   private final CommandSwerveDrivetrain swerve;
 
   // Initialize the LinearPath and the LinearPath.State to a null value
-  private LinearPath path = null;
+  // private LinearPath path = null;
+  private LinearPath path;
   private LinearPath.State pathState = null;
 
   // Initialize the Target Pose and the Target Pose Supplier to a null value
@@ -47,11 +48,12 @@ public class DriveToPose extends Command {
    * @param swerve Swerve Subsystem.
    * @param targetPoseSupplier Target Pose Supplier (for changing values of pose not just runtime)
    */
-  public DriveToPose(CommandSwerveDrivetrain swerve, Supplier<Pose2d> targetPoseSupplier) {
+  public DriveToPose(CommandSwerveDrivetrain swerve, Supplier<Pose2d> targetPoseSupplier, LinearPath path) {
     // Use addRequirements() here to declare subsystem dependencies.
     this.swerve = swerve;
     this.targetPoseSupplier = targetPoseSupplier;
     this.targetPose = targetPoseSupplier.get();
+    this.path = path;
 
     addRequirements(swerve);
   }
@@ -65,11 +67,13 @@ public class DriveToPose extends Command {
       targetPose = targetPoseSupplier.get();
     }
 
-    path =
-        new LinearPath(
-            new TrapezoidProfile.Constraints(1, 1), new TrapezoidProfile.Constraints(0.2, 0.2));
+    // path =
+    //     new LinearPath(
+    //         new TrapezoidProfile.Constraints(1, 1), new TrapezoidProfile.Constraints(0.2, 0.2)); //moving
     pathState =
         new LinearPath.State(swerve.getCurrentState().Pose, swerve.getCurrentState().Speeds);
+
+    path.calculate(0.0, pathState, targetPose); //added
 
     DogLog.log("Init Current Pose", swerve.getCurrentState().Pose);
     DogLog.log("Init Target Pose", targetPose);
