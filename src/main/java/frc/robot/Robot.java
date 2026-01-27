@@ -52,10 +52,10 @@ public class Robot extends TimedRobot {
   @Override
   public void disabledInit() {}
 
-  // @Override
-  // public void robotInit() {
-  //   DogLog.setOptions(new DogLogOptions().withNtPublish(false).withCaptureDs(true).withLogExtras(true));
-  // }
+  @Override
+  public void robotInit() {
+    DogLog.setOptions(new DogLogOptions().withNtPublish(false).withCaptureDs(true).withLogExtras(true));
+  }
 
   @Override
   public void disabledPeriodic() {}
