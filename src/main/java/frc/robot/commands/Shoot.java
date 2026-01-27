@@ -4,9 +4,11 @@
 
 package frc.robot.commands;
 
+import dev.doglog.DogLog;
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.Vector;
 import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj.BuiltInAccelerometer;
@@ -55,10 +57,18 @@ public class Shoot extends Command {
   public void execute() {
     Pose3d target = new Pose3d();
     shooter.rampUp(shootingSpeed(target, 5));
-    pointAtTarget(positionToTarget(null));
+    pointAtTarget(positionToTarget(target));
     if (shooter.atSpeed() && pointingAtTarget(positionToTarget(null))) {
       shooter.runPreShooterAtRPS(10);
     }
+
+    DogLog.log("Shoot/shootSpeed1pres", shootingSpeed(target, 1));
+    DogLog.log("Shoot/shootSpeed2pres", shootingSpeed(target, 2));
+    DogLog.log("Shoot/shootSpeed3pres", shootingSpeed(target, 3));
+    DogLog.log("Shoot/shootSpeed4pres", shootingSpeed(target, 4));
+    DogLog.log("Shoot/shootSpeed5pres", shootingSpeed(target, 5));
+    DogLog.log("Shoot/target", target);
+    DogLog.log("Shoot/positionTargeting", new Pose3d(positionToTarget(target).x, positionToTarget(target).y, positionToTarget(target).z, new Rotation3d()));
   }
 
   // Called once the command ends or is interrupted.
