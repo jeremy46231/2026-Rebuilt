@@ -90,8 +90,7 @@ public class TunerConstants {
 
   // Every 1 rotation of the azimuth results in kCoupleRatio drive motor turns;
   // This may need to be tuned to your individual robot
-  private static final double kCoupleRatio =
-      Constants.Swerve.WHICH_SWERVE_ROBOT.COUPLE_RATIO;
+  private static final double kCoupleRatio = Constants.Swerve.WHICH_SWERVE_ROBOT.COUPLE_RATIO;
 
   private static final double kDriveGearRatio =
       Constants.Swerve.WHICH_SWERVE_ROBOT.SWERVE_LEVEL.DRIVE_GEAR_RATIO;
@@ -148,8 +147,7 @@ public class TunerConstants {
   private static final int kFrontLeftSteerMotorId = 3;
   private static final int kFrontLeftEncoderId = 21;
   private static final Angle kFrontLeftEncoderOffset =
-      Constants.Swerve.WHICH_SWERVE_ROBOT
-          .FRONT_LEFT_ENCODER_OFFSET;
+      Constants.Swerve.WHICH_SWERVE_ROBOT.FRONT_LEFT_ENCODER_OFFSET;
   private static final boolean kFrontLeftSteerMotorInverted =
       Constants.Swerve.WHICH_SWERVE_ROBOT.INVERTED_MODULES;
   private static final boolean kFrontLeftEncoderInverted = false;
@@ -164,8 +162,7 @@ public class TunerConstants {
   private static final int kFrontRightSteerMotorId = 5;
   private static final int kFrontRightEncoderId = 22;
   private static final Angle kFrontRightEncoderOffset =
-      Constants.Swerve.WHICH_SWERVE_ROBOT
-          .FRONT_RIGHT_ENCODER_OFFSET;
+      Constants.Swerve.WHICH_SWERVE_ROBOT.FRONT_RIGHT_ENCODER_OFFSET;
   private static final boolean kFrontRightSteerMotorInverted =
       Constants.Swerve.WHICH_SWERVE_ROBOT.INVERTED_MODULES;
   private static final boolean kFrontRightEncoderInverted = false;
