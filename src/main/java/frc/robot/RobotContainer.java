@@ -86,11 +86,10 @@ public class RobotContainer {
     joystick
         .leftBumper()
         .whileTrue(
-          Commands.runEnd(
-            () -> hopperSubsystem.runHopper(Constants.Hopper.TARGET_PULLEY_SPEED_M_PER_SEC), 
-            hopperSubsystem::stop, 
-            hopperSubsystem)
-        );
+            Commands.runEnd(
+                () -> hopperSubsystem.runHopper(Constants.Hopper.TARGET_PULLEY_SPEED_M_PER_SEC),
+                hopperSubsystem::stop,
+                hopperSubsystem));
   }
 
   public Command getAutonomousCommand() {
