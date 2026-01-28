@@ -1,19 +1,20 @@
-package frc.robot;
+package frc.robot.commands;
 
 import choreo.auto.AutoFactory;
 import choreo.auto.AutoRoutine;
 import choreo.auto.AutoTrajectory;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 
-public class AutoRoutines {
+public class AutoRoutinesCommand extends SequentialCommandGroup {
   final AutoTrajectory moveForward;
   final AutoRoutine routine;
 
-  public AutoRoutines(AutoFactory factory) {
+  public AutoRoutinesCommand(AutoFactory factory) {
     routine = factory.newRoutine("CristianoRonaldo.chor");
     moveForward = routine.trajectory("MoveForward.traj");
 
-    routine.active().onTrue(moveForward.resetOdometry().andThen(moveForward.cmd()));
+    addCommands(moveForward.resetOdometry(), moveForward.cmd());
   }
 
   public AutoRoutine moveForwardAuto() {

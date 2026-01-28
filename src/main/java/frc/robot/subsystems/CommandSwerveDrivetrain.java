@@ -257,7 +257,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     setControl(m_pathApplyFieldSpeeds.withSpeeds(speeds));
   }
 
-  public void resetPose(Pose2d pose) { //new
+  public void resetPose(Pose2d pose) { // new
     super.resetPose(pose);
   }
 

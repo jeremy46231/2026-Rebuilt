@@ -8,7 +8,6 @@ import static edu.wpi.first.units.Units.*;
 
 import choreo.auto.AutoChooser;
 import choreo.auto.AutoFactory;
-
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import dev.doglog.DogLog;
@@ -48,8 +47,8 @@ public class RobotContainer {
 
   public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
 
-    private final AutoFactory autoFactory;
-    private final AutoRoutines autoRoutines;
+  private final AutoFactory autoFactory;
+  private final AutoRoutines autoRoutines;
 
   private final AutoChooser autoChooser = new AutoChooser();
 
@@ -57,7 +56,18 @@ public class RobotContainer {
     autoFactory = drivetrain.createAutoFactory();
     autoRoutines = new AutoRoutines(autoFactory);
 
-    autoChooser.addRoutine("CristianoRonaldo", autoRoutines::moveForwardAuto);
+    // autoChooser.addRoutine("CristianoRonaldo", autoRoutines::moveForwardAuto);
+    autoChooser.addCmd(
+        "sequence",
+        () ->
+            new SequentialCommandGroup(
+                autoRoutines.getPathAsCommand(),
+                new InstantCommand(() -> DogLog.log("Choreo Command Ended", 1)),
+                new DriveToPose(
+                    drivetrain,
+                    () ->
+                        MiscUtils.plus(drivetrain.getCurrentState().Pose, new Translation2d(1, 0))),
+                new InstantCommand(() -> DogLog.log("Choreo Command Ended", 2))));
     SmartDashboard.putData("Auto Chooser", autoChooser);
 
     configureBindings();
@@ -113,9 +123,27 @@ public class RobotContainer {
     // choreo
     // joystick.x().whileTrue(autoRoutines.getPathAsCommand());
 
-    // Acc auto sequence: choreo forward, dtp back
-    joystick.x().whileTrue(new SequentialCommandGroup(autoRoutines.getPathAsCommand(), new DriveToPose(drivetrain, () -> MiscUtils.plus(drivetrain.getCurrentState().Pose, new Translation2d(1, 0)))));
-    // joystick.x().whileTrue(new SequentialCommandGroup(new AutoRoutines(autoFactory), new DriveToPose(drivetrain, () -> MiscUtils.plus(drivetrain.getCurrentState().Pose, new Translation2d(1, 0)))));
+    // choreo with commands
+    // joystick.x().whileTrue(autoRoutines.getPathAsCommand());
+
+    // Auto sequence: choreo forward, dtp back
+    joystick
+        .x()
+        .onTrue(
+            autoRoutines
+                .getPathAsCommand()
+                .andThen(
+                    new DriveToPose(
+                        drivetrain,
+                        () ->
+                            MiscUtils.plus(
+                                drivetrain.getCurrentState().Pose, new Translation2d(1, 0)))));
+    // joystick.y().onTrue(new InstantCommand(() -> DogLog.log("Logs Check", 3)));
+
+    // Auto sequence as command groups
+    // joystick.x().whileTrue(new SequentialCommandGroup(new AutoRoutinesCommand(autoFactory), new
+    // DriveToPose(drivetrain, () -> MiscUtils.plus(drivetrain.getCurrentState().Pose, new
+    // Translation2d(1, 0)))));
 
     drivetrain.registerTelemetry(logger::telemeterize);
   }
