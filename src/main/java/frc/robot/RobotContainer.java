@@ -102,20 +102,19 @@ public class RobotContainer {
     joystick.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
 
     // dtp
-    // joystick
-    //     .x()
-    //     .whileTrue(
-    //         new DriveToPose(
-    //             drivetrain,
-    //             () -> MiscUtils.plus(drivetrain.getCurrentState().Pose, new Translation2d(1,
-    // 0))));
+    joystick
+        .x()
+        .whileTrue(
+            new DriveToPose(
+                drivetrain,
+                () -> MiscUtils.plus(drivetrain.getCurrentState().Pose, new Translation2d(1,
+    0))));
 
     // choreo
     // joystick.x().whileTrue(autoRoutines.getPathAsCommand());
 
     // Acc auto sequence: choreo forward, dtp back
-
-    joystick.x().whileTrue(new SequentialCommandGroup(autoRoutines.getPathAsCommand(), new DriveToPose(drivetrain, () -> MiscUtils.plus(drivetrain.getCurrentState().Pose, new Translation2d(1, 0)))));
+    // joystick.x().whileTrue(new SequentialCommandGroup(new DriveToPose(drivetrain, () -> MiscUtils.plus(drivetrain.getCurrentState().Pose, new Translation2d(1, 0))), autoRoutines.getPathAsCommand()));
 
     drivetrain.registerTelemetry(logger::telemeterize);
   }

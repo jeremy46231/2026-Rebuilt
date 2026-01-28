@@ -283,9 +283,10 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
                 m_hasAppliedOperatorPerspective = true;
               });
     }
-    if (this.getCurrentCommand() != null) {
-      DogLog.log("String command", this.getCurrentCommand().toString());
-    }
+    // if (this.getCurrentCommand() != null) {
+    //   DogLog.log("String command", this.getCurrentCommand().toString());
+    // }
+    DogLog.log("String command", 1);
   }
   // private void startSimThread() {
   //     m_lastSimTime = Utils.getCurrentTimeSeconds();
