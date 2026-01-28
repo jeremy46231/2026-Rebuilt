@@ -19,6 +19,7 @@ import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.ShooterSubsystem;
 
 public class RobotContainer {
+
   private double MaxSpeed =
       TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
   private double MaxAngularRate =
@@ -41,9 +42,15 @@ public class RobotContainer {
 
   public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
 
-  public final ShooterSubsystem shooterSubsystem = ShooterSubsystem.getInstance();
+  public final ShooterSubsystem lebron;
 
   public RobotContainer() {
+    if (Constants.shooterOnRobot) {
+        lebron = ShooterSubsystem.getInstance();
+    } else {
+        lebron = null;
+    }
+
     configureBindings();
   }
 
@@ -85,7 +92,7 @@ public class RobotContainer {
 
     drivetrain.registerTelemetry(logger::telemeterize);
 
-    joystick.rightTrigger().whileTrue(new ShootAtSpeed(shooterSubsystem));
+    joystick.rightTrigger().whileTrue(new ShootAtSpeed(lebron));
   }
 
   public Command getAutonomousCommand() {
