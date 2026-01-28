@@ -95,13 +95,19 @@ public class Shoot extends Command {
   private void pointAtTarget(Vector3 target) {
     double turnrate = -1 * MiscMath.clamp(Math.atan2(Vector3.subtract(new Vector3(drivetrain.getPose()), target).x, Vector3.subtract(new Vector3(drivetrain.getPose()), target).y) - drivetrain.getPose().getRotation().getRadians(), -maxRotSpeed, maxRotSpeed);
     DogLog.log("Shoot/rot", -1 * (Math.atan2(Vector3.subtract(new Vector3(drivetrain.getPose()), target).x, Vector3.subtract(new Vector3(drivetrain.getPose()), target).y) - drivetrain.getPose().getRotation().getRadians()));
+    drivetrain.setFieldSpeeds(
+      new ChassisSpeeds(
+        drivetrain.getRobotSpeeds().vxMetersPerSecond,
+        drivetrain.getRobotSpeeds().vyMetersPerSecond,
+        -1 * MiscMath.clamp(Math.atan2(Vector3.subtract(new Vector3(drivetrain.getPose()), target).x, Vector3.subtract(new Vector3(drivetrain.getPose()), target).z) - drivetrain.getPose().getRotation().getRadians(), -maxRotSpeed, maxRotSpeed)
+      )
+    );
   }
 
   public double turnRate() {
     Pose3d targetPose = Constants.Landmarks.BLUE_HUB;
     Vector3 target = positionToTarget(targetPose, 5);
     return -1 * MiscMath.clamp(Math.atan2(Vector3.subtract(new Vector3(drivetrain.getPose()), target).x, Vector3.subtract(new Vector3(drivetrain.getPose()), target).y) - drivetrain.getPose().getRotation().getRadians(), -maxRotSpeed, maxRotSpeed);
-    //DogLog.log("Shoot/rot", -1 * (Math.atan2(Vector3.subtract(new Vector3(drivetrain.getPose()), target).x, Vector3.subtract(new Vector3(drivetrain.getPose()), target).y) - drivetrain.getPose().getRotation().getRadians()));
   }
 
   private boolean pointingAtTarget(Vector3 target) {
