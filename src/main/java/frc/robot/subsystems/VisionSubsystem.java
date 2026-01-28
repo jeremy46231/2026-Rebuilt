@@ -116,7 +116,7 @@ public class VisionSubsystem extends SubsystemBase {
       b -> {
         DogLog.log("Vision/BlobPresent", true);
         DogLog.log("Vision/BlobYaw", b.getYaw());
-        DogLog.log("Vision/BlobArea", b.getArea());
+        DogLog.log("Vision/FuelGuage", ((double) Math.round(b.getArea()*10.0))/10.0);
         DogLog.log("Vision/BlobPitch", b.getPitch());
         DogLog.log("Vision/BlobSkew", b.getSkew());
       },
