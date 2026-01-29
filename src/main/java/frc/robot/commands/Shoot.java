@@ -5,6 +5,9 @@
 package frc.robot.commands;
 
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
+
+import java.util.function.BooleanSupplier;
+
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
 import dev.doglog.DogLog;
@@ -29,14 +32,17 @@ import frc.robot.subsystems.SwerveSubsystem;
 /** An example command that uses an example subsystem. */
 public class Shoot extends Command {
   @SuppressWarnings("PMD.UnusedPrivateField")
-  private final ShooterSubsystem shooter;
+  //private final ShooterSubsystem shooter;
   private final SwerveSubsystem drivetrain;
+  private final BooleanSupplier redside;
 
   static final float MAX_TIME = 10f;
-  static final float angularTolerance = 1f;
+  static final float angularTolerance = .1f;
   static final float maxRotSpeed = .1f;
 
   static final double shooterAngleDeg = 75;
+
+  public static double targetAngle = 0;
 
   float timer;
 
@@ -45,9 +51,10 @@ public class Shoot extends Command {
    *
    * @param subsystem The subsystem used by this command.
    */
-  public Shoot(SwerveSubsystem drivetrain, ShooterSubsystem shooter) {
+  public Shoot(SwerveSubsystem drivetrain/* , ShooterSubsystem shooter*/, BooleanSupplier redside) {
     this.drivetrain = drivetrain;
-    this.shooter = shooter;
+    //this.shooter = shooter;
+    this.redside = redside;
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(drivetrain);
   }
@@ -59,31 +66,35 @@ public class Shoot extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    Pose3d target = Constants.Landmarks.BLUE_HUB;
-    shooter.rampUp(shootingSpeed(target, 5));
-    pointAtTarget(positionToTarget(target, 5));
-    if (shooter.atSpeed() && pointingAtTarget(positionToTarget(target, 5))) {
-      shooter.runPreShooterAtRPS(10);
-    }
+    Pose3d target = redside.getAsBoolean() ? Constants.Landmarks.RED_HUB : Constants.Landmarks.BLUE_HUB;
+    //shooter.rampUp(shootingSpeed(target, 5));
+    //pointAtTarget(positionToTarget(target, 5));
+    // if (shooter.atSpeed() && pointingAtTarget(positionToTarget(target, 5))) {
+    //   shooter.runPreShooterAtRPS(10);
+    // }
+    targetAngle = targetAngle(target);
 
     DogLog.log("Shoot/isPointing", pointingAtTarget(positionToTarget(target, 5)));
 
     for (int i = 1; i <= 5; i++) {
-      DogLog.log("Shoot/shootSpeed" + i + "prec", shootingSpeed(target, i));
+      DogLog.log("Shoot/shootSpeed/" + i + "prec", shootingSpeed(target, i));
     }
 
     DogLog.log("Shoot/tof", 2 * shootingSpeed(target, 5) * Math.sin(Math.toRadians(shooterAngleDeg)) / 9.81);
 
     DogLog.log("Shoot/target", target);
     for (int i = 1; i <= 5; i++) {
-      DogLog.log("Shoot/positionTargeting" + i + "prec", new Pose3d(positionToTarget(target, i).x, positionToTarget(target, i).y, positionToTarget(target, i).z, new Rotation3d()));
+      DogLog.log("Shoot/positionTargeting/" + i + "prec", new Pose3d(positionToTarget(target, i).x, positionToTarget(target, i).y, positionToTarget(target, i).z, new Rotation3d()));
     }
+
+    DogLog.log("Shoot/ta", targetAngle);
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    shooter.stopAll();
+    //shooter.stopAll();
+    targetAngle = 0;
   }
 
   // Returns true when the command should end.
@@ -92,22 +103,13 @@ public class Shoot extends Command {
     return false;
   }
 
-  private void pointAtTarget(Vector3 target) {
-    double turnrate = -1 * MiscMath.clamp(Math.atan2(Vector3.subtract(new Vector3(drivetrain.getPose()), target).x, Vector3.subtract(new Vector3(drivetrain.getPose()), target).y) - drivetrain.getPose().getRotation().getRadians(), -maxRotSpeed, maxRotSpeed);
-    DogLog.log("Shoot/rot", -1 * (Math.atan2(Vector3.subtract(new Vector3(drivetrain.getPose()), target).x, Vector3.subtract(new Vector3(drivetrain.getPose()), target).y) - drivetrain.getPose().getRotation().getRadians()));
-    drivetrain.setFieldSpeeds(
-      new ChassisSpeeds(
-        drivetrain.getRobotSpeeds().vxMetersPerSecond,
-        drivetrain.getRobotSpeeds().vyMetersPerSecond,
-        -1 * MiscMath.clamp(Math.atan2(Vector3.subtract(new Vector3(drivetrain.getPose()), target).x, Vector3.subtract(new Vector3(drivetrain.getPose()), target).z) - drivetrain.getPose().getRotation().getRadians(), -maxRotSpeed, maxRotSpeed)
-      )
-    );
+  public double turnRate(Pose3d targetNoOffset) {
+    return -1 * MiscMath.clamp(targetAngle(targetNoOffset) - drivetrain.getPose().getRotation().getRadians(), -maxRotSpeed, maxRotSpeed);
   }
 
-  public double turnRate() {
-    Pose3d targetPose = Constants.Landmarks.BLUE_HUB;
-    Vector3 target = positionToTarget(targetPose, 5);
-    return -1 * MiscMath.clamp(Math.atan2(Vector3.subtract(new Vector3(drivetrain.getPose()), target).x, Vector3.subtract(new Vector3(drivetrain.getPose()), target).y) - drivetrain.getPose().getRotation().getRadians(), -maxRotSpeed, maxRotSpeed);
+  public double targetAngle(Pose3d targetNoOffset) {
+    Vector3 target = positionToTarget(targetNoOffset, 5);
+    return Math.atan2(Vector3.subtract(new Vector3(drivetrain.getPose()), target).x, Vector3.subtract(new Vector3(drivetrain.getPose()), target).y);
   }
 
   private boolean pointingAtTarget(Vector3 target) {
