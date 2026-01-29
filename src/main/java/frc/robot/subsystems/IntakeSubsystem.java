@@ -24,7 +24,6 @@ import frc.robot.Constants;
 import frc.robot.util.LoggedTalonFX;
 
 public class IntakeSubsystem extends SubsystemBase {
-  private static IntakeSubsystem instance;
   private LoggedTalonFX armMotor, intakeMotor;
   private CANcoder cancoder;
   private double targetAngle;
