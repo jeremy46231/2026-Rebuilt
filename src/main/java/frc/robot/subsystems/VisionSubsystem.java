@@ -104,6 +104,7 @@ public class VisionSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
+    
     visionEst = Optional.empty();
     latestVisionResult = null;
     if (cameraID != Constants.Vision.Cameras.COLOR_CAM){
@@ -115,7 +116,7 @@ public class VisionSubsystem extends SubsystemBase {
         }
       }
     }
-
+    
     DogLog.log("Vision/" + cameraTitle + "/CameraConnected", true);
 
     // add all unread results to results <List>
@@ -132,11 +133,31 @@ public class VisionSubsystem extends SubsystemBase {
           DogLog.log("Vision/BlobYaw", b.getYaw());
           DogLog.log("Vision/BlobPitch", b.getPitch());
           DogLog.log("Vision/BlobSkew", b.getSkew());
+          DogLog.log(
+                      "Vision/FuelGuage",
+                      ((double)
+                              Math.round(
+                                  b.getArea()
+                                      / Constants.Vision.MAX_DETECTABLE_FUEL_AREA_PERCENTAGE
+                                      * 100.0
+                                      / 10.0))
+                          * 10.0);
+          DogLog.log(
+                      "Vision/FuelGuageRealistic",
+                      ((double)
+                              Math.round(
+                                  b.getArea()
+                                      / Constants.Vision.REALISTIC_MAX_DETECTABLE_AREA_PERCENTAGE
+                                      * 100.0
+                                      / 10.0))
+                          * 10.0);
+          
         },
         () -> DogLog.log("Vision/BlobPresent", false));
   }
 
   public void addFilteredPose() {
+    DogLog.log("Vision/addFilteredPoseworking", true);
 
     if (latestVisionResult == null || latestVisionResult.getTargets().isEmpty()) {
       DogLog.log("Vision/" + cameraTitle + "/HasEstimate", visionEst.isPresent());
@@ -169,36 +190,36 @@ public class VisionSubsystem extends SubsystemBase {
       // for 26
 
       // skip AprilTag pose estimation for color cameras
-      if (cameraID == Constants.Vision.Cameras.COLOR_CAM) {
-        getLargestBlob()
-            .ifPresent(
-                blob -> {
-                  DogLog.log("Vision/BlobPresent", true);
-                  DogLog.log("Vision/BlobYaw", blob.getYaw());
-                  DogLog.log("Vision/BlobArea", blob.getArea());
-                  // calculating fuel gage percentage by dividing area of the ball by the max ball
-                  // area then multiplying by 100 and rounding to nearest 10
-                  DogLog.log(
-                      "Vision/FuelGuage",
-                      ((double)
-                              Math.round(
-                                  blob.getArea()
-                                      / Constants.Vision.MAX_DETECTABLE_FUEL_AREA_PERCENTAGE
-                                      * 100.0
-                                      / 10.0))
-                          * 10.0);
-                  DogLog.log(
-                      "Vision/FuelGuageRealistic",
-                      ((double)
-                              Math.round(
-                                  blob.getArea()
-                                      / Constants.Vision.REALISTIC_MAX_DETECTABLE_AREA_PERCENTAGE
-                                      * 100.0
-                                      / 10.0))
-                          * 10.0);
-                });
-        return;
-      }
+      // if (cameraID == Constants.Vision.Cameras.COLOR_CAM) {
+      //   getLargestBlob()
+      //       .ifPresent(
+      //           blob -> {
+      //             DogLog.log("Vision/BlobPresent", true);
+      //             DogLog.log("Vision/BlobYaw", blob.getYaw());
+      //             DogLog.log("Vision/BlobArea", blob.getArea());
+      //             // calculating fuel gage percentage by dividing area of the ball by the max ball
+      //             // area then multiplying by 100 and rounding to nearest 10
+      //             DogLog.log(
+      //                 "Vision/FuelGuage",
+      //                 ((double)
+      //                         Math.round(
+      //                             blob.getArea()
+      //                                 / Constants.Vision.MAX_DETECTABLE_FUEL_AREA_PERCENTAGE
+      //                                 * 100.0
+      //                                 / 10.0))
+      //                     * 10.0);
+      //             DogLog.log(
+      //                 "Vision/FuelGuageRealistic",
+      //                 ((double)
+      //                         Math.round(
+      //                             blob.getArea()
+      //                                 / Constants.Vision.REALISTIC_MAX_DETECTABLE_AREA_PERCENTAGE
+      //                                 * 100.0
+      //                                 / 10.0))
+      //                     * 10.0);
+      //           });
+      //   return;
+      // }
 
       // creates a list of all detected tags and logs for debugging
       List<PhotonTrackedTarget> tags =
