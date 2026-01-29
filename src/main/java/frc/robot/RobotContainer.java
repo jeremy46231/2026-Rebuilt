@@ -84,34 +84,31 @@ public class RobotContainer {
     joystick.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
 
     // right bumper -> run intake
-    if (Constants.intakeOnRobot)
-      joystick
-          .rightBumper()
-          .whileTrue(intakeSubsystem.runIntake());
+    if (Constants.intakeOnRobot) joystick.rightBumper().whileTrue(intakeSubsystem.runIntake());
 
     // left trigger + x -> arm to initial pos (0)
     joystick
         .leftTrigger()
         .and(joystick.x())
-    .onTrue(intakeSubsystem.armToDegrees(Constants.Intake.Arm.ARM_POS_INITIAL));
+        .onTrue(intakeSubsystem.armToDegrees(Constants.Intake.Arm.ARM_POS_INITIAL));
 
     // left trigger + a -> arm to extended pos (15)
     joystick
         .leftTrigger()
         .and(joystick.a())
-    .onTrue(intakeSubsystem.armToDegrees(Constants.Intake.Arm.ARM_POS_EXTENDED));
+        .onTrue(intakeSubsystem.armToDegrees(Constants.Intake.Arm.ARM_POS_EXTENDED));
 
     // left trigger + b -> arm to idle pos (45)
     joystick
         .leftTrigger()
         .and(joystick.b())
-    .onTrue(intakeSubsystem.armToDegrees(Constants.Intake.Arm.ARM_POS_IDLE));
+        .onTrue(intakeSubsystem.armToDegrees(Constants.Intake.Arm.ARM_POS_IDLE));
 
     // left trigger + y -> arm to retracted pos (90)
     joystick
         .leftTrigger()
         .and(joystick.y())
-    .onTrue(intakeSubsystem.armToDegrees(Constants.Intake.Arm.ARM_POS_RETRACTED));
+        .onTrue(intakeSubsystem.armToDegrees(Constants.Intake.Arm.ARM_POS_RETRACTED));
 
     drivetrain.registerTelemetry(logger::telemeterize);
   }
