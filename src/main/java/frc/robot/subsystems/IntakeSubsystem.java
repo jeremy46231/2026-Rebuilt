@@ -36,7 +36,12 @@ public class IntakeSubsystem extends SubsystemBase {
             Constants.Intake.MOTOR2_PORT,
             Constants.Swerve.WHICH_SWERVE_ROBOT.CANBUS_NAME);
 
-    Slot0Configs s0c = new Slot0Configs();
+    Slot0Configs s0c =
+        new Slot0Configs()
+            .withKP(Constants.Intake.KP);
+            .withKI(Constants.Intake.KI);
+            .withKD(Constants.Intake.KD);
+
     // Set up motor followers and deal with inverted motors
     Follower follower = new Follower(Constants.Intake.MOTOR1_PORT, MotorAlignmentValue.Aligned);
     motor2.setControl(follower);
