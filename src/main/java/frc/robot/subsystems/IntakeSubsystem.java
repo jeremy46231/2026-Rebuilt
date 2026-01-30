@@ -4,10 +4,14 @@
 
 package frc.robot.subsystems;
 
+import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
+import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
+import com.ctre.phoenix6.configs.TalonFXConfigurator;
 import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.VelocityVoltage;
+import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.MotorAlignmentValue;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -36,11 +40,24 @@ public class IntakeSubsystem extends SubsystemBase {
             Constants.Intake.MOTOR2_PORT,
             Constants.Swerve.WHICH_SWERVE_ROBOT.CANBUS_NAME);
 
-    Slot0Configs s0c =
+    Slot0Configs intakeSlot0Configs =
         new Slot0Configs()
-            .withKP(Constants.Intake.KP);
-            .withKI(Constants.Intake.KI);
+            .withKV(Constants.Intake.KV)
+            .withKP(Constants.Intake.KP)
+            .withKI(Constants.Intake.KI)
             .withKD(Constants.Intake.KD);
+
+    CurrentLimitsConfigs intakeCurrentLimitsConfigs =
+        new CurrentLimitsConfigs()
+            .withStatorCurrentLimitEnable(true)
+            .withStatorCurrentLimit(Constants.Intake.INTAKE_STATOR_CURRENT_LIMIT)
+            .withSupplyCurrentLimit(Constants.Intake.INTAKE_SUPPLY_CURRENT_LIMIT);
+
+    TalonFXConfigurator intakeMotor1Config = motor1.getConfigurator();
+    TalonFXConfigurator intakeMotor2Config = motor2.getConfigurator();
+
+    intakeMotor1Config.apply(intakeSlot0Configs);
+    intakeMotor2Config.apply(intakeCurrentLimitsConfigs);
 
     // Set up motor followers and deal with inverted motors
     Follower follower = new Follower(Constants.Intake.MOTOR1_PORT, MotorAlignmentValue.Aligned);

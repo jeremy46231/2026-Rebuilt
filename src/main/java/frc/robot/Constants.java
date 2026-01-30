@@ -23,6 +23,11 @@ public final class Constants {
   public static class Intake {
     public static final int MOTOR1_PORT = 0;
     public static final int MOTOR2_PORT  = 32;
+
+    public static final double KP  = 0.1;
+    public static final double KI  = 0.0;
+    public static final double KD  = 0.0;
+    public static final double KV  = 0.14;
   }
 
   public static class Shooter {
