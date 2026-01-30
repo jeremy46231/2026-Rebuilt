@@ -41,6 +41,7 @@ public class VisionSubsystem extends SubsystemBase {
 
   // NOTE FOR SID/SAKETH: come back to ln 57-70 in 2025 repo
 
+  // VISION:
   private double maxDistance = 15.0; // meters, beyond which readings are dropped
 
   // normalization maximums
@@ -67,8 +68,11 @@ public class VisionSubsystem extends SubsystemBase {
   public static final double timestampDiffThreshold = 0.5;
   public static final double timestampFPGACorrection = -0.03;
 
+  // :VISION
+
   // constructor for VisionSubsystem
   public VisionSubsystem(Constants.Vision.Cameras cameraID, BooleanSupplier isRedSide) {
+    // VISION:
     this.isRedSide = isRedSide;
     this.cameraID = cameraID;
     photonCamera = new PhotonCamera(cameraID.toString());
@@ -92,19 +96,23 @@ public class VisionSubsystem extends SubsystemBase {
 
     cameraTitle = cameraID.getLoggingName();
     latestVisionResult = null;
+
+    // :VISION
   }
 
-  // returns VisionSubsystem instance
+  // returns VisionSubsystem instance (VISION:)
   public static VisionSubsystem getInstance(
       Constants.Vision.Cameras cameraID, BooleanSupplier isRedSide) {
     int index = cameraID.ordinal();
     if (cameraList[index] == null) cameraList[index] = new VisionSubsystem(cameraID, isRedSide);
     return cameraList[index];
   }
+  // :VISION
 
   @Override
   public void periodic() {
     
+    // VISION:
     visionEst = Optional.empty();
     latestVisionResult = null;
     if (cameraID != Constants.Vision.Cameras.COLOR_CAM){
@@ -125,7 +133,10 @@ public class VisionSubsystem extends SubsystemBase {
     // Go through all results (if there are any) and update the latest result with the last
     for (var result : results) latestVisionResult = result;
 
+    // :VISION
+
     // log yaw and area of blob if present
+    // OBJ:
     Optional<PhotonTrackedTarget> blob = getLargestBlob();
     blob.ifPresentOrElse(
         b -> {
@@ -154,9 +165,10 @@ public class VisionSubsystem extends SubsystemBase {
           
         },
         () -> DogLog.log("Vision/BlobPresent", false));
+        // :OBJ
   }
 
-  public void addFilteredPose() {
+  public void addFilteredPose() { // All VISION:
     DogLog.log("Vision/addFilteredPoseworking", true);
 
     if (latestVisionResult == null || latestVisionResult.getTargets().isEmpty()) {
@@ -189,38 +201,7 @@ public class VisionSubsystem extends SubsystemBase {
       // 2025-reefscape has a validTags list on lines 160-166, replacing it with a list of all tags
       // for 26
 
-      // skip AprilTag pose estimation for color cameras
-      // if (cameraID == Constants.Vision.Cameras.COLOR_CAM) {
-      //   getLargestBlob()
-      //       .ifPresent(
-      //           blob -> {
-      //             DogLog.log("Vision/BlobPresent", true);
-      //             DogLog.log("Vision/BlobYaw", blob.getYaw());
-      //             DogLog.log("Vision/BlobArea", blob.getArea());
-      //             // calculating fuel gage percentage by dividing area of the ball by the max ball
-      //             // area then multiplying by 100 and rounding to nearest 10
-      //             DogLog.log(
-      //                 "Vision/FuelGuage",
-      //                 ((double)
-      //                         Math.round(
-      //                             blob.getArea()
-      //                                 / Constants.Vision.MAX_DETECTABLE_FUEL_AREA_PERCENTAGE
-      //                                 * 100.0
-      //                                 / 10.0))
-      //                     * 10.0);
-      //             DogLog.log(
-      //                 "Vision/FuelGuageRealistic",
-      //                 ((double)
-      //                         Math.round(
-      //                             blob.getArea()
-      //                                 / Constants.Vision.REALISTIC_MAX_DETECTABLE_AREA_PERCENTAGE
-      //                                 * 100.0
-      //                                 / 10.0))
-      //                     * 10.0);
-      //           });
-      //   return;
-      // }
-
+      // VISION: to end
       // creates a list of all detected tags and logs for debugging
       List<PhotonTrackedTarget> tags =
           latestVisionResult.getTargets().stream().collect(Collectors.toList());
@@ -428,7 +409,7 @@ public class VisionSubsystem extends SubsystemBase {
   }
 
   // object detection
-
+  // OBJ:
   public Optional<PhotonTrackedTarget> getLargestBlob() {
     if (latestVisionResult == null) return Optional.empty();
     List<PhotonTrackedTarget> targets = latestVisionResult.getTargets();
