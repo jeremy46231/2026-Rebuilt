@@ -13,6 +13,9 @@ import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.MotorAlignmentValue;
+
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.util.LoggedTalonFX;
@@ -72,6 +75,15 @@ public class IntakeSubsystem extends SubsystemBase {
     motor1.setControl(velocityRequest.withVelocity(motorVelocity));
   }
 
+  // Commands
+  public Command runIntakeDutyCycle(double dutyCycleProportion) {
+    return Commands.startEnd(() -> this.setProportion(dutyCycleProportion), () -> this.setProportion(0), this);
+  }
+
+  public Command runIntakeVelocity(double velocity) {
+    return Commands.startEnd(() -> this.setVelocity(velocity), () -> this.setVelocity(0), this);
+  }
+  
   @Override
   public void periodic() {
   }
