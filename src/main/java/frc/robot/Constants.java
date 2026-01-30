@@ -24,6 +24,9 @@ public final class Constants {
     public static final int MOTOR1_PORT = 0;
     public static final int MOTOR2_PORT  = 32;
 
+    public static final double INTAKE_SUPPLY_CURRENT_LIMIT = 30.0;
+    public static final double INTAKE_STATOR_CURRENT_LIMIT = 50.0;
+
     public static final double KP  = 0.1;
     public static final double KI  = 0.0;
     public static final double KD  = 0.0;
