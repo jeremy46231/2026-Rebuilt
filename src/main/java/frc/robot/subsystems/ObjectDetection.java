@@ -3,6 +3,7 @@ package frc.robot.subsystems;
 import dev.doglog.DogLog;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.Constants.Vision.FUEL_GAUGE;
 import java.util.List;
 import java.util.Optional;
 import org.photonvision.PhotonCamera;
@@ -44,26 +45,43 @@ public class ObjectDetection extends SubsystemBase {
           DogLog.log("Vision/BlobYaw", b.getYaw());
           DogLog.log("Vision/BlobPitch", b.getPitch());
           DogLog.log("Vision/BlobSkew", b.getSkew());
-          DogLog.log(
-              "Vision/FuelGauge",
+          double maxFuelPercentage =
               ((double)
                       Math.round(
                           b.getArea()
                               / Constants.Vision.MAX_DETECTABLE_FUEL_AREA_PERCENTAGE
                               * 100.0
                               / 10.0))
-                  * 10.0);
-          DogLog.log(
-              "Vision/FuelGaugeRealistic",
+                  * 10.0;
+
+          double maxFuelRealisticPercentage =
               ((double)
                       Math.round(
                           b.getArea()
                               / Constants.Vision.REALISTIC_MAX_DETECTABLE_AREA_PERCENTAGE
                               * 100.0
                               / 10.0))
-                  * 10.0);
+                  * 10.0;
+
+          DogLog.log("Vision/FuelGauge", maxFuelPercentage);
+          DogLog.log("Vision/FuelGaugeRealistic", maxFuelRealisticPercentage);
+
+          logThresholdStates(maxFuelPercentage, maxFuelRealisticPercentage);
         },
         () -> DogLog.log("Vision/BlobPresent", false));
+  }
+
+  public void logThresholdStates(double max, double maxRealistic) {
+
+    DogLog.log("Vision/FuelGauge/empty", (max >= FUEL_GAUGE.EMPTY));
+    DogLog.log("Vision/FuelGauge/low", (max >= FUEL_GAUGE.LOW));
+    DogLog.log("Vision/FuelGauge/medium", (max >= FUEL_GAUGE.MEDIUM));
+    DogLog.log("Vision/FuelGauge/full", (max >= FUEL_GAUGE.FULL));
+
+    DogLog.log("Vision/FuelGauge/realEmpty", (maxRealistic >= FUEL_GAUGE.EMPTY));
+    DogLog.log("Vision/FuelGauge/realLow", (maxRealistic >= FUEL_GAUGE.LOW));
+    DogLog.log("Vision/FuelGauge/realMedium", (maxRealistic >= FUEL_GAUGE.MEDIUM));
+    DogLog.log("Vision/FuelGauge/realFull", (maxRealistic >= FUEL_GAUGE.FULL));
   }
 
   public Optional<PhotonTrackedTarget> getLargestBlob() {
