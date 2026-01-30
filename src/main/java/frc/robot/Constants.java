@@ -272,5 +272,13 @@ public final class Constants {
           throw new IllegalArgumentException("Unknown camera ID: " + camera);
       }
     }
+
+    public static class FUEL_GAUGE_THRESHOLDS {
+      public static final double EMPTY = 0.0;
+      public static final double LOW = 0.0;
+      public static final double MEDIUM = 0.0;
+      public static final double FULL = 0.0;
+    }
+
   }
 }

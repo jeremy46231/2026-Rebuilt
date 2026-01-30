@@ -41,22 +41,7 @@ public class RobotContainer {
 
   public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
 
-  public final VisionSubsystem visionRight, visionLeft, visionColor;
-
   public RobotContainer() {
-
-    if (Constants.visionOnRobot) {
-      visionRight = VisionSubsystem.getInstance(Constants.Vision.Cameras.RIGHT_CAM, () -> true);
-      visionLeft = VisionSubsystem.getInstance(Constants.Vision.Cameras.LEFT_CAM, () -> true);
-
-      visionColor = VisionSubsystem.getInstance(Constants.Vision.Cameras.COLOR_CAM, () -> true);
-
-    } else {
-      visionRight = null;
-      visionLeft = null;
-
-      visionColor = null;
-    }
 
     configureBindings();
   }
