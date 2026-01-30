@@ -27,7 +27,7 @@ public final class Constants {
     public static final double INTAKE_SUPPLY_CURRENT_LIMIT = 30.0;
     public static final double INTAKE_STATOR_CURRENT_LIMIT = 50.0;
 
-    public static final double KP  = 0.1;
+    public static final double KP  = 1.0;
     public static final double KI  = 0.0;
     public static final double KD  = 0.0;
     public static final double KV  = 0.14;
@@ -35,6 +35,11 @@ public final class Constants {
 
   public static class Shooter {
     public static final int MOTOR1_PORT = -1;
+
+    public static final double KP  = 1.0;
+    public static final double KI  = 0.0;
+    public static final double KD  = 0.0;
+    public static final double KV  = 0.14;
   }
 
   public static class Swerve {
