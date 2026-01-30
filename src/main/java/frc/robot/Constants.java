@@ -273,11 +273,12 @@ public final class Constants {
       }
     }
 
-    public static class FUEL_GAUGE_THRESHOLDS {
-      public static final double EMPTY = 0.0;
-      public static final double LOW = 0.0;
-      public static final double MEDIUM = 0.0;
-      public static final double FULL = 0.0;
+    public static class FUEL_GAUGE {
+      public static final double EMPTY = 20.0;
+      public static final double LOW = 50.0;
+      public static final double MEDIUM = 70.0;
+      public static final double FULL = 100.0;
     }
+
   }
 }
