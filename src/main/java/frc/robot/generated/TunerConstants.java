@@ -135,6 +135,7 @@ public class TunerConstants {
               .withSteerFrictionVoltage(kSteerFrictionVoltage)
               .withDriveFrictionVoltage(kDriveFrictionVoltage);
 
+/*
   // Front Left
   private static final int kFrontLeftDriveMotorId = 4;
   private static final int kFrontLeftSteerMotorId = 3;
@@ -185,6 +186,41 @@ public class TunerConstants {
   private static final Angle kBackRightEncoderOffset = Rotations.of(-0.09765625);
   private static final boolean kBackRightSteerMotorInverted = false;
   private static final boolean kBackRightEncoderInverted = false;
+
+  */
+
+   // Front Left
+    private static final int FRONT_LEFT_STEER_MOTOR_ID = 3;
+    private static final int FRONT_LEFT_DRIVE_MOTOR_ID = 4;
+    private static final int FRONT_LEFT_ENCODER_ID = 21;
+    private static final double FRONT_LEFT_ENCODER_OFFSET = -0.46337890625;//-0.464599609375;//-0.466552734375;
+
+    private static final double FRONT_LEFT_X_POS_INCHES = 11.26 - moveCOMX;
+    private static final double FRONT_LEFT_Y_POS_INCHES = 11.417 - moveCOMY;
+
+    // Front Right
+    private static final int FRONT_RIGHT_STEER_MOTOR_ID = 5;
+    private static final int FRONT_RIGHT_DRIVE_MOTOR_ID = 6;
+    private static final int FRONT_RIGHT_ENCODER_ID = 22;
+    private static final double FRONT_RIGHT_ENCODER_OFFSET = -0.437744140625;//-0.44775390625;//-0.436767578125;
+
+    private static final double FRONT_RIGHT_X_POS_INCHES = 11.26 - moveCOMX;
+    private static final double FRONT_RIGHT_Y_POS_INCHES = -11.417 - moveCOMY;
+
+    // Back Left
+    private static final int BACK_LEFT_STEER_MOTOR_ID = 1;
+    private static final int BACK_LEFT_DRIVE_MOTOR_ID = 2;
+    private static final int BACK_LEFT_ENCODER_ID = 20;
+    private static final double BACK_LEFT_ENCODER_OFFSET = -0.1796875;//-0.18886484375;//-0.165283203125;
+
+    private static final double BACK_LEFT_X_POS_INCHES = -11.26 - moveCOMX;
+    private static final double BACK_LEFT_Y_POS_INCHES = 11.417 - moveCOMY;
+
+    // Back Right
+    private static final int BACK_RIGHT_STEER_MOTOR_ID = 7;
+    private static final int BACK_RIGHT_DRIVE_MOTOR_ID = 8;
+    private static final int BACK_RIGHT_ENCODER_ID = 23;
+    private static final double BACK_RIGHT_ENCODER_OFFSET = -0.345703125;//-0.33544921875;//-0.336181640625;
 
   // private static final Distance kBackRightXPos = Inches.of(-11.26);
   // private static final Distance kBackRightYPos = Inches.of(-11.417);
