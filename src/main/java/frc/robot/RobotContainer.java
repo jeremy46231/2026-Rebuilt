@@ -115,21 +115,27 @@ public class RobotContainer {
     joystick.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
 
     // dtp no rotation; x=Ftb, y=sts
+    // joystick
+    //     .x()
+    //     .whileTrue(
+    //         new DriveToPose(
+    //             drivetrain,
+    //             () -> MiscUtils.plus(drivetrain.getCurrentState().Pose, new Translation2d(0, 1))));
+
     joystick
-        .x()
+        .y()
         .whileTrue(
             new DriveToPose(
                 drivetrain,
                 () -> MiscUtils.plus(drivetrain.getCurrentState().Pose, new Translation2d(1, 0))));
 
     // dtp with rotation
-    // joystick
-    //     .x()
-    //     .whileTrue(
-    //         new DriveToPose(
-    //             drivetrain,
-    //             () -> MiscUtils.plusWithRotation(drivetrain.getCurrentState().Pose, new
-    // Transform2d(new Translation2d(1, 0), new Rotation2d(1)))));
+    joystick
+        .x()
+        .whileTrue(
+            new DriveToPose(
+                drivetrain,
+                () -> MiscUtils.plusWithRotation(drivetrain.getCurrentState().Pose, new Pose2d(new Translation2d(1, 0), new Rotation2d(1)))));
 
     // choreo
     // joystick.x().whileTrue(autoRoutines.getPathAsCommand());
