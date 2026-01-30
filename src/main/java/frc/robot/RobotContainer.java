@@ -135,28 +135,30 @@ public class RobotContainer {
     // 0))));
 
     //dtp with rotation
-    joystick
-        .x()
-        .whileTrue(
-            new DriveToPose(
-                drivetrain,
-                () -> MiscUtils.plusWithRotation(drivetrain.getCurrentState().Pose, new Transform2d(new Translation2d(1, 0), new Rotation2d(1)))));
+    // joystick
+    //     .x()
+    //     .whileTrue(
+    //         new DriveToPose(
+    //             drivetrain,
+    //             () -> MiscUtils.plusWithRotation(drivetrain.getCurrentState().Pose, new Transform2d(new Translation2d(1, 0), new Rotation2d(1)))));
 
     // choreo
     // joystick.x().whileTrue(autoRoutines.getPathAsCommand());
 
     // Auto sequence: choreo forward, dtp back
-    // joystick
-    //     .x()
-    //     .onTrue(
-    //         autoRoutines
-    //             .getPathAsCommand()
-    //             .andThen(
-    //                 new DriveToPose(
-    //                     drivetrain,
-    //                     () ->
-    //                         MiscUtils.plus(
-    //                             drivetrain.getCurrentState().Pose, new Translation2d(1, 0)))));
+    Command trajCommand =
+    autoFactory
+        .resetOdometry("MoveForward.traj")
+        .andThen(
+            autoFactory
+                .trajectoryCmd("MoveForward.traj")
+                .andThen(
+                    new DriveToPose(
+                        drivetrain,
+                        () ->
+                            MiscUtils.plus(
+                                drivetrain.getCurrentState().Pose, new Translation2d(1, 0)))));
+    joystick.x().whileTrue(trajCommand);
 
     drivetrain.registerTelemetry(logger::telemeterize);
   }
