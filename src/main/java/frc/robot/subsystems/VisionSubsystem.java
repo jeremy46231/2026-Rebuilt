@@ -107,15 +107,16 @@ public class VisionSubsystem extends SubsystemBase {
     if (cameraList[index] == null) cameraList[index] = new VisionSubsystem(cameraID, isRedSide);
     return cameraList[index];
   }
+
   // :VISION
 
   @Override
   public void periodic() {
-    
+
     // VISION:
     visionEst = Optional.empty();
     latestVisionResult = null;
-    if (cameraID != Constants.Vision.Cameras.COLOR_CAM){
+    if (cameraID != Constants.Vision.Cameras.COLOR_CAM) {
       for (PhotonPipelineResult result : photonCamera.getAllUnreadResults()) {
         latestVisionResult = result;
         visionEst = poseEstimator.estimateCoprocMultiTagPose(result);
@@ -124,7 +125,7 @@ public class VisionSubsystem extends SubsystemBase {
         }
       }
     }
-    
+
     DogLog.log("Vision/" + cameraTitle + "/CameraConnected", true);
 
     // add all unread results to results <List>
@@ -145,27 +146,26 @@ public class VisionSubsystem extends SubsystemBase {
           DogLog.log("Vision/BlobPitch", b.getPitch());
           DogLog.log("Vision/BlobSkew", b.getSkew());
           DogLog.log(
-                      "Vision/FuelGuage",
-                      ((double)
-                              Math.round(
-                                  b.getArea()
-                                      / Constants.Vision.MAX_DETECTABLE_FUEL_AREA_PERCENTAGE
-                                      * 100.0
-                                      / 10.0))
-                          * 10.0);
+              "Vision/FuelGuage",
+              ((double)
+                      Math.round(
+                          b.getArea()
+                              / Constants.Vision.MAX_DETECTABLE_FUEL_AREA_PERCENTAGE
+                              * 100.0
+                              / 10.0))
+                  * 10.0);
           DogLog.log(
-                      "Vision/FuelGuageRealistic",
-                      ((double)
-                              Math.round(
-                                  b.getArea()
-                                      / Constants.Vision.REALISTIC_MAX_DETECTABLE_AREA_PERCENTAGE
-                                      * 100.0
-                                      / 10.0))
-                          * 10.0);
-          
+              "Vision/FuelGuageRealistic",
+              ((double)
+                      Math.round(
+                          b.getArea()
+                              / Constants.Vision.REALISTIC_MAX_DETECTABLE_AREA_PERCENTAGE
+                              * 100.0
+                              / 10.0))
+                  * 10.0);
         },
         () -> DogLog.log("Vision/BlobPresent", false));
-        // :OBJ
+    // :OBJ
   }
 
   public void addFilteredPose() { // All VISION:
