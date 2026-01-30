@@ -23,7 +23,6 @@ public class Robot extends TimedRobot {
   private final RobotContainer m_robotContainer;
 
   private VisionSubsystem visionRight, visionLeft;
-  private ObjectDetection visionColor;
 
   /**
    * This function is run when the robot is first started up and should be used for any
