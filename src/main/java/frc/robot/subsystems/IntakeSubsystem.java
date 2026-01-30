@@ -4,6 +4,7 @@
 
 package frc.robot.subsystems;
 
+import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.VelocityVoltage;
@@ -28,13 +29,14 @@ public class IntakeSubsystem extends SubsystemBase {
         new LoggedTalonFX(
             "subsystems/Intake/motor1",
             Constants.Intake.MOTOR1_PORT,
-            "rio");
+            Constants.Swerve.WHICH_SWERVE_ROBOT.CANBUS_NAME);
     motor2 =
         new LoggedTalonFX(
             "subsystems/Intake/motor1",
             Constants.Intake.MOTOR2_PORT,
-            "rio");
+            Constants.Swerve.WHICH_SWERVE_ROBOT.CANBUS_NAME);
 
+    Slot0Configs s0c = new Slot0Configs();
     // Set up motor followers and deal with inverted motors
     Follower follower = new Follower(Constants.Intake.MOTOR1_PORT, MotorAlignmentValue.Aligned);
     motor2.setControl(follower);
@@ -42,6 +44,10 @@ public class IntakeSubsystem extends SubsystemBase {
 
   public void setProportion(double dutyCycleProportion) {
     motor1.setControl(dutyCycleRequest.withOutput(dutyCycleProportion));
+  }
+
+  public void setVelocity(double motorVelocity) {
+    motor1.setControl(velocityRequest.withVelocity(motorVelocity));
   }
 
   @Override

@@ -20,6 +20,15 @@ public final class Constants {
     public static final int kDriverControllerPort = 0;
   }
 
+  public static class Intake {
+    public static final int MOTOR1_PORT = 0;
+    public static final int MOTOR2_PORT  = 32;
+  }
+
+  public static class Shooter {
+    public static final int MOTOR1_PORT = -1;
+  }
+
   public static class Swerve {
     public static final SwerveType WHICH_SWERVE_ROBOT = SwerveType.PROTO;
 
