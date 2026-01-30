@@ -82,12 +82,23 @@ public class RobotContainer {
     // reset the field-centric heading on left bumper press
     joystick.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
 
-    joystick
-        .x()
-        .whileTrue(
-            new DriveToPose(
-                drivetrain,
-                () -> MiscUtils.plus(drivetrain.getCurrentState().Pose, new Translation2d(0, 1))));
+  // dtp no rotation; x=Ftb, y=sts
+   joystick
+       .x()
+       .whileTrue(
+           new DriveToPose(
+               drivetrain,
+               () -> MiscUtils.plus(drivetrain.getCurrentState().Pose, new Translation2d(1,
+   0))));
+
+
+   //dtp with rotation
+   joystick
+       .x()
+       .whileTrue(
+           new DriveToPose(
+               drivetrain,
+               () -> MiscUtils.plusWithRotation(drivetrain.getCurrentState().Pose, new Transform2d(new Translation2d(1, 0), new Rotation2d(1)))));
 
     drivetrain.registerTelemetry(logger::telemeterize);
   }
