@@ -71,16 +71,10 @@ public class RobotContainer {
     //                             drivetrain.getCurrentState().Pose, new Translation2d(1, 0)))));
     Command trajCommand =
         autoFactory
-            .resetOdometry("MoveForward.traj")
+            .resetOdometry("LongDistance.traj")
             .andThen(
                 autoFactory
-                    .trajectoryCmd("MoveForward.traj")
-                    .andThen(
-                        new DriveToPose(
-                            drivetrain,
-                            () ->
-                                MiscUtils.plus(
-                                    drivetrain.getCurrentState().Pose, new Translation2d(1, 0)))));
+                    .trajectoryCmd("LongDistance.traj"));
 
     autoChooser.addCmd("sequence", () -> trajCommand);
 

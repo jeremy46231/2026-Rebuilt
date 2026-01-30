@@ -194,7 +194,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         () -> getCurrentState().Pose,
         this::resetPose,
         this::followPath,
-        false,
+        true,
         this,
         trajLogger); // getState().pose
   }
