@@ -57,8 +57,8 @@
   },
   "bumper":{
    "front":{
-    "exp":"19 in",
-    "val":0.4826
+    "exp":"25 in",
+    "val":0.635
    },
    "side":{
     "exp":"25.46 in",
