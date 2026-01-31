@@ -3,7 +3,7 @@ package frc.robot.subsystems;
 import dev.doglog.DogLog;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
-import frc.robot.Constants.Vision.fuelGauge;
+import frc.robot.Constants.Vision.FuelGauge;
 import java.util.List;
 import java.util.Optional;
 import org.photonvision.PhotonCamera;
@@ -66,32 +66,32 @@ public class ObjectDetection extends SubsystemBase {
           DogLog.log("Vision/FuelGauge", maxFuelPercentage);
           DogLog.log("Vision/FuelGaugeRealistic", maxFuelRealisticPercentage);
 
-          logThresholdStates(maxFuelPercentage, maxFuelRealisticPercentage);
+          logThresholdState(maxFuelPercentage, maxFuelRealisticPercentage);
         },
         () -> DogLog.log("Vision/BlobPresent", false));
   }
 
-  public void logThresholdStates(double max, double maxRealistic) {
-    fuelGauge gauge, realisticGauge;
+  public void logThresholdState(double max, double maxRealistic) {
+    FuelGauge gauge, realisticGauge;
 
-    if (max < fuelGauge.EMPTY.getThreshold()) {
-      gauge = fuelGauge.EMPTY;
-    } else if (max < fuelGauge.LOW.getThreshold()) {
-      gauge = fuelGauge.LOW;
-    } else if (max < fuelGauge.MEDIUM.getThreshold()) {
-      gauge = fuelGauge.MEDIUM;
+    if (max < FuelGauge.EMPTY.getThreshold()) {
+      gauge = FuelGauge.EMPTY;
+    } else if (max < FuelGauge.LOW.getThreshold()) {
+      gauge = FuelGauge.LOW;
+    } else if (max < FuelGauge.MEDIUM.getThreshold()) {
+      gauge = FuelGauge.MEDIUM;
     } else {
-      gauge = fuelGauge.FULL;
+      gauge = FuelGauge.FULL;
     }
 
-    if (maxRealistic < fuelGauge.EMPTY.getThreshold()) {
-      realisticGauge = fuelGauge.EMPTY;
-    } else if (maxRealistic < fuelGauge.LOW.getThreshold()) {
-      realisticGauge = fuelGauge.LOW;
-    } else if (maxRealistic < fuelGauge.MEDIUM.getThreshold()) {
-      realisticGauge = fuelGauge.MEDIUM;
+    if (maxRealistic < FuelGauge.EMPTY.getThreshold()) {
+      realisticGauge = FuelGauge.EMPTY;
+    } else if (maxRealistic < FuelGauge.LOW.getThreshold()) {
+      realisticGauge = FuelGauge.LOW;
+    } else if (maxRealistic < FuelGauge.MEDIUM.getThreshold()) {
+      realisticGauge = FuelGauge.MEDIUM;
     } else {
-      realisticGauge = fuelGauge.FULL;
+      realisticGauge = FuelGauge.FULL;
     }
 
     DogLog.log("Vision/FuelGaugeLevel", gauge.toString());

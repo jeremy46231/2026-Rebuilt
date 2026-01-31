@@ -273,7 +273,7 @@ public final class Constants {
       }
     }
 
-    public static enum fuelGauge {
+    public static enum FuelGauge {
       EMPTY(20.0),
       LOW(50.0),
       MEDIUM(70.0),
@@ -281,7 +281,7 @@ public final class Constants {
 
       private double threshold;
 
-      fuelGauge(double threshold) {
+      FuelGauge(double threshold) {
         this.threshold = threshold;
       }
 
