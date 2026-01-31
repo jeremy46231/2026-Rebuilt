@@ -44,8 +44,7 @@ public class RobotContainer {
 
   public final IntakeSubsystem intakeSubsystem =
       Constants.intakeOnRobot ? new IntakeSubsystem() : null;
-  public final ShooterSubsystem lebron =
-      Constants.shooterOnRobot ? new ShooterSubsystem() : null;
+  public final ShooterSubsystem lebron = Constants.shooterOnRobot ? new ShooterSubsystem() : null;
 
   public RobotContainer() {
     configureBindings();
