@@ -13,7 +13,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
-import frc.robot.commands.ShooterCommands.ShootAtSpeed;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.ShooterSubsystem;
@@ -46,9 +45,9 @@ public class RobotContainer {
 
   public RobotContainer() {
     if (Constants.shooterOnRobot) {
-        lebron = ShooterSubsystem.getInstance();
+      lebron = new ShooterSubsystem();
     } else {
-        lebron = null;
+      lebron = null;
     }
 
     configureBindings();
@@ -92,7 +91,7 @@ public class RobotContainer {
 
     drivetrain.registerTelemetry(logger::telemeterize);
 
-    joystick.rightTrigger().whileTrue(new ShootAtSpeed(lebron));
+    joystick.rightTrigger().whileTrue(lebron.ShootAtSpeed());
   }
 
   public Command getAutonomousCommand() {
