@@ -12,7 +12,6 @@ import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
-import frc.robot.Constants.Vision.FuelGauge;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.BooleanSupplier;
@@ -29,7 +28,6 @@ public class VisionSubsystem extends SubsystemBase {
   private static VisionSubsystem[] cameraList =
       new VisionSubsystem[Constants.Vision.Cameras.values().length];
 
-  // Camera datatype with only 3 options, left, right, or color
   private final Constants.Vision.Cameras cameraID;
 
   private String cameraTitle;
@@ -69,11 +67,8 @@ public class VisionSubsystem extends SubsystemBase {
   public static final double timestampDiffThreshold = 0.5;
   public static final double timestampFPGACorrection = -0.03;
 
-  // :VISION
-
   // constructor for VisionSubsystem
   public VisionSubsystem(Constants.Vision.Cameras cameraID, BooleanSupplier isRedSide) {
-    // VISION:
     this.isRedSide = isRedSide;
     this.cameraID = cameraID;
     photonCamera = new PhotonCamera(cameraID.toString());
@@ -83,25 +78,13 @@ public class VisionSubsystem extends SubsystemBase {
     this.fieldLayout = AprilTagFieldLayout.loadField(AprilTagFields.k2026RebuiltWelded);
 
     // initialize poseEstimator
-    if (cameraID != Constants.Vision.Cameras.COLOR_CAM) {
-      poseEstimator = new PhotonPoseEstimator(fieldLayout, cameraToRobot);
-    } else {
-      poseEstimator = null; // color camera does not need pose estimation
-    }
-    // initialize poseEstimator - changes on ln 77 (breaks on new), 177
-    if (poseEstimator != null) {
-      DogLog.log("Vision/PoseEstimator", true);
-      return;
-    }
-    DogLog.log("Vision/PoseEstimator", false);
+
+    poseEstimator = new PhotonPoseEstimator(fieldLayout, cameraToRobot);
 
     cameraTitle = cameraID.getLoggingName();
     latestVisionResult = null;
-
-    // :VISION
   }
 
-  // returns VisionSubsystem instance (VISION:)
   public static VisionSubsystem getInstance(
       Constants.Vision.Cameras cameraID, BooleanSupplier isRedSide) {
     int index = cameraID.ordinal();
@@ -109,21 +92,18 @@ public class VisionSubsystem extends SubsystemBase {
     return cameraList[index];
   }
 
-  // :VISION
-
   @Override
   public void periodic() {
 
     // VISION:
     visionEst = Optional.empty();
     latestVisionResult = null;
-    if (cameraID != Constants.Vision.Cameras.COLOR_CAM) {
-      for (PhotonPipelineResult result : photonCamera.getAllUnreadResults()) {
-        latestVisionResult = result;
-        visionEst = poseEstimator.estimateCoprocMultiTagPose(result);
-        if (visionEst.isEmpty()) {
-          visionEst = poseEstimator.estimateLowestAmbiguityPose(result);
-        }
+
+    for (PhotonPipelineResult result : photonCamera.getAllUnreadResults()) {
+      latestVisionResult = result;
+      visionEst = poseEstimator.estimateCoprocMultiTagPose(result);
+      if (visionEst.isEmpty()) {
+        visionEst = poseEstimator.estimateLowestAmbiguityPose(result);
       }
     }
 
@@ -134,74 +114,9 @@ public class VisionSubsystem extends SubsystemBase {
 
     // Go through all results (if there are any) and update the latest result with the last
     for (var result : results) latestVisionResult = result;
-
-    // :VISION
-
-    // log yaw and area of blob if present
-    // OBJ:
-
-    Optional<PhotonTrackedTarget> blob = getLargestBlob();
-    blob.ifPresentOrElse(
-        b -> {
-          DogLog.log("Vision/BlobPresent", true);
-          DogLog.log("Vision/BlobYaw", b.getYaw());
-          DogLog.log("Vision/BlobPitch", b.getPitch());
-          DogLog.log("Vision/BlobSkew", b.getSkew());
-          double maxFuelPercentage =
-              ((double)
-                      Math.round(
-                          b.getArea()
-                              / Constants.Vision.MAX_DETECTABLE_FUEL_AREA_PERCENTAGE
-                              * 100.0
-                              / 10.0))
-                  * 10.0;
-
-          double maxFuelRealisticPercentage =
-              ((double)
-                      Math.round(
-                          b.getArea()
-                              / Constants.Vision.REALISTIC_MAX_DETECTABLE_AREA_PERCENTAGE
-                              * 100.0
-                              / 10.0))
-                  * 10.0;
-
-          DogLog.log("Vision/FuelGauge", maxFuelPercentage);
-          DogLog.log("Vision/FuelGaugeRealistic", maxFuelRealisticPercentage);
-
-          logThresholdState(maxFuelPercentage, maxFuelRealisticPercentage);
-        },
-        () -> DogLog.log("Vision/BlobPresent", false));
-    // :OBJ
   }
 
-  public void logThresholdState(double max, double maxRealistic) {
-    FuelGauge gauge, realisticGauge;
-
-    if (max < FuelGauge.EMPTY.getThreshold()) {
-      gauge = FuelGauge.EMPTY;
-    } else if (max < FuelGauge.LOW.getThreshold()) {
-      gauge = FuelGauge.LOW;
-    } else if (max < FuelGauge.MEDIUM.getThreshold()) {
-      gauge = FuelGauge.MEDIUM;
-    } else {
-      gauge = FuelGauge.FULL;
-    }
-
-    if (maxRealistic < FuelGauge.EMPTY.getThreshold()) {
-      realisticGauge = FuelGauge.EMPTY;
-    } else if (maxRealistic < FuelGauge.LOW.getThreshold()) {
-      realisticGauge = FuelGauge.LOW;
-    } else if (maxRealistic < FuelGauge.MEDIUM.getThreshold()) {
-      realisticGauge = FuelGauge.MEDIUM;
-    } else {
-      realisticGauge = FuelGauge.FULL;
-    }
-
-    DogLog.log("Vision/FuelGaugeLevel", gauge.toString());
-    DogLog.log("Vision/FuelGaugeRealisticLevel", realisticGauge.toString());
-  }
-
-  public void addFilteredPose() { // All VISION:
+  public void addFilteredPose() {
     DogLog.log("Vision/addFilteredPoseworking", true);
 
     if (latestVisionResult == null || latestVisionResult.getTargets().isEmpty()) {
@@ -439,32 +354,5 @@ public class VisionSubsystem extends SubsystemBase {
 
     double computedStdDevs = calibrationFactor * tagFactor * distanceFactor * speedFactor;
     return computedStdDevs;
-  }
-
-  // object detection
-  // OBJ:
-  public Optional<PhotonTrackedTarget> getLargestBlob() {
-    if (latestVisionResult == null) return Optional.empty();
-    List<PhotonTrackedTarget> targets = latestVisionResult.getTargets();
-    if (targets.isEmpty()) return Optional.empty();
-
-    // returns the largest by area
-    return targets.stream().max((a, b) -> Double.compare(a.getArea(), b.getArea()));
-  }
-
-  public Optional<Double> getYawToBlob() {
-    return getLargestBlob().map(PhotonTrackedTarget::getYaw);
-  }
-
-  public Optional<Double> getAreaOfBlob() {
-    return getLargestBlob().map(PhotonTrackedTarget::getArea);
-  }
-
-  public Optional<Double> getPitchToBlob() {
-    return getLargestBlob().map(PhotonTrackedTarget::getPitch);
-  }
-
-  public Optional<Double> getSkewToBlob() {
-    return getLargestBlob().map(PhotonTrackedTarget::getSkew);
   }
 }

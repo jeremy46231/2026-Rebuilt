@@ -106,4 +106,20 @@ public class ObjectDetection extends SubsystemBase {
 
     return targets.stream().max((a, b) -> Double.compare(a.getArea(), b.getArea()));
   }
+
+  public Optional<Double> getYawToBlob() {
+    return getLargestBlob().map(PhotonTrackedTarget::getYaw);
+  }
+
+  public Optional<Double> getAreaOfBlob() {
+    return getLargestBlob().map(PhotonTrackedTarget::getArea);
+  }
+
+  public Optional<Double> getPitchToBlob() {
+    return getLargestBlob().map(PhotonTrackedTarget::getPitch);
+  }
+
+  public Optional<Double> getSkewToBlob() {
+    return getLargestBlob().map(PhotonTrackedTarget::getSkew);
+  }
 }
