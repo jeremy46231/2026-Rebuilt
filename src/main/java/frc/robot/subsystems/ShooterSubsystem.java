@@ -11,16 +11,16 @@ import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.signals.MotorAlignmentValue;
 import dev.doglog.DogLog;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.util.LoggedTalonFX;
 
 public class ShooterSubsystem extends SubsystemBase {
-  private static ShooterSubsystem instance;
-
   private final LoggedTalonFX warmUpMotor1, warmUpMotor2, warmUpMotor3, master;
 
-  private final VelocityVoltage velocityRequest = new VelocityVoltage(null);
+  private final VelocityVoltage velocityRequest = new VelocityVoltage(0);
 
   private static double targetSpeed = 0;
   private static double tolerance = 5; // rps
@@ -63,13 +63,6 @@ public class ShooterSubsystem extends SubsystemBase {
     m3config.apply(clc);
   }
 
-  public static ShooterSubsystem getInstance() {
-    if (instance == null) {
-      instance = new ShooterSubsystem();
-    }
-    return instance;
-  }
-
   public double calculateFtToRPS(double speed) {
     return speed
         / (Constants.Shooter.SHOOTER_WHEEL_DIAMETER * Math.PI / 12)
@@ -104,6 +97,11 @@ public class ShooterSubsystem extends SubsystemBase {
 
   public double getCurrentSpeed() {
     return calculateRPSToFt(master.getVelocity().getValueAsDouble());
+  }
+
+  // Comands
+  public Command ShootAtSpeed() {
+    return Commands.runEnd(() -> this.setSpeed(Constants.Shooter.SHOOT_FOR_AUTO), this::stop, this);
   }
 
   @Override
