@@ -68,7 +68,8 @@ public class ObjectDetection extends SubsystemBase {
                   * 10.0;
 
           latestMeasurements.add(maxFuelRealisticPercentage);
-          while (latestMeasurements.size() > Constants.ObjectDetection.MAX_FUEL_GAUGE_MEASUREMENTS) {
+          while (latestMeasurements.size()
+              > Constants.ObjectDetection.MAX_FUEL_GAUGE_MEASUREMENTS) {
             latestMeasurements.remove(0);
           }
 
