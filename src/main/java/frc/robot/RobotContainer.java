@@ -93,35 +93,35 @@ public class RobotContainer {
     // INTAKE COMMANDS
     // right bumper -> run intake
     if (Constants.intakeOnRobot) {
-        joystick.rightBumper().whileTrue(intakeSubsystem.runIntake());
+      joystick.rightBumper().whileTrue(intakeSubsystem.runIntake());
 
-    // left trigger + x -> arm to initial pos (0)
-    joystick
-        .leftTrigger()
-        .and(joystick.x())
-        .onTrue(intakeSubsystem.armToDegrees(Constants.Intake.Arm.ARM_POS_INITIAL));
+      // left trigger + x -> arm to initial pos (0)
+      joystick
+          .leftTrigger()
+          .and(joystick.x())
+          .onTrue(intakeSubsystem.armToDegrees(Constants.Intake.Arm.ARM_POS_INITIAL));
 
-    // left trigger + a -> arm to extended pos (15)
-    joystick
-        .leftTrigger()
-        .and(joystick.a())
-        .onTrue(intakeSubsystem.armToDegrees(Constants.Intake.Arm.ARM_POS_EXTENDED));
+      // left trigger + a -> arm to extended pos (15)
+      joystick
+          .leftTrigger()
+          .and(joystick.a())
+          .onTrue(intakeSubsystem.armToDegrees(Constants.Intake.Arm.ARM_POS_EXTENDED));
 
-    // left trigger + b -> arm to idle pos (45)
-    joystick
-        .leftTrigger()
-        .and(joystick.b())
-        .onTrue(intakeSubsystem.armToDegrees(Constants.Intake.Arm.ARM_POS_IDLE));
+      // left trigger + b -> arm to idle pos (45)
+      joystick
+          .leftTrigger()
+          .and(joystick.b())
+          .onTrue(intakeSubsystem.armToDegrees(Constants.Intake.Arm.ARM_POS_IDLE));
 
-    // left trigger + y -> arm to retracted pos (90)
-    joystick
-        .leftTrigger()
-        .and(joystick.y())
-        .onTrue(intakeSubsystem.armToDegrees(Constants.Intake.Arm.ARM_POS_RETRACTED));
+      // left trigger + y -> arm to retracted pos (90)
+      joystick
+          .leftTrigger()
+          .and(joystick.y())
+          .onTrue(intakeSubsystem.armToDegrees(Constants.Intake.Arm.ARM_POS_RETRACTED));
     }
 
     if (Constants.shooterOnRobot) {
-        joystick.rightTrigger().whileTrue(lebron.ShootAtSpeed());
+      joystick.rightTrigger().whileTrue(lebron.ShootAtSpeed());
     }
 
     drivetrain.registerTelemetry(logger::telemeterize);
