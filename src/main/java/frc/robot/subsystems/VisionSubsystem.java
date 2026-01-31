@@ -59,7 +59,6 @@ public class VisionSubsystem extends SubsystemBase {
   private Optional<MultiTargetPNPResult> visionResult;
   Optional<EstimatedRobotPose> visionEst;
   private List<PhotonTrackedTarget> tags;
-  private final BooleanSupplier isRedSide;
   private final AprilTagFieldLayout fieldLayout;
 
   public final double acceptableYawThreshold = 60d;
@@ -68,8 +67,7 @@ public class VisionSubsystem extends SubsystemBase {
   public static final double timestampFPGACorrection = -0.03;
 
   // constructor for VisionSubsystem
-  public VisionSubsystem(Constants.Vision.Cameras cameraID, BooleanSupplier isRedSide) {
-    this.isRedSide = isRedSide;
+  public VisionSubsystem(Constants.Vision.Cameras cameraID) {
     this.cameraID = cameraID;
     photonCamera = new PhotonCamera(cameraID.toString());
     Transform3d cameraToRobot = Constants.Vision.getCameraTransform(cameraID);
@@ -86,9 +84,9 @@ public class VisionSubsystem extends SubsystemBase {
   }
 
   public static VisionSubsystem getInstance(
-      Constants.Vision.Cameras cameraID, BooleanSupplier isRedSide) {
+      Constants.Vision.Cameras cameraID) {
     int index = cameraID.ordinal();
-    if (cameraList[index] == null) cameraList[index] = new VisionSubsystem(cameraID, isRedSide);
+    if (cameraList[index] == null) cameraList[index] = new VisionSubsystem(cameraID);
     return cameraList[index];
   }
 

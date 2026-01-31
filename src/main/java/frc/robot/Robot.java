@@ -35,8 +35,8 @@ public class Robot extends TimedRobot {
     m_robotContainer = new RobotContainer();
 
     if (Constants.visionOnRobot) {
-      visionRight = VisionSubsystem.getInstance(Constants.Vision.Cameras.RIGHT_CAM, () -> true);
-      visionLeft = VisionSubsystem.getInstance(Constants.Vision.Cameras.LEFT_CAM, () -> true);
+      visionRight = VisionSubsystem.getInstance(Constants.Vision.Cameras.RIGHT_CAM);
+      visionLeft = VisionSubsystem.getInstance(Constants.Vision.Cameras.LEFT_CAM);
       visionColor = ObjectDetection.getInstance(Constants.Vision.Cameras.COLOR_CAM);
 
     } else {
