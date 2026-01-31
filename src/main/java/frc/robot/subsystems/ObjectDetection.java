@@ -3,7 +3,7 @@ package frc.robot.subsystems;
 import dev.doglog.DogLog;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
-import frc.robot.Constants.Vision.FUEL_GAUGE;
+import frc.robot.Constants.Vision.fuelGauge;
 import java.util.List;
 import java.util.Optional;
 import org.photonvision.PhotonCamera;
@@ -72,16 +72,30 @@ public class ObjectDetection extends SubsystemBase {
   }
 
   public void logThresholdStates(double max, double maxRealistic) {
+    fuelGauge gauge, realisticGauge;
 
-    DogLog.log("Vision/FuelGauge/empty", (max >= FUEL_GAUGE.EMPTY));
-    DogLog.log("Vision/FuelGauge/low", (max >= FUEL_GAUGE.LOW));
-    DogLog.log("Vision/FuelGauge/medium", (max >= FUEL_GAUGE.MEDIUM));
-    DogLog.log("Vision/FuelGauge/full", (max >= FUEL_GAUGE.FULL));
+    if (max < fuelGauge.EMPTY.getThreshold()) {
+      gauge = fuelGauge.EMPTY;
+    } else if (max < fuelGauge.LOW.getThreshold()) {
+      gauge = fuelGauge.LOW;
+    } else if (max < fuelGauge.MEDIUM.getThreshold()) {
+      gauge = fuelGauge.MEDIUM;
+    } else {
+      gauge = fuelGauge.FULL;
+    }
 
-    DogLog.log("Vision/FuelGauge/realEmpty", (maxRealistic >= FUEL_GAUGE.EMPTY));
-    DogLog.log("Vision/FuelGauge/realLow", (maxRealistic >= FUEL_GAUGE.LOW));
-    DogLog.log("Vision/FuelGauge/realMedium", (maxRealistic >= FUEL_GAUGE.MEDIUM));
-    DogLog.log("Vision/FuelGauge/realFull", (maxRealistic >= FUEL_GAUGE.FULL));
+    if (maxRealistic < fuelGauge.EMPTY.getThreshold()) {
+      realisticGauge = fuelGauge.EMPTY;
+    } else if (maxRealistic < fuelGauge.LOW.getThreshold()) {
+      realisticGauge = fuelGauge.LOW;
+    } else if (maxRealistic < fuelGauge.MEDIUM.getThreshold()) {
+      realisticGauge = fuelGauge.MEDIUM;
+    } else {
+      realisticGauge = fuelGauge.FULL;
+    }
+
+    DogLog.log("Vision/FuelGaugeLevel", gauge.toString());
+    DogLog.log("Vision/FuelGaugeRealisticLevel", realisticGauge.toString());
   }
 
   public Optional<PhotonTrackedTarget> getLargestBlob() {

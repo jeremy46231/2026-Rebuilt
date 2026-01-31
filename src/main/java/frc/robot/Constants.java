@@ -273,11 +273,21 @@ public final class Constants {
       }
     }
 
-    public static class FUEL_GAUGE {
-      public static final double EMPTY = 20.0;
-      public static final double LOW = 50.0;
-      public static final double MEDIUM = 70.0;
-      public static final double FULL = 100.0;
+    public static enum fuelGauge {
+      EMPTY(20.0),
+      LOW(50.0),
+      MEDIUM(70.0),
+      FULL(100.0);
+
+      private double threshold;
+
+      fuelGauge(double threshold) {
+        this.threshold = threshold;
+      }
+
+      public double getThreshold() {
+        return threshold;
+      }
     }
   }
 }
