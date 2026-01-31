@@ -14,7 +14,6 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import java.util.List;
 import java.util.Optional;
-import java.util.function.BooleanSupplier;
 import java.util.stream.Collectors;
 import org.photonvision.EstimatedRobotPose;
 import org.photonvision.PhotonCamera;
@@ -83,8 +82,7 @@ public class VisionSubsystem extends SubsystemBase {
     latestVisionResult = null;
   }
 
-  public static VisionSubsystem getInstance(
-      Constants.Vision.Cameras cameraID) {
+  public static VisionSubsystem getInstance(Constants.Vision.Cameras cameraID) {
     int index = cameraID.ordinal();
     if (cameraList[index] == null) cameraList[index] = new VisionSubsystem(cameraID);
     return cameraList[index];
