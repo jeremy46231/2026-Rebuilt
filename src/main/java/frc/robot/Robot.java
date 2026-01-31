@@ -21,7 +21,7 @@ public class Robot extends TimedRobot {
 
   private final RobotContainer m_robotContainer;
 
-  private VisionSubsystem visionRight, visionLeft, visionColor;
+  private VisionSubsystem visionRight, visionLeft;
 
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -36,13 +36,9 @@ public class Robot extends TimedRobot {
       visionRight = VisionSubsystem.getInstance(Constants.Vision.Cameras.RIGHT_CAM, () -> true);
       visionLeft = VisionSubsystem.getInstance(Constants.Vision.Cameras.LEFT_CAM, () -> true);
 
-      visionColor = VisionSubsystem.getInstance(Constants.Vision.Cameras.COLOR_CAM, () -> true);
-
     } else {
       visionRight = null;
       visionLeft = null;
-
-      visionColor = null;
     }
   }
 
