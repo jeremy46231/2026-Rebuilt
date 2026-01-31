@@ -1,0 +1,56 @@
+// Copyright (c) FIRST and other WPILib contributors.
+// Open Source Software; you can modify and/or share it under the terms of
+// the WPILib BSD license file in the root directory of this project.
+
+package frc.robot.commands;
+
+import com.ctre.phoenix6.*;
+import com.ctre.phoenix6.controls.SolidColor;
+import com.ctre.phoenix6.signals.RGBWColor;
+import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.subsystems.LEDsubsystem;
+
+/** An example command that uses an example subsystem. */
+public class LEDcommand extends Command {
+  @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
+  private LEDsubsystem m_LEDsubsystem;
+
+  /**
+   * Creates a new ExampleCommand.
+   *
+   * @param subsystem The subsystem used by this command.
+   */
+  public LEDcommand(LEDsubsystem subsystem) {
+    m_LEDsubsystem = subsystem;
+    addRequirements(subsystem);
+  }
+
+  // Called when the command is initially scheduled.
+  @Override
+  public void initialize() {}
+
+  // Called every time the scheduler runs while the command is scheduled.
+  @Override
+  public void execute() {
+    // GRB system for setLeds
+    m_LEDsubsystem
+        .getCandle()
+        .setControl(
+            new SolidColor(0, 8)
+                .withColor(
+                    new RGBWColor(
+                        m_LEDsubsystem.gChannel(),
+                        m_LEDsubsystem.rChannel(),
+                        m_LEDsubsystem.bChannel())));
+  }
+
+  // Called once the command ends or is interrupted.
+  @Override
+  public void end(boolean interrupted) {}
+
+  // Returns true when the command should end.
+  @Override
+  public boolean isFinished() {
+    return false;
+  }
+}
