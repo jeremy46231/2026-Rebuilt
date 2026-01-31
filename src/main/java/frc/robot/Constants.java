@@ -2,7 +2,6 @@ package frc.robot;
 
 import static edu.wpi.first.units.Units.*;
 
-import edu.wpi.first.math.util.Units;
 import com.ctre.phoenix6.configs.*;
 import com.ctre.phoenix6.swerve.*;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants.*;
@@ -275,7 +274,7 @@ public final class Constants {
 
     public static final double TOLERANCE_MOTOR_ROTS_PER_SEC = .1;
   }
-  
+
   public static class Vision {
 
     // initializes cameras for use in VisionSubsystem
