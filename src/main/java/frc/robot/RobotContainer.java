@@ -16,8 +16,10 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.IntakeSubsystem;
+import frc.robot.subsystems.ShooterSubsystem;
 
 public class RobotContainer {
+
   private double MaxSpeed =
       TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
   private double MaxAngularRate =
@@ -42,9 +44,9 @@ public class RobotContainer {
 
   public final IntakeSubsystem intakeSubsystem =
       Constants.intakeOnRobot ? new IntakeSubsystem() : null;
+  public final ShooterSubsystem lebron = Constants.shooterOnRobot ? new ShooterSubsystem() : null;
 
   public RobotContainer() {
-
     configureBindings();
   }
 
@@ -112,6 +114,8 @@ public class RobotContainer {
         .onTrue(intakeSubsystem.armToDegrees(Constants.Intake.Arm.ARM_POS_RETRACTED));
 
     drivetrain.registerTelemetry(logger::telemeterize);
+
+    joystick.rightTrigger().whileTrue(lebron.ShootAtSpeed());
   }
 
   public Command getAutonomousCommand() {
