@@ -274,6 +274,8 @@ public final class Constants {
     public static final double HOPPER_SUPPLY_LIMIT = 30.0;
 
     public static final double TOLERANCE_MOTOR_ROTS_PER_SEC = .1;
+  }
+  
   public static class Vision {
 
     // initializes cameras for use in VisionSubsystem
