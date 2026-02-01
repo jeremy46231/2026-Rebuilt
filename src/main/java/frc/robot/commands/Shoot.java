@@ -24,23 +24,23 @@ import frc.robot.MathUtils.MiscMath;
 import frc.robot.MathUtils.Polynomials;
 import frc.robot.MathUtils.Vector3;
 import frc.robot.commands.SwerveCommands.SwerveJoystickCommand;
-//import frc.robot.subsystems.ShooterSubsystem;
+import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
-
-// it will need to rotate swerve and move arm
 
 /** An example command that uses an example subsystem. */
 public class Shoot extends Command {
   @SuppressWarnings("PMD.UnusedPrivateField")
-  //private final ShooterSubsystem shooter;
+  private final ShooterSubsystem shooter;
   private final SwerveSubsystem drivetrain;
   private final BooleanSupplier redside;
 
   static final float MAX_TIME = 10f;
-  static final float angularTolerance = .1f;
+  static final float angularTolerance = .01f;
   static final float maxRotSpeed = .1f;
 
-  static final double shooterAngleDeg = 75;
+  static final double shooterAngleDeg = 45;
+
+  boolean shootsback = true;
 
   public static double targetAngle = 0;
 
@@ -51,9 +51,9 @@ public class Shoot extends Command {
    *
    * @param subsystem The subsystem used by this command.
    */
-  public Shoot(SwerveSubsystem drivetrain/* , ShooterSubsystem shooter*/, BooleanSupplier redside) {
+  public Shoot(SwerveSubsystem drivetrain, ShooterSubsystem shooter, BooleanSupplier redside) {
     this.drivetrain = drivetrain;
-    //this.shooter = shooter;
+    this.shooter = shooter;
     this.redside = redside;
     // Use addRequirements() here to declare subsystem dependencies.
   }
@@ -66,11 +66,11 @@ public class Shoot extends Command {
   @Override
   public void execute() {
     Pose3d target = redside.getAsBoolean() ? Constants.Landmarks.RED_HUB : Constants.Landmarks.BLUE_HUB;
-    //shooter.rampUp(shootingSpeed(target, 5));
+    shooter.rampUp(shootingSpeed(target, 5));
     //pointAtTarget(positionToTarget(target, 5));
-    // if (shooter.atSpeed() && pointingAtTarget(positionToTarget(target, 5))) {
-    //   shooter.runPreShooterAtRPS(10);
-    // }
+    if (shooter.atSpeed() && pointingAtTarget(positionToTarget(target, 5))) {
+      shooter.runPreShooterAtRPS(10);
+    }
     targetAngle = targetAngle(target);
 
     DogLog.log("Shoot/isPointing", pointingAtTarget(positionToTarget(target, 5)));
@@ -92,7 +92,7 @@ public class Shoot extends Command {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    //shooter.stopAll();
+    shooter.stopAll();
     targetAngle = 0;
   }
 
@@ -110,11 +110,11 @@ public class Shoot extends Command {
     Vector3 target = positionToTarget(targetNoOffset, 5);
     DogLog.log("Shoot/difx", Vector3.subtract(target, new Vector3(drivetrain.getPose())).x);
     DogLog.log("Shoot/dify", Vector3.subtract(target, new Vector3(drivetrain.getPose())).y);
-    return Math.atan2(Vector3.subtract(target, new Vector3(drivetrain.getPose())).y, Vector3.subtract(target, new Vector3(drivetrain.getPose())).x);
+    return Math.atan2(Vector3.subtract(target, new Vector3(drivetrain.getPose())).y, Vector3.subtract(target, new Vector3(drivetrain.getPose())).x)+ (shootsback ? 3.14 : 0);
   }
 
   private boolean pointingAtTarget(Vector3 target) {
-    boolean hullAimed = Math.atan2(Vector3.subtract(new Vector3(drivetrain.getPose()), target).x, Vector3.subtract(new Vector3(drivetrain.getPose()), target).z) - drivetrain.getPose().getRotation().getRadians() <= angularTolerance;
+    boolean hullAimed = Math.atan2(Vector3.subtract(new Vector3(drivetrain.getPose()), target).x, Vector3.subtract(new Vector3(drivetrain.getPose()), target).z) + (shootsback ? 3.14 : 0) - drivetrain.getPose().getRotation().getRadians() <= angularTolerance;
     return hullAimed;
   }
 
