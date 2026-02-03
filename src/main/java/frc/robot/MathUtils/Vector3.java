@@ -42,12 +42,6 @@ public class Vector3 {
     z += other.z;
   }
 
-  // public void mult(float m) {
-  //     x *= m;
-  //     y *= m;
-  //     z *= m;
-  // }
-
   public static Vector3 add(Vector3... a) {
     Vector3 newVec = new Vector3(0, 0, 0);
     for (Vector3 vec : a) {

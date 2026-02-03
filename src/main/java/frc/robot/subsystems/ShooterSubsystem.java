@@ -6,98 +6,109 @@ package frc.robot.subsystems;
 
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
+import com.ctre.phoenix6.configs.TalonFXConfigurator;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.signals.MotorAlignmentValue;
 import dev.doglog.DogLog;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.util.LoggedTalonFX;
 
 public class ShooterSubsystem extends SubsystemBase {
-  private static ShooterSubsystem instance;
+  private final LoggedTalonFX warmUpMotor1, warmUpMotor2, warmUpMotor3, shooter;
 
-  private static double tolerance = 1;
-  private final LoggedTalonFX motor1, motor2;
-  private final LoggedTalonFX preShooterMotor;
-  private final double wheelradius = 2d / 12d / 3d;
-  private final double noteVelToSpinnerSurfaceVel = 1.5;
+  private final VelocityVoltage velocityRequest = new VelocityVoltage(0);
 
-  private double targetSpeed = 0;
-
-  public static ShooterSubsystem getInstance() {
-    if (instance == null) {
-      instance = new ShooterSubsystem();
-    }
-    return instance;
-  }
+  private static double targetSpeed = 0;
+  private static double tolerance = 5; // rps
 
   public ShooterSubsystem() {
-    // curr limits, motor configs, motionmagic configs, sensor initialization
+
+    warmUpMotor1 = new LoggedTalonFX(Constants.Shooter.warmUpMotor1.port);
+    warmUpMotor2 = new LoggedTalonFX(Constants.Shooter.warmUpMotor2.port);
+    warmUpMotor3 = new LoggedTalonFX(Constants.Shooter.warmUpMotor3.port);
+
+    Follower follower =
+        new Follower(Constants.Shooter.warmUpMotor1.port, MotorAlignmentValue.Aligned);
+    warmUpMotor1.setControl(follower);
+    warmUpMotor2.setControl(follower);
+    warmUpMotor3.setControl(follower);
+    shooter = warmUpMotor1;
+
+    Slot0Configs s0c =
+        new Slot0Configs()
+            .withKP(Constants.Shooter.SHOOTER_KP)
+            .withKI(Constants.Shooter.SHOOTER_KI)
+            .withKD(Constants.Shooter.SHOOTER_KD)
+            .withKV(Constants.Shooter.SHOOTER_KV)
+            .withKA(Constants.Shooter.SHOOTER_KA);
+
     CurrentLimitsConfigs clc =
-        new CurrentLimitsConfigs().withStatorCurrentLimit(30).withSupplyCurrentLimit(30);
+        new CurrentLimitsConfigs()
+            .withStatorCurrentLimit(Constants.Shooter.STATOR_CURRENT_LIMIT)
+            .withSupplyCurrentLimit(Constants.Shooter.SUPPLY_CURRENT_LIMIT);
 
-    Slot0Configs s0c = new Slot0Configs().withKP(.4).withKI(0).withKD(0).withKV(0.1185);
-    Slot0Configs psS0c = new Slot0Configs().withKP(.1).withKI(0).withKD(0).withKV(0.1185);
+    TalonFXConfigurator m1config = warmUpMotor1.getConfigurator();
+    TalonFXConfigurator m2config = warmUpMotor2.getConfigurator();
+    TalonFXConfigurator m3config = warmUpMotor3.getConfigurator();
 
-    motor1 = new LoggedTalonFX(Constants.Shooter.motor1Constants.port);
-    motor2 = new LoggedTalonFX(Constants.Shooter.motor2Constants.port);
-    preShooterMotor = new LoggedTalonFX(Constants.Shooter.preShooterConstants.port);
-
-    motor1.getConfigurator().apply(s0c);
-    motor2.getConfigurator().apply(s0c);
-    motor1.getConfigurator().apply(clc);
-    motor2.getConfigurator().apply(clc);
-
-    preShooterMotor.getConfigurator().apply(psS0c);
-    preShooterMotor.getConfigurator().apply(clc);
-
-    motor2.setControl(new Follower(motor1.getDeviceID(), MotorAlignmentValue.Aligned));
+    m1config.apply(s0c);
+    m2config.apply(s0c);
+    m3config.apply(s0c);
+    m1config.apply(clc);
+    m2config.apply(clc);
+    m3config.apply(clc);
   }
 
-  // spin the shooter up to speed before the game piece goes through it
-  public void rampUp(double speed) {
-    targetSpeed = speed;
-    VelocityVoltage m_velocityControl =
-        new VelocityVoltage(speed * (24d / 18d) / (2 * 3.14 * wheelradius) * noteVelToSpinnerSurfaceVel);
-    motor1.setControl(m_velocityControl);
+  public double calculateFtToRPS(double speed) {
+    return speed
+        / (Constants.Shooter.SHOOTER_WHEEL_DIAMETER * Math.PI / 12)
+        * Constants.Shooter.SHOOTER_WHEEL_GEAR_RATIO;
+    // from surface speed in ft/sec to rps
   }
 
-  public void runPreShooterAtRPS(double speed) {
-    VelocityVoltage m_velocityControl = new VelocityVoltage(speed * -4d);
-    m_velocityControl.withFeedForward(0.1);
-    preShooterMotor.setControl(m_velocityControl);
+  public double calculateRPSToFt(double rps) {
+    return rps
+        * (Constants.Shooter.SHOOTER_WHEEL_DIAMETER * Math.PI / 12)
+        / Constants.Shooter.SHOOTER_WHEEL_GEAR_RATIO;
   }
 
-  public void stopShooters() {
-    motor1.setControl(new VelocityVoltage(0));
+  // speed based on shooter wheel which is the one flinging the ball with a max of 52.36 and a min
+  // of 35.60 ft/sec
+  // input the speed you want the ball to go at (ft/sec); it will be divided by 2 because that's
+  // what Jeff said that relationship is
+  // so now max is 104.72 and min is 71.2
+  public void setSpeed(double speed) {
+    targetSpeed = speed / 2;
+    shooter.setControl(velocityRequest.withVelocity(calculateFtToRPS(targetSpeed)));
   }
 
-  public void stopPreShooter() {
-    preShooterMotor.setControl(new VelocityVoltage(0));
+  public void stop() {
+    setSpeed(0);
   }
 
-  public void stopAll() {
-    stopPreShooter();
-    stopShooters();
-  }
-
-  // returns if your speed error is within the tolerance
-  public boolean atSpeed() {
-    return Math.abs(
-            motor1.getVelocity().getValueAsDouble()
-                - targetSpeed * (24d / 18d) / (2 * 3.14 * wheelradius) * noteVelToSpinnerSurfaceVel)
+  public boolean isAtSpeed() {
+    return Math.abs(calculateFtToRPS(targetSpeed) - shooter.getVelocity().getValueAsDouble())
         <= tolerance;
+  }
+
+  public double getCurrentSpeed() {
+    return calculateRPSToFt(shooter.getVelocity().getValueAsDouble());
+  }
+
+  // Comands
+  public Command ShootAtSpeed() {
+    return Commands.runEnd(() -> this.setSpeed(Constants.Shooter.SHOOT_FOR_AUTO), this::stop, this);
   }
 
   @Override
   public void periodic() {
-    DogLog.log(
-        "ShooterSubsystem/MotorSpeed",
-        motor1.getVelocity().getValueAsDouble());
-    DogLog.log("ShooterSubsystem/PSSpeed", preShooterMotor.getVelocity().getValueAsDouble());
-    DogLog.log("ShooterSubsystem/AtSpeed", atSpeed());
-    DogLog.log("ShooterSubsystem/TargetSpeed", targetSpeed);
+    DogLog.log("Doglog/shooter/targetSpeed", targetSpeed);
+    DogLog.log("Doglog/shooter/isAtSpeed", isAtSpeed());
+    DogLog.log("Doglog.shooter/currentSpeed", getCurrentSpeed());
   }
 
   @Override

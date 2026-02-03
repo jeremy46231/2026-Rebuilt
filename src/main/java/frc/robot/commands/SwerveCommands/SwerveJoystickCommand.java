@@ -8,7 +8,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
 import frc.robot.commands.Shoot;
-import frc.robot.subsystems.SwerveSubsystem;
+import frc.robot.subsystems.CommandSwerveDrivetrain;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
@@ -23,7 +23,7 @@ public class SwerveJoystickCommand extends Command {
   // Limits rate of change (in this case x, y, and turning movement)
   protected final SlewRateLimiter xLimiter, yLimiter, turningLimiter;
 
-  protected final SwerveSubsystem swerveDrivetrain;
+  protected final CommandSwerveDrivetrain swerveDrivetrain;
   protected BooleanSupplier fixedRotation;
   private final SwerveRequest.FieldCentric fieldCentricDrive =
       new SwerveRequest.FieldCentric().withDriveRequestType(DriveRequestType.Velocity);
@@ -38,7 +38,7 @@ public class SwerveJoystickCommand extends Command {
       DoubleSupplier turningSpdFunction,
       DoubleSupplier speedControlFunction,
       BooleanSupplier fieldRelativeFunction,
-      SwerveSubsystem swerveSubsystem) {
+      CommandSwerveDrivetrain swerveSubsystem) {
     this.xSpdFunction = frontBackFunction;
     this.ySpdFunction = leftRightFunction;
     this.turningSpdFunction = turningSpdFunction;
@@ -66,7 +66,7 @@ public class SwerveJoystickCommand extends Command {
       DoubleSupplier leftRightFunction,
       DoubleSupplier turningSpdFunction,
       DoubleSupplier speedControlFunction,
-      SwerveSubsystem swerveSubsystem) {
+      CommandSwerveDrivetrain swerveSubsystem) {
 
     this(
         frontBackFunction,
@@ -106,7 +106,7 @@ public class SwerveJoystickCommand extends Command {
       BooleanSupplier targetRotationSupplier,
       BooleanSupplier LeftL1,
       BooleanSupplier RightL1,
-      SwerveSubsystem swerveSubsystem) {
+      CommandSwerveDrivetrain swerveSubsystem) {
     this(
         frontBackFunction,
         leftRightFunction,
@@ -125,7 +125,7 @@ public class SwerveJoystickCommand extends Command {
       DoubleSupplier leftRightFunction,
       DoubleSupplier turningSpdFunction,
       DoubleSupplier speedControlFunction,
-      SwerveSubsystem swerveSubsystem,
+      CommandSwerveDrivetrain swerveSubsystem,
       boolean squaredTurn) {
 
     this(
@@ -146,7 +146,7 @@ public class SwerveJoystickCommand extends Command {
       BooleanSupplier fieldRelativeFunction,
       BooleanSupplier redSide,
       BooleanSupplier targetRotationSupplier,
-      SwerveSubsystem swerveSubsystem) {
+      CommandSwerveDrivetrain swerveSubsystem) {
     this(
         frontBackFunction,
         leftRightFunction,

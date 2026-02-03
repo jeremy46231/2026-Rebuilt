@@ -4,101 +4,133 @@
 
 package frc.robot;
 
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import static edu.wpi.first.units.Units.*;
+
+import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
+import com.ctre.phoenix6.swerve.SwerveRequest;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.robot.Constants.OperatorConstants;
-import frc.robot.commands.Shoot;
-import frc.robot.commands.SwerveCommands.SwerveJoystickCommand;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
+import frc.robot.generated.TunerConstants;
+import frc.robot.subsystems.ClimberSubsystem;
+import frc.robot.subsystems.CommandSwerveDrivetrain;
+import frc.robot.subsystems.HopperSubsystem;
+import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
-import frc.robot.subsystems.SwerveSubsystem;
-import java.util.function.BooleanSupplier;
-import java.util.function.DoubleSupplier;
 
-/**
- * This class is where the bulk of the robot should be declared. Since Command-based is a
- * "declarative" paradigm, very little robot logic should actually be handled in the {@link Robot}
- * periodic methods (other than the scheduler calls). Instead, the structure of the robot (including
- * subsystems, commands, and trigger mappings) should be declared here.
- */
 public class RobotContainer {
-  // The robot's subsystems and commands are defined here...
-  private final ShooterSubsystem lebron = ShooterSubsystem.getInstance();
-  private final SwerveSubsystem driveTrain = SwerveSubsystem.getInstance();
-  private BooleanSupplier redside = () -> redAlliance;
-  private static boolean redAlliance;
 
-  // Replace with CommandPS4Controller or CommandJoystick if needed
-  private final CommandXboxController m_driverController =
-      new CommandXboxController(OperatorConstants.kDriverControllerPort);
+  private double MaxSpeed =
+      TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
+  private double MaxAngularRate =
+      RotationsPerSecond.of(0.75)
+          .in(RadiansPerSecond); // 3/4 of a rotation per second max angular velocity
 
-  /** The container for the robot. Contains subsystems, OI devices, and commands. */
+  /* Setting up bindings for necessary control of the swerve drive platform */
+  private final SwerveRequest.FieldCentric drive =
+      new SwerveRequest.FieldCentric()
+          .withDeadband(MaxSpeed * 0.1)
+          .withRotationalDeadband(MaxAngularRate * 0.1) // Add a 10% deadband
+          .withDriveRequestType(
+              DriveRequestType.OpenLoopVoltage); // Use open-loop control for drive motors
+  private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
+  private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
+
+  private final Telemetry logger = new Telemetry(MaxSpeed);
+
+  private final CommandXboxController joystick = new CommandXboxController(0);
+
+  public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
+
+  public final ClimberSubsystem climberSubsystem =
+      Constants.climberOnRobot ? new ClimberSubsystem() : null;
+  public final HopperSubsystem hopperSubsystem =
+      Constants.hopperOnRobot ? new HopperSubsystem() : null;
+  public final IntakeSubsystem intakeSubsystem =
+      Constants.intakeOnRobot ? new IntakeSubsystem() : null;
+  public final ShooterSubsystem lebron = Constants.shooterOnRobot ? new ShooterSubsystem() : null;
+
   public RobotContainer() {
-    // Configure the trigger bindings
+
     configureBindings();
   }
 
-  /**
-   * Use this method to define your trigger->command mappings. Triggers can be created via the
-   * {@link Trigger#Trigger(java.util.function.BooleanSupplier)} constructor with an arbitrary
-   * predicate, or via the named factories in {@link
-   * edu.wpi.first.wpilibj2.command.button.CommandGenericHID}'s subclasses for {@link
-   * CommandXboxController Xbox}/{@link edu.wpi.first.wpilibj2.command.button.CommandPS4Controller
-   * PS4} controllers or {@link edu.wpi.first.wpilibj2.command.button.CommandJoystick Flight
-   * joysticks}.
-   */
   private void configureBindings() {
-    // Schedule `ExampleCommand` when `exampleCondition` changes to `true`
-    // lebron.setDefaultCommand(
-    //     new InstantCommand(
-    //         () -> {
-    //           lebron.stopAll();
-    //         }, lebron));
-    Trigger leftTrigger = m_driverController.leftTrigger();
-    DoubleSupplier frontBackFunction = () -> -m_driverController.getLeftY(),
-        leftRightFunction = () -> -m_driverController.getLeftX(),
-        rotationFunction = () -> -m_driverController.getRightX(),
-        speedFunction =
+    // Note that X is defined as forward according to WPILib convention,
+    // and Y is defined as to the left according to WPILib convention.
+    drivetrain.setDefaultCommand(
+        // Drivetrain will execute this command periodically
+        drivetrain.applyRequest(
             () ->
-                leftTrigger.getAsBoolean()
-                    ? 0d
-                    : 1d; // slowmode when left shoulder is pressed, otherwise fast
+                drive
+                    .withVelocityX(
+                        -joystick.getLeftY() * MaxSpeed) // Drive forward with negative Y (forward)
+                    .withVelocityY(
+                        -joystick.getLeftX() * MaxSpeed) // Drive left with negative X (left)
+                    .withRotationalRate(
+                        -joystick.getRightX()
+                            * MaxAngularRate) // Drive counterclockwise with negative X (left)
+            ));
 
-    SwerveJoystickCommand swerveJoystickCommand =
-        new SwerveJoystickCommand(
-            frontBackFunction,
-            leftRightFunction,
-            rotationFunction,
-            speedFunction, // slowmode when left shoulder is pressed, otherwise fast
-            () -> m_driverController.leftTrigger().getAsBoolean(),
-            redside,
-            () -> m_driverController.x().getAsBoolean(), // must be same as shoot cmd binding
-            driveTrain);
-    driveTrain.setDefaultCommand(swerveJoystickCommand);
+    joystick.a().whileTrue(drivetrain.applyRequest(() -> brake));
+    joystick
+        .b()
+        .whileTrue(
+            drivetrain.applyRequest(
+                () ->
+                    point.withModuleDirection(
+                        new Rotation2d(-joystick.getLeftY(), -joystick.getLeftX()))));
 
-    m_driverController.x().whileTrue(new Shoot(driveTrain, lebron, redside)); // shoot cmd binding
+    // Run SysId routines when holding back/start and X/Y.
+    // Note that each routine should be run exactly once in a single log.
+    joystick.back().and(joystick.y()).whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
+    joystick.back().and(joystick.x()).whileTrue(drivetrain.sysIdDynamic(Direction.kReverse));
+    joystick.start().and(joystick.y()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
+    joystick.start().and(joystick.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
 
-    // Schedule `exampleMethodCommand` when the Xbox controller's B button is pressed,
-    // cancelling on release.
+    // reset the field-centric heading on left bumper press
+    joystick.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
+
+    // INTAKE COMMANDS
+    // right bumper -> run intake
+    if (Constants.intakeOnRobot) {
+      joystick.rightBumper().whileTrue(intakeSubsystem.runIntake());
+
+      // left trigger + x -> arm to initial pos (0)
+      joystick
+          .leftTrigger()
+          .and(joystick.x())
+          .onTrue(intakeSubsystem.armToDegrees(Constants.Intake.Arm.ARM_POS_INITIAL));
+
+      // left trigger + a -> arm to extended pos (15)
+      joystick
+          .leftTrigger()
+          .and(joystick.a())
+          .onTrue(intakeSubsystem.armToDegrees(Constants.Intake.Arm.ARM_POS_EXTENDED));
+
+      // left trigger + b -> arm to idle pos (45)
+      joystick
+          .leftTrigger()
+          .and(joystick.b())
+          .onTrue(intakeSubsystem.armToDegrees(Constants.Intake.Arm.ARM_POS_IDLE));
+
+      // left trigger + y -> arm to retracted pos (90)
+      joystick
+          .leftTrigger()
+          .and(joystick.y())
+          .onTrue(intakeSubsystem.armToDegrees(Constants.Intake.Arm.ARM_POS_RETRACTED));
+    }
+
+    if (Constants.shooterOnRobot) {
+      joystick.rightTrigger().whileTrue(lebron.ShootAtSpeed());
+    }
+
+    drivetrain.registerTelemetry(logger::telemeterize);
   }
 
-  public static void setAlliance() {
-    redAlliance =
-        (DriverStation.getAlliance().isEmpty())
-            ? false
-            : (DriverStation.getAlliance().get() == Alliance.Red);
-  }
-
-  /**
-   * Use this to pass the autonomous command to the main {@link Robot} class.
-   *
-   * @return the command to run in autonomous
-   */
   public Command getAutonomousCommand() {
-    // An example command will be run in autonomous
-    return new InstantCommand(); // Autos.exampleAuto();
+    return Commands.print("No autonomous command configured");
   }
 }
