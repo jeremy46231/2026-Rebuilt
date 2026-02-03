@@ -67,8 +67,8 @@ public class DriveToPose extends Command {
 
     path =
         new LinearPath(
-            new TrapezoidProfile.Constraints(0.5, 0.5),
-            new TrapezoidProfile.Constraints(0.2, 0.2)); // constants
+            new TrapezoidProfile.Constraints(Constants.Swerve.WHICH_SWERVE_ROBOT.SWERVE_DRIVE_TO_POSE_PROFILE_VALUES.maxVelocityLinear, Constants.Swerve.WHICH_SWERVE_ROBOT.SWERVE_DRIVE_TO_POSE_PROFILE_VALUES.maxAccelerationLinear),
+            new TrapezoidProfile.Constraints(Constants.Swerve.WHICH_SWERVE_ROBOT.SWERVE_DRIVE_TO_POSE_PROFILE_VALUES.maxVelocityAngular, Constants.Swerve.WHICH_SWERVE_ROBOT.SWERVE_DRIVE_TO_POSE_PROFILE_VALUES.maxAccelerationAngular)); // constants
 
     addRequirements(swerve);
   }
