@@ -13,13 +13,13 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
+import frc.robot.commandGroups.WarmUpAndShoot;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.ClimberSubsystem;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.HopperSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
-import frc.robot.commandGroups.WarmUpAndShoot;
 
 public class RobotContainer {
 
@@ -128,8 +128,8 @@ public class RobotContainer {
       joystick.rightTrigger().whileTrue(lebron.ShootAtSpeed());
     }
 
-    if(Constants.shooterOnRobot && Constants.hopperOnRobot) {
-        joystick.leftBumper().onTrue(new WarmUpAndShoot(lebron, hopperSubsystem));
+    if (Constants.shooterOnRobot && Constants.hopperOnRobot) {
+      joystick.leftBumper().onTrue(new WarmUpAndShoot(lebron, hopperSubsystem));
     }
 
     drivetrain.registerTelemetry(logger::telemeterize);

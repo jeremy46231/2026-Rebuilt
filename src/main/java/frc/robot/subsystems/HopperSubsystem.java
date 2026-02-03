@@ -57,6 +57,11 @@ public class HopperSubsystem extends SubsystemBase {
         <= Constants.Hopper.TOLERANCE_MOTOR_ROTS_PER_SEC;
   }
 
+  // placeholder boolean function for seeing how many balls are in hopper
+  public boolean isHopperSufficientlyEmpty() {
+    return true;
+  }
+
   // Commands
   public Command RunHopper(double speed) {
     return Commands.runEnd(

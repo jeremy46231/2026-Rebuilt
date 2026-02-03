@@ -103,7 +103,7 @@ public class IntakeSubsystem extends SubsystemBase {
   }
 
   public void setArmDegrees(double angle) {
-    targetAngle = angle * Constants.Intake.Arm.MOTOR_ROTS_TO_ARM_DEGREES;
+    targetAngle = angle * Constants.Intake.Arm.ARM_DEGREES_TO_MOTOR_ROTS;
     // PositionTorqueCurrentFOC might not be the right control request
     armMotor.setControl(
         new PositionTorqueCurrentFOC(
