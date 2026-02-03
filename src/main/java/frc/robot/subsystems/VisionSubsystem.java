@@ -103,7 +103,7 @@ public class VisionSubsystem extends SubsystemBase {
       }
     }
 
-    DogLog.log("Vision/" + cameraTitle + "/CameraConnected", true);
+    DogLog.log("Subsystems/Vision/" + cameraTitle + "/CameraConnected", true);
 
     // add all unread results to results <List>
     List<PhotonPipelineResult> results = photonCamera.getAllUnreadResults();
@@ -113,17 +113,17 @@ public class VisionSubsystem extends SubsystemBase {
   }
 
   public void addFilteredPose() {
-    DogLog.log("Vision/addFilteredPoseworking", true);
+    DogLog.log("Subsystems/Vision/addFilteredPoseworking", true);
 
     if (latestVisionResult == null || latestVisionResult.getTargets().isEmpty()) {
-      DogLog.log("Vision/" + cameraTitle + "/HasEstimate", visionEst.isPresent());
+      DogLog.log("Subsystems/Vision/" + cameraTitle + "/HasEstimate", visionEst.isPresent());
 
       // Ensure we have a valid pose estimate and vision result from periodic()
       if (visionEst.isEmpty() || latestVisionResult == null) {
-        DogLog.log("Vision/" + cameraTitle + "/HasTargets", false);
+        DogLog.log("Subsystems/Vision/" + cameraTitle + "/HasTargets", false);
         return;
       }
-      DogLog.log("Vision/" + cameraTitle + "/HasTargets", true);
+      DogLog.log("Subsystems/Vision/" + cameraTitle + "/HasTargets", true);
 
       // distance to closest april tag
       double minDistance =
@@ -132,7 +132,7 @@ public class VisionSubsystem extends SubsystemBase {
               .min()
               .orElse(Double.NaN);
 
-      DogLog.log("Vision/closestTagDistance", minDistance);
+      DogLog.log("Subsystems/Vision/closestTagDistance", minDistance);
 
       // average distance to all visible april tags
       double averageDistance =
@@ -140,7 +140,7 @@ public class VisionSubsystem extends SubsystemBase {
               .mapToDouble(t -> t.getBestCameraToTarget().getTranslation().getNorm())
               .average()
               .orElse(Double.NaN);
-      DogLog.log("Vision/averageTagDistance", averageDistance);
+      DogLog.log("Subsystems/Vision/averageTagDistance", averageDistance);
 
       // 2025-reefscape has a validTags list on lines 160-166, replacing it with a list of all tags
       // for 26
@@ -152,21 +152,21 @@ public class VisionSubsystem extends SubsystemBase {
 
       // log area and yaw for all detected april tags
       for (PhotonTrackedTarget tag : tags) {
-        DogLog.log("Vision/" + cameraTitle + "/Area", tag.getArea());
-        DogLog.log("Vision/" + cameraTitle + "/Yaw", tag.getYaw());
+        DogLog.log("Subsystems/Vision/" + cameraTitle + "/Area", tag.getArea());
+        DogLog.log("Subsystems/Vision/" + cameraTitle + "/Yaw", tag.getYaw());
       }
       // Extract pose estimate
       EstimatedRobotPose estimatedPose = visionEst.get();
       Pose2d measuredPose = estimatedPose.estimatedPose.toPose2d();
-      DogLog.log("Vision/MeasuredPose", measuredPose);
+      DogLog.log("Subsystems/Vision/MeasuredPose", measuredPose);
 
       // Get detected tags
       tags = latestVisionResult.getTargets();
       if (tags.isEmpty()) {
-        DogLog.log("Vision/" + cameraTitle + "/Tags", false);
+        DogLog.log("Subsystems/Vision/" + cameraTitle + "/Tags", false);
         return;
       }
-      DogLog.log("Vision/" + cameraTitle + "/Tags", true);
+      DogLog.log("Subsystems/Vision/" + cameraTitle + "/Tags", true);
 
       // Distance calculations
       minDistance =
@@ -181,24 +181,24 @@ public class VisionSubsystem extends SubsystemBase {
               .average()
               .orElse(Double.NaN);
 
-      DogLog.log("Vision/closestTagDistance", minDistance);
-      DogLog.log("Vision/averageTagDistance", averageDistance);
+      DogLog.log("Subsystems/Vision/closestTagDistance", minDistance);
+      DogLog.log("Subsystems/Vision/averageTagDistance", averageDistance);
 
       // Reject invalid or distant measurements
       if (Double.isNaN(minDistance) || minDistance > maxDistance) {
-        DogLog.log("Vision/" + cameraTitle + "/ThrownOutDistance", true);
+        DogLog.log("Subsystems/Vision/" + cameraTitle + "/ThrownOutDistance", true);
         return;
       }
-      DogLog.log("Vision/" + cameraTitle + "/ThrownOutDistance", false);
+      DogLog.log("Subsystems/Vision/" + cameraTitle + "/ThrownOutDistance", false);
 
       // Log yaw + area for debugging
       for (PhotonTrackedTarget tag : tags) {
-        DogLog.log("Vision/" + cameraTitle + "/TagYaw", tag.getYaw());
-        DogLog.log("Vision/" + cameraTitle + "/TagArea", tag.getArea());
+        DogLog.log("Subsystems/Vision/" + cameraTitle + "/TagYaw", tag.getYaw());
+        DogLog.log("Subsystems/Vision/" + cameraTitle + "/TagArea", tag.getArea());
       }
 
       int tagCount = tags.size();
-      DogLog.log("Vision/tagCount", tagCount);
+      DogLog.log("Subsystems/Vision/tagCount", tagCount);
 
       // TODO: Replace with real swerve speed
       double currentSpeed = 0.0;
@@ -247,12 +247,12 @@ public class VisionSubsystem extends SubsystemBase {
           estimatedPose.timestampSeconds,
           noiseVector);
 
-      DogLog.log("Vision/VisionPoseEstimate", measuredPose);
+      DogLog.log("Subsystems/Vision/VisionPoseEstimate", measuredPose);
 
       if (measuredPose == null) {
-        DogLog.log("Vision/measuredPoseAvailable", false);
+        DogLog.log("Subsystems/Vision/measuredPoseAvailable", false);
       } else {
-        DogLog.log("Vision/measuredPoseAvailable", true);
+        DogLog.log("Subsystems/Vision/measuredPoseAvailable", true);
       }
     }
   }
@@ -282,7 +282,7 @@ public class VisionSubsystem extends SubsystemBase {
 
   private boolean acceptableYaw(double yaw) {
     boolean yawIsAcceptable = Math.abs(yaw) < acceptableYawThreshold;
-    DogLog.log("Vision/acceptableYaw", yawIsAcceptable);
+    DogLog.log("Subsystems/Vision/acceptableYaw", yawIsAcceptable);
 
     return yawIsAcceptable;
   }
@@ -320,10 +320,10 @@ public class VisionSubsystem extends SubsystemBase {
     double vNorm = Math.min(robotSpeed, maximumRobotSpeed) / maximumRobotSpeed;
     double speedFactor = 1d + speedCoefficient * (vNorm * vNorm);
 
-    DogLog.log("Vision/calibrationFactor", calibrationFactor);
-    DogLog.log("Vision/tagFactor", tagFactor);
-    DogLog.log("Vision/distanceFactor", distanceFactor);
-    DogLog.log("Vision/speedFactor", speedFactor);
+    DogLog.log("Subsystems/Vision/calibrationFactor", calibrationFactor);
+    DogLog.log("Subsystems/Vision/tagFactor", tagFactor);
+    DogLog.log("Subsystems/Vision/distanceFactor", distanceFactor);
+    DogLog.log("Subsystems/Vision/speedFactor", speedFactor);
 
     double computedStdDevs = calibrationFactor * tagFactor * distanceFactor * speedFactor;
     return computedStdDevs;

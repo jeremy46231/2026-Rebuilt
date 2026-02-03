@@ -250,8 +250,6 @@ public final class Constants {
     public static final double COLOR_PITCH = Units.degreesToRadians(-12.5);
     public static final double COLOR_YAW = Units.degreesToRadians(-40);
 
-    public static final double MAX_DETECTABLE_FUEL_AREA_PERCENTAGE = 60.00;
-    public static final double REALISTIC_MAX_DETECTABLE_AREA_PERCENTAGE = 23.00;
 
     // initializing Transform3d for use in future field visualization
     public static Transform3d getCameraTransform(Cameras camera) {
@@ -274,8 +272,10 @@ public final class Constants {
     }
   }
 
-  public static class ObjectDetection {
+  public static class FuelGaugeDetection {
     public static final int MAX_FUEL_GAUGE_MEASUREMENTS = 33;
+    public static final double MAX_DETECTABLE_FUEL_AREA_PERCENTAGE = 60.00;
+    public static final double REALISTIC_MAX_DETECTABLE_AREA_PERCENTAGE = 23.00;
 
     public static enum FuelGauge { // LAST: 20, 50, 70, 100
       EMPTY(10.0),

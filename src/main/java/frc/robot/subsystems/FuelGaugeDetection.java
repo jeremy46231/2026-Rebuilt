@@ -3,7 +3,7 @@ package frc.robot.subsystems;
 import dev.doglog.DogLog;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
-import frc.robot.Constants.ObjectDetection.FuelGauge;
+import frc.robot.Constants.FuelGaugeDetection.FuelGauge;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -11,10 +11,10 @@ import org.photonvision.PhotonCamera;
 import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.PhotonTrackedTarget;
 
-public class ObjectDetection extends SubsystemBase {
+public class FuelGaugeDetection extends SubsystemBase {
 
-  private static ObjectDetection[] cameraList =
-      new ObjectDetection[Constants.Vision.Cameras.values().length];
+  private static FuelGaugeDetection[] cameraList =
+      new FuelGaugeDetection[Constants.Vision.Cameras.values().length];
 
   private static ArrayList<Double> latestMeasurements = new ArrayList<>();
 
@@ -24,16 +24,16 @@ public class ObjectDetection extends SubsystemBase {
   private final PhotonCamera photonCamera;
   private PhotonPipelineResult latestVisionResult;
 
-  public ObjectDetection(Constants.Vision.Cameras cameraID) {
+  public FuelGaugeDetection(Constants.Vision.Cameras cameraID) {
     this.cameraID = cameraID;
     photonCamera = new PhotonCamera(cameraID.toString());
 
     cameraTitle = cameraID.getLoggingName();
   }
 
-  public static ObjectDetection getInstance(Constants.Vision.Cameras cameraID) {
+  public static FuelGaugeDetection getInstance(Constants.Vision.Cameras cameraID) {
     int index = cameraID.ordinal();
-    if (cameraList[index] == null) cameraList[index] = new ObjectDetection(cameraID);
+    if (cameraList[index] == null) cameraList[index] = new FuelGaugeDetection(cameraID);
     return cameraList[index];
   }
 
@@ -42,18 +42,18 @@ public class ObjectDetection extends SubsystemBase {
     List<PhotonPipelineResult> results = photonCamera.getAllUnreadResults();
     for (var result : results) latestVisionResult = result;
 
-    Optional<PhotonTrackedTarget> blob = getLargestBlob();
-    blob.ifPresentOrElse(
+    Optional<PhotonTrackedTarget> ball = getLargestBall();
+    ball.ifPresentOrElse(
         b -> {
-          DogLog.log("Vision/BlobPresent", true);
-          DogLog.log("Vision/BlobYaw", b.getYaw());
-          DogLog.log("Vision/BlobPitch", b.getPitch());
-          DogLog.log("Vision/BlobSkew", b.getSkew());
+          DogLog.log("Subsystems/FuelGauge/BallPresent", true);
+          DogLog.log("Subsystems/FuelGauge/BallYaw", b.getYaw());
+          DogLog.log("Subsystems/FuelGauge/BallPitch", b.getPitch());
+          DogLog.log("Subsystems/FuelGauge/BallSkew", b.getSkew());
           double maxFuelPercentage =
               ((double)
                       Math.round(
                           b.getArea()
-                              / Constants.Vision.MAX_DETECTABLE_FUEL_AREA_PERCENTAGE
+                              / Constants.FuelGaugeDetection.MAX_DETECTABLE_FUEL_AREA_PERCENTAGE
                               * 100.0
                               / 10.0))
                   * 10.0;
@@ -62,14 +62,14 @@ public class ObjectDetection extends SubsystemBase {
               ((double)
                       Math.round(
                           b.getArea()
-                              / Constants.Vision.REALISTIC_MAX_DETECTABLE_AREA_PERCENTAGE
+                              / Constants.FuelGaugeDetection.REALISTIC_MAX_DETECTABLE_AREA_PERCENTAGE
                               * 100.0
                               / 10.0))
                   * 10.0;
 
           latestMeasurements.add(maxFuelRealisticPercentage);
           while (latestMeasurements.size()
-              > Constants.ObjectDetection.MAX_FUEL_GAUGE_MEASUREMENTS) {
+              > Constants.FuelGaugeDetection.MAX_FUEL_GAUGE_MEASUREMENTS) {
             latestMeasurements.remove(0);
           }
 
@@ -84,13 +84,13 @@ public class ObjectDetection extends SubsystemBase {
             avgRealisticPercentage = maxFuelRealisticPercentage;
           }
 
-          DogLog.log("Vision/FuelGauge", maxFuelPercentage);
-          DogLog.log("Vision/FuelGaugeRealistic", maxFuelRealisticPercentage);
-          DogLog.log("Vision/AvgFuelGaugeRealistic", avgRealisticPercentage);
+          DogLog.log("Subsystems/FuelGauge/FuelGauge", maxFuelPercentage);
+          DogLog.log("Subsystems/FuelGauge/FuelGaugeRealistic", maxFuelRealisticPercentage);
+          DogLog.log("Subsystems/FuelGauge/AvgFuelGaugeRealistic", avgRealisticPercentage);
 
           logThresholdState(avgRealisticPercentage, maxFuelRealisticPercentage);
         },
-        () -> DogLog.log("Vision/BlobPresent", false));
+        () -> DogLog.log("Subsystems/FuelGauge/BlobPresent", false));
   }
 
   public void logThresholdState(double avgRealistic, double maxRealistic) {
@@ -116,11 +116,11 @@ public class ObjectDetection extends SubsystemBase {
       realisticGauge = FuelGauge.FULL;
     }
 
-    DogLog.log("Vision/FuelGaugeLevel", avgGauge.toString());
-    DogLog.log("Vision/FuelGaugeRealisticLevel", realisticGauge.toString());
+    DogLog.log("Subsystems/FuelGauge/FuelGaugeLevel", avgGauge.toString());
+    DogLog.log("Subsystems/FuelGauge/FuelGaugeRealisticLevel", realisticGauge.toString());
   }
 
-  public Optional<PhotonTrackedTarget> getLargestBlob() {
+  public Optional<PhotonTrackedTarget> getLargestBall() {
     if (latestVisionResult == null) return Optional.empty();
     List<PhotonTrackedTarget> targets = latestVisionResult.getTargets();
     if (targets.isEmpty()) return Optional.empty();
@@ -128,19 +128,19 @@ public class ObjectDetection extends SubsystemBase {
     return targets.stream().max((a, b) -> Double.compare(a.getArea(), b.getArea()));
   }
 
-  public Optional<Double> getYawToBlob() {
-    return getLargestBlob().map(PhotonTrackedTarget::getYaw);
+  public Optional<Double> getYawToBall() {
+    return getLargestBall().map(PhotonTrackedTarget::getYaw);
   }
 
-  public Optional<Double> getAreaOfBlob() {
-    return getLargestBlob().map(PhotonTrackedTarget::getArea);
+  public Optional<Double> getAreaOfBall() {
+    return getLargestBall().map(PhotonTrackedTarget::getArea);
   }
 
-  public Optional<Double> getPitchToBlob() {
-    return getLargestBlob().map(PhotonTrackedTarget::getPitch);
+  public Optional<Double> getPitchToBall() {
+    return getLargestBall().map(PhotonTrackedTarget::getPitch);
   }
 
-  public Optional<Double> getSkewToBlob() {
-    return getLargestBlob().map(PhotonTrackedTarget::getSkew);
+  public Optional<Double> getSkewToBall() {
+    return getLargestBall().map(PhotonTrackedTarget::getSkew);
   }
 }
