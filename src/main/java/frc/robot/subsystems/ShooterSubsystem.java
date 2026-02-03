@@ -57,7 +57,8 @@ public class ShooterSubsystem extends SubsystemBase {
   // spin the shooter up to speed before the game piece goes through it
   public void rampUp(double speed) {
     targetSpeed = speed;
-    VelocityVoltage m_velocityControl = new VelocityVoltage(speed * 24d / 18d / (2 * 3.14 * wheelradius));
+    VelocityVoltage m_velocityControl =
+        new VelocityVoltage(speed * 24d / 18d / (2 * 3.14 * wheelradius));
     motor1.setControl(m_velocityControl);
   }
 
@@ -82,12 +83,17 @@ public class ShooterSubsystem extends SubsystemBase {
 
   // returns if your speed error is within the tolerance
   public boolean atSpeed() {
-    return Math.abs(motor1.getVelocity().getValueAsDouble() - targetSpeed * 24d / 18d / (2 * 3.14 * wheelradius)) <= tolerance;
+    return Math.abs(
+            motor1.getVelocity().getValueAsDouble()
+                - targetSpeed * 24d / 18d / (2 * 3.14 * wheelradius))
+        <= tolerance;
   }
 
   @Override
   public void periodic() {
-    DogLog.log("ShooterSubsystem/Speed", motor1.getVelocity().getValueAsDouble() / 24 * 18 * (2 * 3.14 * wheelradius));
+    DogLog.log(
+        "ShooterSubsystem/Speed",
+        motor1.getVelocity().getValueAsDouble() / 24 * 18 * (2 * 3.14 * wheelradius));
     DogLog.log("ShooterSubsystem/PSSpeed", preShooterMotor.getVelocity().getValueAsDouble());
     DogLog.log("ShooterSubsystem/AtSpeed", atSpeed());
     DogLog.log("ShooterSubsystem/TargetSpeed", targetSpeed);

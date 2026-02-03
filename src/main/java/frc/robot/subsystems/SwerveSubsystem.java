@@ -474,9 +474,7 @@ public class SwerveSubsystem extends SwerveDrivetrain<TalonFX, TalonFX, CANcoder
         "subsystems/swerve/module0/drive/speedrps",
         this.getModule(1).getDriveMotor().getVelocity().getValueAsDouble());
 
-    DogLog.log(
-        "subsystems/swerve/pose",
-        this.getState().Pose);
+    DogLog.log("subsystems/swerve/pose", this.getState().Pose);
 
     currentState = getState();
 

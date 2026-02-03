@@ -10,16 +10,12 @@ import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.configs.*;
 import com.ctre.phoenix6.swerve.*;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants.*;
-
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
-import edu.wpi.first.math.geometry.Transform3d;
-import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.*;
 import frc.robot.Constants.Swerve.BumperThickness;
 import frc.robot.Constants.Swerve.RobotDimensions;
@@ -51,16 +47,19 @@ public final class Constants {
 
     public static final int ObjectDetectorPort = 1;
 
-    public static Pose3d offset = new Pose3d(0,0,0, new Rotation3d()); //TODO: acquire vals
+    public static Pose3d offset = new Pose3d(0, 0, 0, new Rotation3d()); // TODO: acquire vals
 
     public static float shootSpeedRps = 10f;
-    public static float shooterWheelSize = 0f; //TODO: acquire vals
-    public static float projectileInitSpeed = shootSpeedRps * shooterWheelSize * 2f * (float) Math.PI;
+    public static float shooterWheelSize = 0f; // TODO: acquire vals
+    public static float projectileInitSpeed =
+        shootSpeedRps * shooterWheelSize * 2f * (float) Math.PI;
   }
 
   public static class Landmarks {
-    public static Pose3d BLUE_HUB = new Pose3d(4.621390342712402, 4.032095909118652, 0, new Rotation3d());
-    public static Pose3d RED_HUB = new Pose3d(11.917659759521484, 4.032095909118652, 0, new Rotation3d());
+    public static Pose3d BLUE_HUB =
+        new Pose3d(4.621390342712402, 4.032095909118652, 0, new Rotation3d());
+    public static Pose3d RED_HUB =
+        new Pose3d(11.917659759521484, 4.032095909118652, 0, new Rotation3d());
   }
 
   public static class MotorConstants {

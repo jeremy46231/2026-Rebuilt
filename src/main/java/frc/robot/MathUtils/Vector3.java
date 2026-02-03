@@ -26,7 +26,7 @@ public class Vector3 {
     z = 0;
   }
 
-    public Vector3(Pose3d pose) {
+  public Vector3(Pose3d pose) {
     x = (float) pose.getX();
     y = (float) pose.getY();
     z = (float) pose.getZ();

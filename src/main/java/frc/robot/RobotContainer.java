@@ -4,9 +4,6 @@
 
 package frc.robot;
 
-import java.util.function.BooleanSupplier;
-import java.util.function.DoubleSupplier;
-
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -18,6 +15,8 @@ import frc.robot.commands.Shoot;
 import frc.robot.commands.SwerveCommands.SwerveJoystickCommand;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
+import java.util.function.BooleanSupplier;
+import java.util.function.DoubleSupplier;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -31,7 +30,6 @@ public class RobotContainer {
   private final SwerveSubsystem driveTrain = SwerveSubsystem.getInstance();
   private BooleanSupplier redside = () -> redAlliance;
   private static boolean redAlliance = true;
-
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
   private final CommandXboxController m_driverController =
@@ -69,19 +67,19 @@ public class RobotContainer {
                     ? 0d
                     : 1d; // slowmode when left shoulder is pressed, otherwise fast
 
-    SwerveJoystickCommand swerveJoystickCommand =  
-        new SwerveJoystickCommand(  
-            frontBackFunction,  
-            leftRightFunction,  
-            rotationFunction,  
-            speedFunction, // slowmode when left shoulder is pressed, otherwise fast  
-            () -> m_driverController.leftTrigger().getAsBoolean(),  
-            redside, 
-            () -> m_driverController.x().getAsBoolean(), //must be same as shoot cmd binding  
-            driveTrain);  
-    driveTrain.setDefaultCommand(swerveJoystickCommand); 
+    SwerveJoystickCommand swerveJoystickCommand =
+        new SwerveJoystickCommand(
+            frontBackFunction,
+            leftRightFunction,
+            rotationFunction,
+            speedFunction, // slowmode when left shoulder is pressed, otherwise fast
+            () -> m_driverController.leftTrigger().getAsBoolean(),
+            redside,
+            () -> m_driverController.x().getAsBoolean(), // must be same as shoot cmd binding
+            driveTrain);
+    driveTrain.setDefaultCommand(swerveJoystickCommand);
 
-    m_driverController.x().whileTrue(new Shoot(driveTrain, lebron, redside)); //shoot cmd binding
+    m_driverController.x().whileTrue(new Shoot(driveTrain, lebron, redside)); // shoot cmd binding
 
     // Schedule `exampleMethodCommand` when the Xbox controller's B button is pressed,
     // cancelling on release.
