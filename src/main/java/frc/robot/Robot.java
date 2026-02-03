@@ -26,6 +26,8 @@ public class Robot extends TimedRobot {
 
   private VisionSubsystem visionRight, visionLeft;
   private FuelGaugeDetection visionColor;
+
+  // TODO: figure out how to pass in the actual swerv
   private CommandSwerveDrivetrain visionSwerve;
 
   /**
@@ -47,6 +49,7 @@ public class Robot extends TimedRobot {
       visionRight = null;
       visionLeft = null;
       visionColor = null;
+      visionSwerve = null;
     }
   }
 
