@@ -112,7 +112,7 @@ public class VisionSubsystem extends SubsystemBase {
     for (var result : results) latestVisionResult = result;
   }
 
-  public void addFilteredPose() {
+  public void addFilteredPose(CommandSwerveDrivetrain swerve) {
     DogLog.log("Subsystems/Vision/addFilteredPoseworking", true);
 
     if (latestVisionResult == null || latestVisionResult.getTargets().isEmpty()) {
@@ -245,7 +245,8 @@ public class VisionSubsystem extends SubsystemBase {
           currentSpeed,
           tagCount,
           estimatedPose.timestampSeconds,
-          noiseVector);
+          noiseVector,
+          swerve);
 
       DogLog.log("Subsystems/Vision/VisionPoseEstimate", measuredPose);
 
@@ -265,7 +266,8 @@ public class VisionSubsystem extends SubsystemBase {
       double currentSpeed,
       int tagCount,
       double timestamp,
-      Matrix<N3, N1> noiseVector) {
+      Matrix<N3, N1> noiseVector,
+      CommandSwerveDrivetrain swerve) {
 
     // Use vision timestamp if within threshold of FPGA timestamp
     double fpgaTimestamp = Timer.getFPGATimestamp();
@@ -275,7 +277,7 @@ public class VisionSubsystem extends SubsystemBase {
             ? fpgaTimestamp + timestampFPGACorrection
             : timestamp;
 
-    // swerveDrive.addVisionMeasurement(measuredPose...) check ln 279
+    swerve.addVisionMeasurement(measuredPose, chosenTimestamp, noiseVector);
   }
 
   // prev. year had isTagOnActiveSide but not relevant this year
