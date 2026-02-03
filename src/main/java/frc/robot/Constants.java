@@ -71,7 +71,8 @@ public final class Constants {
 
     public static final double INTAKE_SUPPLY_CURRENT_LIMIT = 30.0;
     public static final double INTAKE_STATOR_CURRENT_LIMIT = 50.0;
-    public static final double INTAKE_TARGET_SPEED = 40.0 / MOTOR_ROTS_TO_INTAKE_ROTS; // subject to change
+    public static final double INTAKE_TARGET_SPEED =
+        40.0 / MOTOR_ROTS_TO_INTAKE_ROTS; // subject to change
   }
 
   public static class MotorConstants {
@@ -89,7 +90,6 @@ public final class Constants {
       L2(6.75, 21.428571428571427),
       L3(6.12, 21.428571428571427),
       FIVEN_L3(5.2734375, 26.09090909091);
-
       public final double DRIVE_GEAR_RATIO, STEER_GEAR_RATIO;
 
       SwerveLevel(double drive, double steer) {
@@ -105,7 +105,6 @@ public final class Constants {
       // //0.12301
       JAMES_HARDEN(0.36, 0d, 0d, 0.2425, 0.11560693641, 0), // 0.041539 //0.12301
       COBRA(0.1, 0d, 0d, 0d, 0.124, 0d); // 0.041539 //0.12301
-
       public final double KP, KI, KD, KS, KV, KA;
 
       SwerveDrivePIDValues(double KP, double KI, double KD, double KS, double KV, double KA) {
@@ -123,7 +122,6 @@ public final class Constants {
       PROTO(20d, 0d, 0d, 0d, 0d, 0d),
       JAMES_HARDEN(38.982d, 2.4768d, 0d, 0.23791d, 0d, 0.1151d),
       COBRA(100d, 0d, 0.5, 0.1, 2.49, 0d);
-
       public final double KP, KI, KD, KS, KV, KA;
 
       SwerveSteerPIDValues(double KP, double KI, double KD, double KS, double KV, double KA) {
@@ -141,7 +139,6 @@ public final class Constants {
       PROTO(Inches.of(22.52), Inches.of(22.834)), // length, width
       JAMES_HARDEN(Inches.of(26.75), Inches.of(22.75)), // length, width
       COBRA(Inches.of(29.0), Inches.of(26.0)); // length, width
-
       public final Distance length, width;
 
       RobotDimensions(Distance length, Distance width) {
@@ -216,7 +213,6 @@ public final class Constants {
           BumperThickness.COBRA,
           3.5714285714285716,
           false);
-
       public final Angle FRONT_LEFT_ENCODER_OFFSET,
           FRONT_RIGHT_ENCODER_OFFSET,
           BACK_LEFT_ENCODER_OFFSET,
@@ -308,8 +304,8 @@ public final class Constants {
 
       public static final double MOTOR_ROTS_TO_PULLEY_ROTS = 1d / 17d;
       public static final double PULLEY_BELT_LENGTH_M = 0; // TODO: get actual value
-      public static final double MOTOR_ROTS_PER_METERS_OF_BELT_TRAVERSAL = MOTOR_ROTS_TO_PULLEY_ROTS
-          * PULLEY_BELT_LENGTH_M;
+      public static final double MOTOR_ROTS_PER_METERS_OF_BELT_TRAVERSAL =
+          MOTOR_ROTS_TO_PULLEY_ROTS * PULLEY_BELT_LENGTH_M;
 
       public static final double REACH_POS = 0; // TODO: get vals
       public static final double PULL_DOWN_POS = 0; // TODO: get vals
@@ -323,10 +319,12 @@ public final class Constants {
     public static final double MOTOR_ROTS_TO_PULLEY_ROTS = .2d; // MRD
     private static final double PULLEY_LENGTH_MM = 220d * 5d; // 220 teeth, 5mm per
     private static final double PULLEY_LENGTH_M = PULLEY_LENGTH_MM / 1000d;
-    public static final double MOTOR_ROTS_TO_METERS_OF_PULLEY_TRAVERSAL = MOTOR_ROTS_TO_PULLEY_ROTS * PULLEY_LENGTH_M;
+    public static final double MOTOR_ROTS_TO_METERS_OF_PULLEY_TRAVERSAL =
+        MOTOR_ROTS_TO_PULLEY_ROTS * PULLEY_LENGTH_M;
 
     public static final double TARGET_PULLEY_SPEED_FT_PER_SEC = 6d;
-    public static final double TARGET_PULLEY_SPEED_M_PER_SEC = Units.feetToMeters(TARGET_PULLEY_SPEED_FT_PER_SEC);
+    public static final double TARGET_PULLEY_SPEED_M_PER_SEC =
+        Units.feetToMeters(TARGET_PULLEY_SPEED_FT_PER_SEC);
 
     public static final int MOTOR_PORT = -1; // TODO: put actual port
 
@@ -367,7 +365,8 @@ public final class Constants {
 
     public static final double DISTANCE_COEFFICIENT_THETA = 0.9;
 
-    public static final double ANGLE_COEFFICIENT_X = 0.5; // noise growth per radian of viewing angle
+    public static final double ANGLE_COEFFICIENT_X =
+        0.5; // noise growth per radian of viewing angle
     public static final double ANGLE_COEFFICIENT_Y = 0.5;
     public static final double ANGLE_COEFFICIENT_THETA = 0.5;
 
@@ -442,20 +441,20 @@ public final class Constants {
   }
 
   public static final class Shooter {
-      public static final MotorConstants warmUpMotor1 = new MotorConstants(35); // TODO
-      public static final MotorConstants warmUpMotor2 = new MotorConstants(34); // TODO
-      public static final MotorConstants warmUpMotor3 = new MotorConstants(32); // TODO
+    public static final MotorConstants warmUpMotor1 = new MotorConstants(35); // TODO
+    public static final MotorConstants warmUpMotor2 = new MotorConstants(34); // TODO
+    public static final MotorConstants warmUpMotor3 = new MotorConstants(32); // TODO
 
-      public static final double SHOOTER_KP = 0.0; // TODO
-      public static final double SHOOTER_KI = 0.0; // TODO
-      public static final double SHOOTER_KD = 0.0; // TODO
-      public static final double SHOOTER_KV = 0.0; // TODO
-      public static final double SHOOTER_KA = 0.0; // TODO
-      public static final double STATOR_CURRENT_LIMIT = 30.0;
-      public static final double SUPPLY_CURRENT_LIMIT = 30.0;
+    public static final double SHOOTER_KP = 0.0; // TODO
+    public static final double SHOOTER_KI = 0.0; // TODO
+    public static final double SHOOTER_KD = 0.0; // TODO
+    public static final double SHOOTER_KV = 0.0; // TODO
+    public static final double SHOOTER_KA = 0.0; // TODO
+    public static final double STATOR_CURRENT_LIMIT = 30.0;
+    public static final double SUPPLY_CURRENT_LIMIT = 30.0;
 
-      public static final double SHOOTER_WHEEL_GEAR_RATIO = 1.25;
-      public static final double SHOOTER_WHEEL_DIAMETER = 3.0;
-      public static final double SHOOT_FOR_AUTO = 104.72;
-    }
+    public static final double SHOOTER_WHEEL_GEAR_RATIO = 1.25;
+    public static final double SHOOTER_WHEEL_DIAMETER = 3.0;
+    public static final double SHOOT_FOR_AUTO = 104.72;
+  }
 }

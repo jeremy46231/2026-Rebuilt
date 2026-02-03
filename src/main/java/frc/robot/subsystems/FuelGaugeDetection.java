@@ -62,7 +62,8 @@ public class FuelGaugeDetection extends SubsystemBase {
               ((double)
                       Math.round(
                           b.getArea()
-                              / Constants.FuelGaugeDetection.REALISTIC_MAX_DETECTABLE_AREA_PERCENTAGE
+                              / Constants.FuelGaugeDetection
+                                  .REALISTIC_MAX_DETECTABLE_AREA_PERCENTAGE
                               * 100.0
                               / 10.0))
                   * 10.0;
