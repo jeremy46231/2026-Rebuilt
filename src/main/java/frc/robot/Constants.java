@@ -277,6 +277,7 @@ public final class Constants {
 
       public static final int ENCODER_PORT = -1; // TODO: get vals
       public static final int ENCODER_ROTATIONS_TO_ARM_ROTATIONS = 0;
+      public static final int ENCODER_OFFSET = 0; // TODO: get vals
     }
 
     public static class SitUp {
@@ -295,6 +296,7 @@ public final class Constants {
 
       public static final int ENCODER_PORT = -1; // TODO: get vals
       public static final int ENCODER_ROTATIONS_TO_ARM_ROTATIONS = 0;
+      public static final int ENCODER_OFFSET = 0; // TODO: get vals
     }
 
     public static class PullUp {
