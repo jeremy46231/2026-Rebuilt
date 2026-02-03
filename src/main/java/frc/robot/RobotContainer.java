@@ -10,6 +10,7 @@ import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -129,13 +130,20 @@ public class RobotContainer {
     if (Constants.shooterOnRobot) {
       joystick.rightTrigger().whileTrue(lebron.ShootAtSpeed());
     }
-    
+
     joystick
         .x()
         .whileTrue(
             new DriveToPose(
                 drivetrain,
-                () -> MiscUtils.plus(drivetrain.getCurrentState().Pose, new Translation2d(0, 1))));
+                () -> MiscUtils.plus(drivetrain.getCurrentState().Pose, new Translation2d(5, 0))));
+
+    joystick
+        .y()
+        .whileTrue(
+            new DriveToPose(
+                drivetrain,
+                () -> MiscUtils.plusWithRotation(drivetrain.getCurrentState().Pose, new Pose2d(new Translation2d(2, 2), new Rotation2d(90)))));
 
     drivetrain.registerTelemetry(logger::telemeterize);
   }

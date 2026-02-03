@@ -82,7 +82,7 @@ public final class Constants {
   }
 
   public static class Swerve {
-    public static final SwerveType WHICH_SWERVE_ROBOT = SwerveType.COBRA;
+    public static final SwerveType WHICH_SWERVE_ROBOT = SwerveType.SERRANO;
 
     public static final double targetPositionError = 0.25;
     public static final double targetAngleError = 0.3;
@@ -136,7 +136,7 @@ public final class Constants {
     }
 
     public static enum SwerveDriveToPosePIDValues {
-      SERRANO(0, 0, 0, 0, 0, 0, 0, 0, 0),
+      SERRANO(12.67, 0, 0, 12.67, 0, 0, 5.67, 0, 0),
       PROTO(0, 0, 0, 0, 0, 0, 0, 0, 0),
       JAMES_HARDEN(0, 0, 0, 0, 0, 0, 0, 0, 0),
       COBRA(2, 0, 0, 2, 0, 0, 5, 0, 0);
@@ -173,15 +173,22 @@ public final class Constants {
     }
 
     public static enum SwerveDriveToPoseProfileValues {
-      SERRANO(0.5, 0.5, 0.2, 0.2),
+      SERRANO(5.067, 8, 5.067, 8),
       PROTO(0.5, 0.5, 0.2, 0.2),
       JAMES_HARDEN(0.5, 0.5, 0.2, 0.2),
       COBRA(0.5, 0.5, 0.2, 0.2);
-      public final double maxVelocityLinear, maxAccelerationLinear, maxVelocityAngular, maxAccelerationAngular;
+      public final double maxVelocityLinear,
+          maxAccelerationLinear,
+          maxVelocityAngular,
+          maxAccelerationAngular;
 
-      SwerveDriveToPoseProfileValues(double maxVelocityLinear, double maxAccelerationLinear, double maxVelocityAngular, double maxAccelerationAngular) {
+      SwerveDriveToPoseProfileValues(
+          double maxVelocityLinear,
+          double maxAccelerationLinear,
+          double maxVelocityAngular,
+          double maxAccelerationAngular) {
         this.maxVelocityLinear = maxVelocityLinear;
-        this.maxAccelerationLinear = maxAccelerationAngular;
+        this.maxAccelerationLinear = maxAccelerationLinear;
         this.maxVelocityAngular = maxVelocityAngular;
         this.maxAccelerationAngular = maxAccelerationAngular;
       }

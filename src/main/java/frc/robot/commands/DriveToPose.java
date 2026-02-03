@@ -67,8 +67,20 @@ public class DriveToPose extends Command {
 
     path =
         new LinearPath(
-            new TrapezoidProfile.Constraints(Constants.Swerve.WHICH_SWERVE_ROBOT.SWERVE_DRIVE_TO_POSE_PROFILE_VALUES.maxVelocityLinear, Constants.Swerve.WHICH_SWERVE_ROBOT.SWERVE_DRIVE_TO_POSE_PROFILE_VALUES.maxAccelerationLinear),
-            new TrapezoidProfile.Constraints(Constants.Swerve.WHICH_SWERVE_ROBOT.SWERVE_DRIVE_TO_POSE_PROFILE_VALUES.maxVelocityAngular, Constants.Swerve.WHICH_SWERVE_ROBOT.SWERVE_DRIVE_TO_POSE_PROFILE_VALUES.maxAccelerationAngular)); // constants
+            new TrapezoidProfile.Constraints(
+                Constants.Swerve.WHICH_SWERVE_ROBOT
+                    .SWERVE_DRIVE_TO_POSE_PROFILE_VALUES
+                    .maxVelocityLinear,
+                Constants.Swerve.WHICH_SWERVE_ROBOT
+                    .SWERVE_DRIVE_TO_POSE_PROFILE_VALUES
+                    .maxAccelerationLinear),
+            new TrapezoidProfile.Constraints(
+                Constants.Swerve.WHICH_SWERVE_ROBOT
+                    .SWERVE_DRIVE_TO_POSE_PROFILE_VALUES
+                    .maxVelocityAngular,
+                Constants.Swerve.WHICH_SWERVE_ROBOT
+                    .SWERVE_DRIVE_TO_POSE_PROFILE_VALUES
+                    .maxAccelerationAngular)); // constants
 
     addRequirements(swerve);
   }
@@ -119,13 +131,18 @@ public class DriveToPose extends Command {
       swerve.applyFieldSpeeds(speeds);
     }
 
-    DogLog.log("CommandSwerveDrivetrain/DriveToPose/Current Pose X", swerve.getCurrentState().Pose.getX()); // fix logs
-    DogLog.log("CommandSwerveDrivetrain/DriveToPose/Current Pose Y", swerve.getCurrentState().Pose.getY());
+    DogLog.log(
+        "CommandSwerveDrivetrain/DriveToPose/Current Pose X",
+        swerve.getCurrentState().Pose.getX()); // fix logs
+    DogLog.log(
+        "CommandSwerveDrivetrain/DriveToPose/Current Pose Y", swerve.getCurrentState().Pose.getY());
     DogLog.log(
         "CommandSwerveDrivetrain/DriveToPose/Current Pose Rotation",
         swerve.getCurrentState().Pose.getRotation().getRadians());
     DogLog.log("CommandSwerveDrivetrain/DriveToPose/Target Pose X", targetPose.getX());
-    DogLog.log("CommandSwerveDrivetrain/DriveToPose/Target Pose Rotation", targetPose.getRotation().getRadians());
+    DogLog.log(
+        "CommandSwerveDrivetrain/DriveToPose/Target Pose Rotation",
+        targetPose.getRotation().getRadians());
     DogLog.log("CommandSwerveDrivetrain/DriveToPose/Target Pose Y", targetPose.getY());
     DogLog.log("CommandSwerveDrivetrain/DriveToPose/Curr time", currTime);
     DogLog.log("CommandSwerveDrivetrain/DriveToPose/Path created", path != null);
@@ -134,11 +151,11 @@ public class DriveToPose extends Command {
   }
 
   private boolean atPosition() {
-    return (swerve.getCurrentState().Pose.getX() - targetPose.getX()
+    return (Math.abs(swerve.getCurrentState().Pose.getX() - targetPose.getX())
             <= Constants.Swerve.targetPositionError)
-        && (swerve.getCurrentState().Pose.getY() - targetPose.getY()
+        && (Math.abs(swerve.getCurrentState().Pose.getY() - targetPose.getY())
             <= Constants.Swerve.targetPositionError)
-        && (swerve.getCurrentState().Pose.getRotation().getRadians()
+        && (Math.abs(swerve.getCurrentState().Pose.getRotation().getRadians())
                 - targetPose.getRotation().getRadians()
             <= Constants.Swerve.targetAngleError);
   }
@@ -150,10 +167,10 @@ public class DriveToPose extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    if (path.isFinished(Utils.getCurrentTimeSeconds() - startTime)) {
-      // pathState = null;
-      return true;
-    }
-    return false;
+    // if (path.isFinished(Utils.getCurrentTimeSeconds() - startTime)) {
+    //   return true;
+    // }
+    // return false;
+    return atPosition();
   }
 }
