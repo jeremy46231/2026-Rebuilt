@@ -16,9 +16,8 @@ public class FuelGaugeDetection extends SubsystemBase {
   private static FuelGaugeDetection[] cameraList =
       new FuelGaugeDetection[Constants.Vision.Cameras.values().length];
 
-  private static ArrayList<Double> latestMeasurements = new ArrayList<>();
-  private static ArrayList<Double> multipleBallMeasurements = new ArrayList<>();
-
+  private static ArrayList<Double> latestRawMeasurements = new ArrayList<>();
+  private static ArrayList<Double> latestMultipleMeasurements = new ArrayList<>();
 
   private final Constants.Vision.Cameras cameraID;
   private String cameraTitle;
@@ -52,86 +51,87 @@ public class FuelGaugeDetection extends SubsystemBase {
           DogLog.log("Subsystems/FuelGauge/BallPitch", b.getPitch());
           DogLog.log("Subsystems/FuelGauge/BallSkew", b.getSkew());
 
-          latestMeasurements.add(b.getArea());
-          while (latestMeasurements.size()
+          latestRawMeasurements.add(b.getArea());
+          while (latestRawMeasurements.size()
               > Constants.FuelGaugeDetection.MAX_FUEL_GAUGE_MEASUREMENTS) {
-            latestMeasurements.remove(0);
+            latestRawMeasurements.remove(0);
           }
 
-          double avgRealisticPercentage = 0.0;
+          double rawArea = b.getArea();
+          double smoothedRawArea = 0.0;
           double smoothedMultipleBalls = 0.0;
 
-          if (!latestMeasurements.isEmpty()) {
-            for (double i : latestMeasurements) {
-              avgRealisticPercentage += i;
+          if (!latestRawMeasurements.isEmpty()) {
+            for (double i : latestRawMeasurements) {
+              smoothedRawArea += i;
             }
-            avgRealisticPercentage = avgRealisticPercentage / latestMeasurements.size();
+            smoothedRawArea = smoothedRawArea / latestRawMeasurements.size();
           } else {
-            avgRealisticPercentage = b.getArea();
+            smoothedRawArea = rawArea;
           }
 
           double avgMultipleBalls = getLargestBallsAvg(3);
 
-          multipleBallMeasurements.add(avgMultipleBalls);
-          while (multipleBallMeasurements.size()
+          latestMultipleMeasurements.add(avgMultipleBalls);
+          while (latestMultipleMeasurements.size()
               > Constants.FuelGaugeDetection.MAX_FUEL_GAUGE_MEASUREMENTS) {
-            multipleBallMeasurements.remove(0);
+            latestMultipleMeasurements.remove(0);
           }
 
-          if (!multipleBallMeasurements.isEmpty()) {
-            for (double i : multipleBallMeasurements) {
+          if (!latestMultipleMeasurements.isEmpty()) {
+            for (double i : latestMultipleMeasurements) {
               smoothedMultipleBalls += i;
             }
-            smoothedMultipleBalls = smoothedMultipleBalls / multipleBallMeasurements.size();
+            smoothedMultipleBalls = smoothedMultipleBalls / latestMultipleMeasurements.size();
           } else {
             smoothedMultipleBalls = avgMultipleBalls;
           }
 
-          DogLog.log("Subsystems/FuelGauge/FuelGauge", b.getArea());
-          DogLog.log("Subsystems/FuelGauge/AvgFuelGauge", avgRealisticPercentage);
-          DogLog.log("Subsystems/FuelGauge/MultipleBallsGauge", smoothedMultipleBalls);
+          DogLog.log("Subsystems/FuelGauge/RawArea", rawArea);
+          DogLog.log("Subsystems/FuelGauge/SmoothedRawArea", smoothedRawArea);
+          DogLog.log("Subsystems/FuelGauge/MultipleBallsArea", smoothedMultipleBalls);
 
-          logThresholdState(avgRealisticPercentage, b.getArea(), smoothedMultipleBalls);
+          logThresholdState(smoothedRawArea, rawArea, smoothedMultipleBalls);
         },
         () -> DogLog.log("Subsystems/FuelGauge/BlobPresent", false));
   }
 
-  public void logThresholdState(double avgRealistic, double maxRealistic, double multipleBalls) {
-    FuelGauge avgGauge, realisticGauge, multipleGauge;
+  public void logThresholdState(double smoothedArea, double rawArea, double smoothedMultipleBalls) {
+    FuelGauge smoothGauge, rawGauge, multipleBallsGauge;
 
-    if (avgRealistic < FuelGauge.EMPTY.getThreshold()) {
-      avgGauge = FuelGauge.EMPTY;
-    } else if (avgRealistic < FuelGauge.LOW.getThreshold()) {
-      avgGauge = FuelGauge.LOW;
-    } else if (avgRealistic < FuelGauge.MEDIUM.getThreshold()) {
-      avgGauge = FuelGauge.MEDIUM;
+    if (smoothedArea < FuelGauge.EMPTY.getThreshold()) {
+      smoothGauge = FuelGauge.EMPTY;
+    } else if (smoothedArea < FuelGauge.LOW.getThreshold()) {
+      smoothGauge = FuelGauge.LOW;
+    } else if (smoothedArea < FuelGauge.MEDIUM.getThreshold()) {
+      smoothGauge = FuelGauge.MEDIUM;
     } else {
-      avgGauge = FuelGauge.FULL;
+      smoothGauge = FuelGauge.FULL;
     }
 
-    if (maxRealistic < FuelGauge.EMPTY.getThreshold()) {
-      realisticGauge = FuelGauge.EMPTY;
-    } else if (maxRealistic < FuelGauge.LOW.getThreshold()) {
-      realisticGauge = FuelGauge.LOW;
-    } else if (maxRealistic < FuelGauge.MEDIUM.getThreshold()) {
-      realisticGauge = FuelGauge.MEDIUM;
+    if (rawArea < FuelGauge.EMPTY.getThreshold()) {
+      rawGauge = FuelGauge.EMPTY;
+    } else if (rawArea < FuelGauge.LOW.getThreshold()) {
+      rawGauge = FuelGauge.LOW;
+    } else if (rawArea < FuelGauge.MEDIUM.getThreshold()) {
+      rawGauge = FuelGauge.MEDIUM;
     } else {
-      realisticGauge = FuelGauge.FULL;
+      rawGauge = FuelGauge.FULL;
     }
 
-    if (multipleBalls < FuelGauge.EMPTY.getThreshold()) {
-      multipleGauge = FuelGauge.EMPTY;
-    } else if (multipleBalls < FuelGauge.LOW.getThreshold()) {
-      multipleGauge = FuelGauge.LOW;
-    } else if (multipleBalls < FuelGauge.MEDIUM.getThreshold()) {
-      multipleGauge = FuelGauge.MEDIUM;
+    if (smoothedMultipleBalls < FuelGauge.EMPTY.getThreshold()) {
+      multipleBallsGauge = FuelGauge.EMPTY;
+    } else if (smoothedMultipleBalls < FuelGauge.LOW.getThreshold()) {
+      multipleBallsGauge = FuelGauge.LOW;
+    } else if (smoothedMultipleBalls < FuelGauge.MEDIUM.getThreshold()) {
+      multipleBallsGauge = FuelGauge.MEDIUM;
     } else {
-      multipleGauge = FuelGauge.FULL;
+      multipleBallsGauge = FuelGauge.FULL;
     }
 
-    DogLog.log("Subsystems/FuelGauge/AvgFuelGaugeLevel", avgGauge.toString());
-    DogLog.log("Subsystems/FuelGauge/FuelGaugeLevel", realisticGauge.toString());
-    DogLog.log("Subsystems/FuelGauge/MultipleBallsGaugeLevel", multipleGauge.toString());
+    DogLog.log("Subsystems/FuelGauge/SmoothedGaugeLevel", smoothGauge.toString());
+    DogLog.log("Subsystems/FuelGauge/RawGaugeLevel", rawGauge.toString());
+    DogLog.log("Subsystems/FuelGauge/MultipleBallsGaugeLevel", multipleBallsGauge.toString());
   }
 
   public Optional<PhotonTrackedTarget> getLargestBall() {
