@@ -49,24 +49,6 @@ public class FuelGaugeDetection extends SubsystemBase {
           DogLog.log("Subsystems/FuelGauge/BallYaw", b.getYaw());
           DogLog.log("Subsystems/FuelGauge/BallPitch", b.getPitch());
           DogLog.log("Subsystems/FuelGauge/BallSkew", b.getSkew());
-          double maxFuelPercentage =
-              ((double)
-                      Math.round(
-                          b.getArea()
-                              / Constants.FuelGaugeDetection.MAX_DETECTABLE_FUEL_AREA_PERCENTAGE
-                              * 100.0
-                              / 10.0))
-                  * 10.0;
-
-          double maxFuelRealisticPercentage =
-              ((double)
-                      Math.round(
-                          b.getArea()
-                              / Constants.FuelGaugeDetection
-                                  .REALISTIC_MAX_DETECTABLE_AREA_PERCENTAGE
-                              * 100.0
-                              / 10.0))
-                  * 10.0;
 
           latestMeasurements.add(b.getArea());
           while (latestMeasurements.size()
@@ -82,20 +64,22 @@ public class FuelGaugeDetection extends SubsystemBase {
             }
             avgRealisticPercentage = avgRealisticPercentage / latestMeasurements.size();
           } else {
-            avgRealisticPercentage = maxFuelRealisticPercentage;
+            avgRealisticPercentage = b.getArea();
           }
 
-          DogLog.log("Subsystems/FuelGauge/FuelGauge", maxFuelPercentage);
-          DogLog.log("Subsystems/FuelGauge/FuelGaugeRealistic", maxFuelRealisticPercentage);
-          DogLog.log("Subsystems/FuelGauge/AvgFuelGaugeRealistic", avgRealisticPercentage);
+          double avgMultipleBalls = getLargestBallsAvg(3);
 
-          logThresholdState(avgRealisticPercentage, b.getArea());
+          DogLog.log("Subsystems/FuelGauge/FuelGauge", b.getArea());
+          DogLog.log("Subsystems/FuelGauge/AvgFuelGauge", avgRealisticPercentage);
+          DogLog.log("Subsystems/FuelGauge/MultipleBallsGauge", avgMultipleBalls);
+
+          logThresholdState(avgRealisticPercentage, b.getArea(), avgMultipleBalls);
         },
         () -> DogLog.log("Subsystems/FuelGauge/BlobPresent", false));
   }
 
-  public void logThresholdState(double avgRealistic, double maxRealistic) {
-    FuelGauge avgGauge, realisticGauge;
+  public void logThresholdState(double avgRealistic, double maxRealistic, double multipleBalls) {
+    FuelGauge avgGauge, realisticGauge, multipleGauge;
 
     if (avgRealistic < FuelGauge.EMPTY.getThreshold()) {
       avgGauge = FuelGauge.EMPTY;
@@ -117,8 +101,19 @@ public class FuelGaugeDetection extends SubsystemBase {
       realisticGauge = FuelGauge.FULL;
     }
 
-    DogLog.log("Subsystems/FuelGauge/FuelGaugeLevel", avgGauge.toString());
-    DogLog.log("Subsystems/FuelGauge/FuelGaugeRealisticLevel", realisticGauge.toString());
+    if (multipleBalls < FuelGauge.EMPTY.getThreshold()) {
+      multipleGauge = FuelGauge.EMPTY;
+    } else if (multipleBalls < FuelGauge.LOW.getThreshold()) {
+      multipleGauge = FuelGauge.LOW;
+    } else if (multipleBalls < FuelGauge.MEDIUM.getThreshold()) {
+      multipleGauge = FuelGauge.MEDIUM;
+    } else {
+      multipleGauge = FuelGauge.FULL;
+    }
+
+    DogLog.log("Subsystems/FuelGauge/AvgFuelGaugeLevel", avgGauge.toString());
+    DogLog.log("Subsystems/FuelGauge/FuelGaugeLevel", realisticGauge.toString());
+    DogLog.log("Subsystems/FuelGauge/MultipleBallsGaugeLevel", multipleGauge.toString());
   }
 
   public Optional<PhotonTrackedTarget> getLargestBall() {
@@ -127,6 +122,20 @@ public class FuelGaugeDetection extends SubsystemBase {
     if (targets.isEmpty()) return Optional.empty();
 
     return targets.stream().max((a, b) -> Double.compare(a.getArea(), b.getArea()));
+  }
+
+  public double getLargestBallsAvg(int numBalls) {
+    double sum = 0.0;
+    if (latestVisionResult == null) return 0.0;
+    List<PhotonTrackedTarget> targets = latestVisionResult.getTargets();
+
+    numBalls = Math.max(numBalls, targets.size());
+
+    for (int i = 0; i < numBalls; i++) {
+      sum += targets.get(i).getArea();
+    }
+
+    return sum / numBalls;
   }
 
   public Optional<Double> getYawToBall() {
