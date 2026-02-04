@@ -51,15 +51,15 @@ public class FuelGaugeDetection extends SubsystemBase {
           DogLog.log("Subsystems/FuelGauge/BallPitch", b.getPitch());
           DogLog.log("Subsystems/FuelGauge/BallSkew", b.getSkew());
 
-          latestRawMeasurements.add(b.getArea());
+          double rawArea = b.getArea();
+          double smoothedRawArea = 0.0;
+          double smoothedMultipleBalls = 0.0;
+
+          latestRawMeasurements.add(rawArea);
           while (latestRawMeasurements.size()
               > Constants.FuelGaugeDetection.MAX_FUEL_GAUGE_MEASUREMENTS) {
             latestRawMeasurements.remove(0);
           }
-
-          double rawArea = b.getArea();
-          double smoothedRawArea = 0.0;
-          double smoothedMultipleBalls = 0.0;
 
           if (!latestRawMeasurements.isEmpty()) {
             for (double i : latestRawMeasurements) {
