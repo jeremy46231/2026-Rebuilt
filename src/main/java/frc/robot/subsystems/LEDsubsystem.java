@@ -5,11 +5,9 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix6.configs.CANdleConfiguration;
-import com.ctre.phoenix6.configs.CustomParamsConfigs;
 import com.ctre.phoenix6.configs.LEDConfigs;
 import com.ctre.phoenix6.hardware.*;
 import com.ctre.phoenix6.signals.StripTypeValue;
-
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 
@@ -24,8 +22,10 @@ public class LEDsubsystem extends SubsystemBase {
   private int r, g, b;
 
   public LEDsubsystem(CommandXboxController controller) {
-    candle = new CANdle(5);
-    config = new CANdleConfiguration().withLED(new LEDConfigs().withStripType(StripTypeValue.RGB).withBrightnessScalar(.5));
+    candle = new CANdle(39);
+    config =
+        new CANdleConfiguration()
+            .withLED(new LEDConfigs().withStripType(StripTypeValue.RGB).withBrightnessScalar(.5));
 
     this.controller = controller;
   }
@@ -55,9 +55,9 @@ public class LEDsubsystem extends SubsystemBase {
   @Override
   public void periodic() {
     if (controller.x().getAsBoolean()) {
-      setLEDcontrol(255, 0, 0);
+      setLEDcontrol(0, 0, 255);
     } else {
-      setLEDcontrol(0, 0, 0);
+      setLEDcontrol(0, 0, 255);
     }
   }
 }
