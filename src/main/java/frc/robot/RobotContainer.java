@@ -78,30 +78,25 @@ public class RobotContainer {
     autoFactory = drivetrain.createAutoFactory();
     autoRoutines = new AutoRoutines(autoFactory);
 
-    // Command trajCommand =
-    //     autoFactory
-    //         .resetOdometry("MoveForward.traj")
-    //         .andThen(autoFactory.trajectoryCmd("MoveForward.traj")).andThen(new DriveToPose(drivetrain, () -> MiscUtils.plus(drivetrain.getCurrentState().Pose, new Translation2d(-1, 0))));
-
     Command trajCommand =
         autoFactory
             .resetOdometry("LongDistance.traj")
-            .andThen(autoFactory.trajectoryCmd("LongDistance.traj"))
-            .andThen(new DriveToPose(
-                            drivetrain,
-                            () ->
-                                MiscUtils.plus(
-                                    drivetrain.getCurrentState().Pose, new Translation2d(-1, 0))))
-            .andThen(new DriveToPose(
-                            drivetrain,
-                            () ->
-                                MiscUtils.plus(
-                                    drivetrain.getCurrentState().Pose, new Translation2d(0, 1))))
-            .andThen(new DriveToPose(
-                            drivetrain,
-                            () ->
-                                MiscUtils.plus(
-                                    drivetrain.getCurrentState().Pose, new Translation2d(1, 0))));
+            .andThen(autoFactory.trajectoryCmd("LongDistance.traj"));
+            // .andThen(new DriveToPose(
+            //                 drivetrain,
+            //                 () ->
+            //                     MiscUtils.plus(
+            //                         drivetrain.getCurrentState().Pose, new Translation2d(-1, 0))))
+            // .andThen(new DriveToPose(
+            //                 drivetrain,
+            //                 () ->
+            //                     MiscUtils.plus(
+            //                         drivetrain.getCurrentState().Pose, new Translation2d(0, 1))))
+            // .andThen(new DriveToPose(
+            //                 drivetrain,
+            //                 () ->
+            //                     MiscUtils.plus(
+            //                         drivetrain.getCurrentState().Pose, new Translation2d(1, 0))));
 
 
     autoChooser.addCmd("sequence", () -> trajCommand);

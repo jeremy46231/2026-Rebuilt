@@ -34,14 +34,7 @@ public class Robot extends TimedRobot {
   public void robotInit() {
     RobotContainer.setAlliance();
     DogLog.setOptions(
-        new DogLogOptions().withNtPublish(false).withCaptureDs(true).withLogExtras(true));
-  }
-
-  @Override
-  public void robotInit() {
-    RobotContainer.setAlliance();
-    DogLog.setOptions(
-        new DogLogOptions().withNtPublish(false).withCaptureDs(true).withLogExtras(true));
+        new DogLogOptions().withNtPublish(true).withCaptureDs(true).withLogExtras(true));
   }
 
   /**
@@ -69,12 +62,6 @@ public class Robot extends TimedRobot {
   /** This function is called once each time the robot enters Disabled mode. */
   @Override
   public void disabledInit() {}
-
-  @Override
-  public void robotInit() {
-    DogLog.setOptions(
-        new DogLogOptions().withNtPublish(true).withCaptureDs(true).withLogExtras(true));
-  }
 
   @Override
   public void disabledPeriodic() {}
