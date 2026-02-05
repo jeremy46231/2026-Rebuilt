@@ -252,6 +252,14 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     super.resetPose(pose);
   }
 
+  public double calculateRequiredRotationalRate(Rotation2d targetRotation) {
+    double omega =
+        // headingProfiledPIDController.getSetpoint().velocity+
+        headingProfiledPIDController.calculate(
+            currentState.Pose.getRotation().getRadians(), targetRotation.getRadians());
+    return omega;
+  }
+
   @Override
   public void periodic() {
     /*
@@ -299,12 +307,4 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
   //     });
   //     m_simNotifier.startPeriodic(kSimLoopPeriod);
   // }
-
-  public double calculateRequiredRotationalRate(Rotation2d targetRotation) {
-    double omega =
-        // headingProfiledPIDController.getSetpoint().velocity+
-        headingProfiledPIDController.calculate(
-            currentState.Pose.getRotation().getRadians(), targetRotation.getRadians());
-    return omega;
-  }
 }
