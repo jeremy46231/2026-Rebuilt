@@ -15,12 +15,15 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.util.LoggedTalonFX;
+import edu.wpi.first.wpilibj.Servo;
 
 public class ClimberSubsystem extends SubsystemBase {
 
   private final LoggedTalonFX muscleUpMotor, sitUpMotor, pullUpMotorR, pullUpMotorL;
   private double sitUpTargetDeg, muscleUpTargetDeg, pullUpTargetPosition;
   private final DutyCycleEncoder muscleUpEncoder, sitUpEncoder;
+
+  private final Servo brake;
 
   public ClimberSubsystem() {
     CurrentLimitsConfigs regClc =
@@ -46,6 +49,10 @@ public class ClimberSubsystem extends SubsystemBase {
     pullUpMotorR = new LoggedTalonFX(Constants.Climber.PullUp.MOTOR_PORT_R);
     pullUpMotorL = new LoggedTalonFX(Constants.Climber.PullUp.MOTOR_PORT_L);
     pullUpMotorL.setControl(new Follower(pullUpMotorR.getDeviceID(), MotorAlignmentValue.Opposed));
+
+    brake = new Servo(Constants.Climber.BRAKE_PORT);
+
+
 
     muscleUpMotor.getConfigurator().apply(s0c);
     sitUpMotor.getConfigurator().apply(s0c);
@@ -126,7 +133,33 @@ public class ClimberSubsystem extends SubsystemBase {
     return sitUpEncoder.get() * Constants.Climber.SitUp.ENCODER_ROTATIONS_TO_ARM_ROTATIONS;
   }
 
+  public void stopSitUp() {
+    sitUpMotor.stopMotor();
+  }
+
+  public void stopPullUp() {
+    pullUpMotorL.stopMotor();
+    pullUpMotorR.stopMotor();
+  }
+
+  public void stopMuscleUp() {
+    muscleUpMotor.stopMotor();
+  }
+
+  public void brakeClimb() {
+    brake.setAngle(Constants.Climber.BRAKE_ANGLE);
+    stopSitUp();
+    stopPullUp();
+    stopMuscleUp();
+  }
+
+
   // Comands
+  public Command brakeCommand() {
+    return Commands.runOnce(() -> this.brakeClimb(), this);
+  }
+
+
   public Command SetMuscleUpToAngle(double angle) {
     return Commands.runOnce(() -> setMuscleUpPosition(angle), this);
   }
@@ -139,26 +172,52 @@ public class ClimberSubsystem extends SubsystemBase {
     return Commands.runOnce(() -> setSitUpPosition(angle), this);
   }
 
-  public Command L1Climb() {
+  public Command L1ClimbAuto() {
     return Commands.sequence(
         SetPullUpToPosition(Constants.Climber.PullUp.REACH_POS),
         SetSitUpToAngle(Constants.Climber.SitUp.SIT_UP_ANGLE),
         SetPullUpToPosition(Constants.Climber.PullUp.PULL_DOWN_POS));
   }
 
-  public Command L3Climb() {
-    // for (int i = 0; i < 3; i++) from old command
-    Command singleCycle =
-        Commands.sequence(
-            SetPullUpToPosition(Constants.Climber.PullUp.REACH_POS),
-            SetSitUpToAngle(Constants.Climber.SitUp.SIT_UP_ANGLE),
-            SetMuscleUpToAngle(Constants.Climber.MuscleUp.MUSCLE_UP_BACK),
-            SetPullUpToPosition(Constants.Climber.PullUp.PULL_DOWN_POS),
-            SetMuscleUpToAngle(Constants.Climber.MuscleUp.MUSCLE_UP_FORWARD),
-            SetSitUpToAngle(Constants.Climber.SitUp.SIT_BACK_ANGLE));
+  public Command LxClimb(int x) {
+    Command[] commands = new Command[x + 1];
 
-    return Commands.sequence(singleCycle, singleCycle, singleCycle);
-  }
+    for (int i = 0; i < x; i++) {
+      commands[i] =
+          Commands.sequence(
+              SetSitUpToAngle(Constants.Climber.SitUp.SIT_UP_ANGLE),
+              SetPullUpToPosition(Constants.Climber.PullUp.REACH_POS),
+              SetMuscleUpToAngle(Constants.Climber.MuscleUp.MUSCLE_UP_BACK),
+              SetPullUpToPosition(Constants.Climber.PullUp.PULL_DOWN_POS),
+              SetMuscleUpToAngle(Constants.Climber.MuscleUp.MUSCLE_UP_FORWARD),
+              SetSitUpToAngle(Constants.Climber.SitUp.SIT_BACK_ANGLE)
+          );
+    }
+
+    commands[x] = brakeCommand();
+
+    return Commands.sequence(commands);
+}
+
+  // public Command L3Climb(int x) {
+  //   // for (int i = 0; i < 3; i++) from old command
+
+  //   Command singleCycle =
+  //       Commands.sequence(
+  //           SetPullUpToPosition(Constants.Climber.PullUp.REACH_POS),
+  //           SetSitUpToAngle(Constants.Climber.SitUp.SIT_UP_ANGLE),
+  //           SetMuscleUpToAngle(Constants.Climber.MuscleUp.MUSCLE_UP_BACK),
+  //           SetPullUpToPosition(Constants.Climber.PullUp.PULL_DOWN_POS),
+  //           SetMuscleUpToAngle(Constants.Climber.MuscleUp.MUSCLE_UP_FORWARD),
+  //           SetSitUpToAngle(Constants.Climber.SitUp.SIT_BACK_ANGLE));
+
+  //   Command[] list = new Command[x];
+  //   for (int i = 0; i < x; i++){
+  //     list[x] = singleCycle; 
+  //   }
+
+  //   return Commands.sequence(Commands.repeat());
+  // }
 
   @Override
   public void periodic() {

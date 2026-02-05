@@ -279,6 +279,9 @@ public final class Constants {
     public static final double DEFAULT_SUPPLY_CURRENT = 30.0;
     public static final double DEFAULT_STATOR_CURRENT = 30.0;
 
+    public static final int BRAKE_PORT = 7; // TODO
+    public static final double BRAKE_ANGLE = 30.0;
+
     public static class MuscleUp {
       public static final double MUSCLE_UP_TOLERANCE = 0.1;
 
