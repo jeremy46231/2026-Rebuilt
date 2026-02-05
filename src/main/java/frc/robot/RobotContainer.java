@@ -10,11 +10,9 @@ import choreo.auto.AutoChooser;
 import choreo.auto.AutoFactory;
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
-import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -30,8 +28,6 @@ import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
-import frc.robot.util.MiscUtils;
-import java.util.function.Supplier;
 
 public class RobotContainer {
 
@@ -78,9 +74,7 @@ public class RobotContainer {
     autoRoutines = new AutoRoutines(autoFactory);
 
     Command trajCommand =
-        autoFactory
-            .resetOdometry("Turn.traj")
-            .andThen(autoFactory.trajectoryCmd("Turn.traj"));
+        autoFactory.resetOdometry("Turn.traj").andThen(autoFactory.trajectoryCmd("Turn.traj"));
 
     autoChooser.addCmd("sequence", () -> trajCommand);
 
@@ -171,9 +165,7 @@ public class RobotContainer {
     Command trajCommand =
         autoFactory
             .resetOdometry("MoveForward.traj")
-            .andThen(
-                autoFactory
-                    .trajectoryCmd("MoveForward.traj"));
+            .andThen(autoFactory.trajectoryCmd("MoveForward.traj"));
 
     joystick.x().whileTrue(trajCommand);
 

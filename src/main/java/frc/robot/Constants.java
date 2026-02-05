@@ -137,22 +137,31 @@ public final class Constants {
     }
 
     public static enum ChoreoPIDValues {
-      SERRANO(0.1d, 0d, 0d, 0.1d, 0d, 0d, 3.867d, 0d ,0d),
-      PROTO(0d, 0d, 0d, 0d, 0d, 0d, 0d, 0d ,0d),
-      JAMES_HARDEN(0d, 0d, 0d, 0d, 0d, 0d, 0d, 0d ,0d),
-      COBRA(0d, 0d, 0d, 0d, 0d, 0d, 0d, 0d ,0d);
+      SERRANO(0.1d, 0d, 0d, 0.1d, 0d, 0d, 3.867d, 0d, 0d),
+      PROTO(0d, 0d, 0d, 0d, 0d, 0d, 0d, 0d, 0d),
+      JAMES_HARDEN(0d, 0d, 0d, 0d, 0d, 0d, 0d, 0d, 0d),
+      COBRA(0d, 0d, 0d, 0d, 0d, 0d, 0d, 0d, 0d);
       public final double kPX, kIX, kDX, kPY, kIY, kDY, kPR, kIR, kDR;
 
-      ChoreoPIDValues(double kPX, double kIX, double kDX, double kPY, double kIY, double kDY, double kPR, double kIR, double kDR) {
-        this.kPX=kPX;
-        this.kIX= kIX;
-        this.kDX=kDX;
-        this.kPY= kPY;
-        this.kIY= kIY;
-        this.kDY= kDY;
-        this.kPR= kPR;
-        this.kIR= kIR;
-        this.kDR= kDR;
+      ChoreoPIDValues(
+          double kPX,
+          double kIX,
+          double kDX,
+          double kPY,
+          double kIY,
+          double kDY,
+          double kPR,
+          double kIR,
+          double kDR) {
+        this.kPX = kPX;
+        this.kIX = kIX;
+        this.kDX = kDX;
+        this.kPY = kPY;
+        this.kIY = kIY;
+        this.kDY = kDY;
+        this.kPR = kPR;
+        this.kIR = kIR;
+        this.kDR = kDR;
       }
     }
 
