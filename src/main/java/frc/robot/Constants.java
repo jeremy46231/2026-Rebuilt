@@ -136,20 +136,23 @@ public final class Constants {
       }
     }
 
-    public static enum ChroreoPIDValues {
-      SERRANO(50d, 0d, 0.2, 0d, 1.5, 0d),
-      PROTO(20d, 0d, 0d, 0d, 0d, 0d),
-      JAMES_HARDEN(38.982d, 2.4768d, 0d, 0.23791d, 0d, 0.1151d),
-      COBRA(100d, 0d, 0.5, 0.1, 2.49, 0d);
-      public final double KP, KI, KD, KS, KV, KA;
+    public static enum ChoreoPIDValues {
+      SERRANO(0.1d, 0d, 0d, 0.1d, 0d, 0d, 3.67d, 0d ,0d),
+      PROTO(0d, 0d, 0d, 0d, 0d, 0d, 0d, 0d ,0d),
+      JAMES_HARDEN(0d, 0d, 0d, 0d, 0d, 0d, 0d, 0d ,0d),
+      COBRA(0d, 0d, 0d, 0d, 0d, 0d, 0d, 0d ,0d);
+      public final double kPX, kIX, kDX, kPY, kIY, kDY, kPR, kIR, kDR;
 
-      ChroreoPIDValues(double KP, double KI, double KD, double KS, double KV, double KA) {
-        this.KP = KP;
-        this.KI = KI;
-        this.KD = KD;
-        this.KS = KS;
-        this.KV = KV;
-        this.KA = KA;
+      ChoreoPIDValues(double kPX, double kIX, double kDX, double kPY, double kIY, double kDY, double kPR, double kIR, double kDR) {
+        this.kPX=kPX;
+        this.kIX= kIX;
+        this.kDX=kDX;
+        this.kPY= kPY;
+        this.kIY= kIY;
+        this.kDY= kDY;
+        this.kPR= kPR;
+        this.kIR= kIR;
+        this.kDR= kDR;
       }
     }
 
@@ -188,6 +191,7 @@ public final class Constants {
           SwerveLevel.L3, // what level the swerve drive is
           SwerveDrivePIDValues.SERRANO,
           SwerveSteerPIDValues.SERRANO,
+          ChoreoPIDValues.SERRANO,
           RobotDimensions.SERRANO,
           "Patrice the Pineapple",
           BumperThickness.SERRANO,
@@ -201,6 +205,7 @@ public final class Constants {
           SwerveLevel.L2, // what level the swerve drive is
           SwerveDrivePIDValues.PROTO,
           SwerveSteerPIDValues.PROTO,
+          ChoreoPIDValues.PROTO,
           RobotDimensions.PROTO,
           "rio",
           BumperThickness.PROTO,
@@ -214,6 +219,7 @@ public final class Constants {
           SwerveLevel.L3,
           SwerveDrivePIDValues.JAMES_HARDEN,
           SwerveSteerPIDValues.JAMES_HARDEN,
+          ChoreoPIDValues.JAMES_HARDEN,
           RobotDimensions.JAMES_HARDEN,
           "JamesHarden",
           BumperThickness.JAMES_HARDEN,
@@ -227,6 +233,7 @@ public final class Constants {
           SwerveLevel.FIVEN_L3,
           SwerveDrivePIDValues.COBRA,
           SwerveSteerPIDValues.COBRA,
+          ChoreoPIDValues.COBRA,
           RobotDimensions.COBRA,
           "Viper",
           BumperThickness.COBRA,
@@ -239,6 +246,7 @@ public final class Constants {
       public final SwerveLevel SWERVE_LEVEL;
       public final SwerveDrivePIDValues SWERVE_DRIVE_PID_VALUES;
       public final SwerveSteerPIDValues SWERVE_STEER_PID_VALUES;
+      public final ChoreoPIDValues CHOREO_PID_VALUES;
       public final RobotDimensions ROBOT_DIMENSIONS;
       public final String CANBUS_NAME;
       public final double COUPLE_RATIO;
@@ -253,6 +261,7 @@ public final class Constants {
           SwerveLevel swerveLevel,
           SwerveDrivePIDValues swerveDrivePIDValues,
           SwerveSteerPIDValues swerveSteerPIDValues,
+          ChoreoPIDValues choreoPIDValues,
           RobotDimensions robotDimensions,
           String canbus_name,
           BumperThickness thickness,
@@ -265,6 +274,7 @@ public final class Constants {
         SWERVE_LEVEL = swerveLevel;
         SWERVE_DRIVE_PID_VALUES = swerveDrivePIDValues;
         SWERVE_STEER_PID_VALUES = swerveSteerPIDValues;
+        CHOREO_PID_VALUES = choreoPIDValues;
         ROBOT_DIMENSIONS = robotDimensions;
         CANBUS_NAME = canbus_name;
         BUMPER_THICKNESS = thickness;
