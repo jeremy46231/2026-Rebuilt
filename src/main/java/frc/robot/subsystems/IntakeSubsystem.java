@@ -17,6 +17,7 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
 import dev.doglog.DogLog;
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -27,36 +28,33 @@ public class IntakeSubsystem extends SubsystemBase {
   private LoggedTalonFX armMotor, intakeMotor;
   private CANcoder cancoder;
   private double targetAngle;
+  private double hasPieceTimestamp = 0.0;
 
   public IntakeSubsystem() {
     intakeMotor = new LoggedTalonFX(Constants.Intake.INTAKE_MOTOR.port);
     armMotor = new LoggedTalonFX(Constants.Intake.Arm.ARM_MOTOR.port);
     targetAngle = Constants.Intake.Arm.ARM_POS_INITIAL;
 
-    Slot0Configs intakeSlot0Configs =
-        new Slot0Configs()
-            .withKV(Constants.Intake.INTAKE_KV)
-            .withKP(Constants.Intake.INTAKE_KP)
-            .withKI(Constants.Intake.INTAKE_KI)
-            .withKD(Constants.Intake.INTAKE_KD);
+    Slot0Configs intakeSlot0Configs = new Slot0Configs()
+        .withKV(Constants.Intake.INTAKE_KV)
+        .withKP(Constants.Intake.INTAKE_KP)
+        .withKI(Constants.Intake.INTAKE_KI)
+        .withKD(Constants.Intake.INTAKE_KD);
 
-    Slot0Configs armSlot0Configs =
-        new Slot0Configs()
-            .withKV(Constants.Intake.Arm.ARM_KV)
-            .withKP(Constants.Intake.Arm.ARM_KP)
-            .withKI(Constants.Intake.Arm.ARM_KI)
-            .withKD(Constants.Intake.Arm.ARM_KD);
+    Slot0Configs armSlot0Configs = new Slot0Configs()
+        .withKV(Constants.Intake.Arm.ARM_KV)
+        .withKP(Constants.Intake.Arm.ARM_KP)
+        .withKI(Constants.Intake.Arm.ARM_KI)
+        .withKD(Constants.Intake.Arm.ARM_KD);
 
-    CurrentLimitsConfigs intakeCurrentLimitsConfigs =
-        new CurrentLimitsConfigs()
-            .withStatorCurrentLimitEnable(true)
-            .withStatorCurrentLimit(Constants.Intake.INTAKE_STATOR_CURRENT_LIMIT)
-            .withSupplyCurrentLimit(Constants.Intake.INTAKE_SUPPLY_CURRENT_LIMIT);
+    CurrentLimitsConfigs intakeCurrentLimitsConfigs = new CurrentLimitsConfigs()
+        .withStatorCurrentLimitEnable(true)
+        .withStatorCurrentLimit(Constants.Intake.INTAKE_STATOR_CURRENT_LIMIT)
+        .withSupplyCurrentLimit(Constants.Intake.INTAKE_SUPPLY_CURRENT_LIMIT);
 
-    CurrentLimitsConfigs armCurrentLimitsConfigs =
-        new CurrentLimitsConfigs()
-            .withStatorCurrentLimitEnable(true)
-            .withStatorCurrentLimit(Constants.Intake.Arm.ARM_STATOR_CURRENT_LIMIT);
+    CurrentLimitsConfigs armCurrentLimitsConfigs = new CurrentLimitsConfigs()
+        .withStatorCurrentLimitEnable(true)
+        .withStatorCurrentLimit(Constants.Intake.Arm.ARM_STATOR_CURRENT_LIMIT);
 
     TalonFXConfigurator armMotorConfig = armMotor.getConfigurator();
     TalonFXConfigurator intakeMotorConfig = intakeMotor.getConfigurator();
@@ -74,8 +72,7 @@ public class IntakeSubsystem extends SubsystemBase {
     cancoder = new CANcoder(Constants.Intake.Arm.ENCODER_PORT);
     CANcoderConfiguration ccConfig = new CANcoderConfiguration();
     // zero the magnet
-    ccConfig
-        .MagnetSensor
+    ccConfig.MagnetSensor
         .withAbsoluteSensorDiscontinuityPoint(Rotations.of(1))
         .withSensorDirection(SensorDirectionValue.CounterClockwise_Positive)
         .withMagnetOffset(Rotations.of(Constants.Intake.Arm.ENCODER_OFFSET));
@@ -83,8 +80,7 @@ public class IntakeSubsystem extends SubsystemBase {
 
     // add the CANcoder as a feedback source for the motor's built-in encoder
     TalonFXConfiguration fxConfig = new TalonFXConfiguration();
-    fxConfig
-        .Feedback
+    fxConfig.Feedback
         .withFeedbackRemoteSensorID(cancoder.getDeviceID())
         .withFeedbackSensorSource(FeedbackSensorSourceValue.FusedCANcoder)
         .withSensorToMechanismRatio(Constants.Intake.Arm.ENCODER_ROTS_TO_ARM_ROTS)
@@ -107,7 +103,7 @@ public class IntakeSubsystem extends SubsystemBase {
     // PositionTorqueCurrentFOC might not be the right control request
     armMotor.setControl(
         new PositionTorqueCurrentFOC(
-                MathUtil.clamp(targetAngle, 0, Constants.Intake.Arm.ARM_DEGREES_UPPER_LIMIT))
+            MathUtil.clamp(targetAngle, 0, Constants.Intake.Arm.ARM_DEGREES_UPPER_LIMIT))
             .withFeedForward(Constants.Intake.Arm.ARM_FEEDFORWARD));
   }
 
@@ -132,8 +128,8 @@ public class IntakeSubsystem extends SubsystemBase {
 
   public boolean atSpeed() {
     return Math.abs(
-            intakeMotor.getVelocity().getValueAsDouble() - Constants.Intake.INTAKE_TARGET_SPEED)
-        <= Constants.Intake.Arm.ARM_TOLERANCE_DEGREES;
+        intakeMotor.getVelocity().getValueAsDouble()
+            - Constants.Intake.INTAKE_TARGET_SPEED) <= Constants.Intake.Arm.ARM_TOLERANCE_DEGREES;
   }
 
   // Commands
@@ -143,6 +139,19 @@ public class IntakeSubsystem extends SubsystemBase {
 
   public Command armToDegrees(double degrees) {
     return Commands.runOnce(() -> this.setArmDegrees(degrees), this);
+  }
+
+  public boolean hasPiece() {
+    //might not be necessary
+    double current = intakeMotor.getStatorCurrent().getValueAsDouble();
+    if (current >= Constants.Intake.HAS_PIECE_CURRENT_AMPS) {
+      if (hasPieceTimestamp == 0.0) {
+        hasPieceTimestamp = Timer.getTimestamp();
+      }
+      return Timer.getTimestamp() - hasPieceTimestamp >= Constants.Intake.HAS_PIECE_THRESHOLD_SEC; //true;
+    }
+    hasPieceTimestamp = 0.0;
+    return false;
   }
 
   @Override

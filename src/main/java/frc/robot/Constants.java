@@ -25,6 +25,8 @@ public final class Constants {
   }
 
   public static final class Intake {
+    public static final double HAS_PIECE_CURRENT_AMPS = 35.0;
+    public static final double HAS_PIECE_THRESHOLD_SEC = 0.15;
     public static final class Arm {
       public static final MotorConstants ARM_MOTOR = new MotorConstants(34);
 
@@ -79,12 +81,6 @@ public final class Constants {
     public MotorConstants(int port) {
       this.port = port;
     }
-  }
-
-  public final class FeatureFlags{
-    public static final boolean NEW_SHOOTER_LOGIC = false;
-    public static final boolean USE_VISION = true;
-    public static final boolean EXPERIMENTAL_AUTO = false;
   }
 
   public static class Swerve {
@@ -403,8 +399,7 @@ public final class Constants {
         MOTOR_ROTS_TO_PULLEY_ROTS * PULLEY_LENGTH_M;
 
     public static final double TARGET_PULLEY_SPEED_FT_PER_SEC = 6d;
-    public static final double TARGET_PULLEY_SPEED_M_PER_SEC =
-        Units.feetToMeters(TARGET_PULLEY_SPEED_FT_PER_SEC);
+    public static final double TARGET_PULLEY_SPEED_M_PER_SEC = Units.feetToMeters(TARGET_PULLEY_SPEED_FT_PER_SEC);
 
     public static final int MOTOR_PORT = -1; // TODO: put actual port
 
@@ -502,4 +497,5 @@ public final class Constants {
     public static final double SHOOTER_WHEEL_DIAMETER = 3.0;
     public static final double SHOOT_FOR_AUTO = 104.72;
   }
+
 }
