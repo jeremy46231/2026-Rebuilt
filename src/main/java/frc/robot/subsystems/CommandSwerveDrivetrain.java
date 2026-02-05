@@ -44,9 +44,9 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
   /* Keep track if we've ever applied the operator perspective before or not */
   private boolean m_hasAppliedOperatorPerspective = false;
 
-  private final PIDController m_pathXController = new PIDController(2, 0, 0);
-  private final PIDController m_pathYController = new PIDController(2, 0, 0);
-  private final PIDController m_pathThetaController = new PIDController(5, 0, 0);
+  private final PIDController m_pathXController = new PIDController(0.1, 0, 0);
+  private final PIDController m_pathYController = new PIDController(0.1, 0, 0);
+  private final PIDController m_pathThetaController = new PIDController(3.67, 0, 0);
 
   private SwerveDriveState currentState;
 

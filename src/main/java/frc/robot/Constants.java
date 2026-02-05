@@ -136,6 +136,23 @@ public final class Constants {
       }
     }
 
+    public static enum ChroreoPIDValues {
+      SERRANO(50d, 0d, 0.2, 0d, 1.5, 0d),
+      PROTO(20d, 0d, 0d, 0d, 0d, 0d),
+      JAMES_HARDEN(38.982d, 2.4768d, 0d, 0.23791d, 0d, 0.1151d),
+      COBRA(100d, 0d, 0.5, 0.1, 2.49, 0d);
+      public final double KP, KI, KD, KS, KV, KA;
+
+      ChroreoPIDValues(double KP, double KI, double KD, double KS, double KV, double KA) {
+        this.KP = KP;
+        this.KI = KI;
+        this.KD = KD;
+        this.KS = KS;
+        this.KV = KV;
+        this.KA = KA;
+      }
+    }
+
     public static enum RobotDimensions {
       SERRANO(Inches.of(22.52), Inches.of(22.834)), // length, width
       PROTO(Inches.of(22.52), Inches.of(22.834)), // length, width
