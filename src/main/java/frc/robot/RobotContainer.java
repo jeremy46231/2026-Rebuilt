@@ -30,6 +30,8 @@ import frc.robot.subsystems.ShooterSubsystem;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 import frc.robot.util.MiscUtils;
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.geometry.Pose2d;
 
 public class RobotContainer {
 
@@ -163,21 +165,7 @@ public class RobotContainer {
         .whileTrue(
             new DriveToPose(
                 drivetrain,
-                () -> MiscUtils.plusWithRotation(drivetrain.getCurrentState().Pose, new Pose2d(new Translation2d(2, 2), new Rotation2d(90)))));
-
-    joystick
-        .x()
-        .whileTrue(
-            new DriveToPose(
-                drivetrain,
-                () -> MiscUtils.plus(drivetrain.getCurrentState().Pose, new Translation2d(5, 0))));
-
-    joystick
-        .y()
-        .whileTrue(
-            new DriveToPose(
-                drivetrain,
-                () -> MiscUtils.plusWithRotation(drivetrain.getCurrentState().Pose, new Pose2d(new Translation2d(2, 2), new Rotation2d(90)))));
+                () -> MiscUtils.plusWithRotation(drivetrain.getCurrentState().Pose, new Pose2d(new Translation2d(2, 2), new Rotation2d(1.5708)))));
 
     drivetrain.registerTelemetry(logger::telemeterize);
   }
