@@ -20,7 +20,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
-import frc.robot.commands.DriveToPose;
 import frc.robot.commands.Shoot;
 import frc.robot.commands.SwerveCommands.SwerveJoystickCommand;
 import frc.robot.generated.TunerConstants;
@@ -80,24 +79,8 @@ public class RobotContainer {
 
     Command trajCommand =
         autoFactory
-            .resetOdometry("LongDistance.traj")
-            .andThen(autoFactory.trajectoryCmd("LongDistance.traj"));
-            // .andThen(new DriveToPose(
-            //                 drivetrain,
-            //                 () ->
-            //                     MiscUtils.plus(
-            //                         drivetrain.getCurrentState().Pose, new Translation2d(-1, 0))))
-            // .andThen(new DriveToPose(
-            //                 drivetrain,
-            //                 () ->
-            //                     MiscUtils.plus(
-            //                         drivetrain.getCurrentState().Pose, new Translation2d(0, 1))))
-            // .andThen(new DriveToPose(
-            //                 drivetrain,
-            //                 () ->
-            //                     MiscUtils.plus(
-            //                         drivetrain.getCurrentState().Pose, new Translation2d(1, 0))));
-
+            .resetOdometry("MoveForward.traj")
+            .andThen(autoFactory.trajectoryCmd("MoveForward.traj"));
 
     autoChooser.addCmd("sequence", () -> trajCommand);
 
@@ -184,40 +167,14 @@ public class RobotContainer {
           .onTrue(intakeSubsystem.armToDegrees(Constants.Intake.Arm.ARM_POS_RETRACTED));
     }
 
-    // dtp no rotation; x=Ftb, y=sts
-    // joystick
-    //     .x()
-    //     .whileTrue(
-    //         new DriveToPose(
-    //             drivetrain,
-    //             () -> MiscUtils.plus(drivetrain.getCurrentState().Pose, new Translation2d(1,
-    // 0))));
-
-    // dtp with rotation
-    // joystick
-    //     .x()
-    //     .whileTrue(
-    //         new DriveToPose(
-    //             drivetrain,
-    //             () -> MiscUtils.plusWithRotation(drivetrain.getCurrentState().Pose, new
-    // Transform2d(new Translation2d(1, 0), new Rotation2d(1)))));
-
-    // choreo
-    // joystick.x().whileTrue(autoRoutines.getPathAsCommand());
-
     // Auto sequence: choreo forward, dtp back
     Command trajCommand =
         autoFactory
             .resetOdometry("MoveForward.traj")
             .andThen(
                 autoFactory
-                    .trajectoryCmd("MoveForward.traj")
-                    .andThen(
-                        new DriveToPose(
-                            drivetrain,
-                            () ->
-                                MiscUtils.plus(
-                                    drivetrain.getCurrentState().Pose, new Translation2d(1, 0)))));
+                    .trajectoryCmd("MoveForward.traj"));
+
     joystick.x().whileTrue(trajCommand);
 
     drivetrain.registerTelemetry(logger::telemeterize);
