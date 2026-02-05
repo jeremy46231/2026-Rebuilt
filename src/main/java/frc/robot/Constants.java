@@ -137,7 +137,7 @@ public final class Constants {
     }
 
     public static enum ChoreoPIDValues {
-      SERRANO(0.1d, 0d, 0d, 0.1d, 0d, 0d, 3.67d, 0d ,0d),
+      SERRANO(0.1d, 0d, 0d, 0.1d, 0d, 0d, 3.867d, 0d ,0d),
       PROTO(0d, 0d, 0d, 0d, 0d, 0d, 0d, 0d ,0d),
       JAMES_HARDEN(0d, 0d, 0d, 0d, 0d, 0d, 0d, 0d ,0d),
       COBRA(0d, 0d, 0d, 0d, 0d, 0d, 0d, 0d ,0d);

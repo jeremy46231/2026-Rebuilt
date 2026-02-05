@@ -79,8 +79,8 @@ public class RobotContainer {
 
     Command trajCommand =
         autoFactory
-            .resetOdometry("Turn.traj")
-            .andThen(autoFactory.trajectoryCmd("Turn.traj"));
+            .resetOdometry("MoveRight.traj")
+            .andThen(autoFactory.trajectoryCmd("MoveRight.traj"));
 
     autoChooser.addCmd("sequence", () -> trajCommand);
 
