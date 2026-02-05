@@ -82,7 +82,7 @@ public final class Constants {
     }
   }
 
-  public final class FeatureFlags{
+  public final class FeatureFlags {
     public static final boolean NEW_SHOOTER_LOGIC = false;
     public static final boolean USE_VISION = true;
     public static final boolean EXPERIMENTAL_AUTO = false;

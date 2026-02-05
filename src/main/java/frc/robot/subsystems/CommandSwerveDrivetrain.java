@@ -226,23 +226,23 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     return currentState;
   }
 
-  public ChassisSpeeds getRobotSpeeds(){
+  public ChassisSpeeds getRobotSpeeds() {
     return currentState.Speeds;
   }
 
   public void applyFieldSpeeds(ChassisSpeeds speeds) {
     setControl(m_pathApplyFieldSpeeds.withSpeeds(speeds));
   }
-  
+
   public Pose2d getPose() {
     return currentState.Pose;
   }
 
-  public double distanceToPose(Pose2d target){
+  public double distanceToPose(Pose2d target) {
     return getPose().getTranslation().getDistance(target.getTranslation());
   }
 
-  public Rotation2d travelAngleTo(Pose2d targetPose){
+  public Rotation2d travelAngleTo(Pose2d targetPose) {
     double deltaX = targetPose.getX() - getCurrentState().Pose.getX();
     double deltaY = targetPose.getY() - getCurrentState().Pose.getY();
     return new Rotation2d(Math.atan2(deltaY, deltaX));
@@ -286,7 +286,6 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     if (this.getCurrentCommand() != null) {
       DogLog.log("CommandSwerveDrivetrain/String command", this.getCurrentCommand().toString());
     }
-
 
     DogLog.log("CommandSwerveDrivetrain/CurrPoseX", getCurrentState().Pose.getX());
     DogLog.log("CommandSwerveDrivetrain/CurrPoseX", getCurrentState().Pose.getY());

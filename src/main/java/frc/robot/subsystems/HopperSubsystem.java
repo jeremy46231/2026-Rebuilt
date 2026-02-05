@@ -52,8 +52,9 @@ public class HopperSubsystem extends SubsystemBase {
   }
 
   public boolean atSpeed() {
-    return Math.abs(motor.getVelocity().getValueAsDouble()
-            - targetSpeed / Constants.Hopper.MOTOR_ROTS_TO_METERS_OF_PULLEY_TRAVERSAL)
+    return Math.abs(
+            motor.getVelocity().getValueAsDouble()
+                - targetSpeed / Constants.Hopper.MOTOR_ROTS_TO_METERS_OF_PULLEY_TRAVERSAL)
         <= Constants.Hopper.TOLERANCE_MOTOR_ROTS_PER_SEC; // absolute
   }
 
@@ -64,8 +65,7 @@ public class HopperSubsystem extends SubsystemBase {
   }
 
   public Command RunHopper(double speed) {
-    return Commands.runEnd(
-        () -> this.runHopper(speed), this::stop, this);
+    return Commands.runEnd(() -> this.runHopper(speed), this::stop, this);
   }
 
   @Override

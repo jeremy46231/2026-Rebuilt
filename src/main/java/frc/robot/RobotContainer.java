@@ -8,7 +8,9 @@ import static edu.wpi.first.units.Units.*;
 
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -27,11 +29,9 @@ import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.HopperSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
+import frc.robot.util.MiscUtils;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
-import frc.robot.util.MiscUtils;
-import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.geometry.Pose2d;
 
 public class RobotContainer {
 
@@ -165,7 +165,10 @@ public class RobotContainer {
         .whileTrue(
             new DriveToPose(
                 drivetrain,
-                () -> MiscUtils.plusWithRotation(drivetrain.getCurrentState().Pose, new Pose2d(new Translation2d(2, 2), new Rotation2d(1.5708)))));
+                () ->
+                    MiscUtils.plusWithRotation(
+                        drivetrain.getCurrentState().Pose,
+                        new Pose2d(new Translation2d(2, 2), new Rotation2d(1.5708)))));
 
     drivetrain.registerTelemetry(logger::telemeterize);
   }
@@ -179,14 +182,14 @@ public class RobotContainer {
 
   public Command getAutonomousCommand() {
     return autoShoot();
-    //return Commands.print("No autonomous command configured");
+    // return Commands.print("No autonomous command configured");
   }
 
-    public Command autoShoot() {
+  public Command autoShoot() {
     return new SequentialCommandGroup(
-        shooter.ShootAtSpeed(), 
+        shooter.ShootAtSpeed(),
         new WaitUntilCommand(() -> shooter.isAtSpeed()),
         hopper.RunHopper(Constants.Hopper.TARGET_PULLEY_SPEED_M_PER_SEC).withTimeout(6.7),
         Commands.runOnce(() -> shooter.stop()));
-    }
+  }
 }
