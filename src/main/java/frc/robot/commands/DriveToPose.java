@@ -14,7 +14,6 @@ import java.util.function.Supplier;
 
 /** This Command drives the robot in a linear path to a specific pose. */
 public class DriveToPose extends Command {
-  @SuppressWarnings("PMD.UnusedPrivateField")
   private final CommandSwerveDrivetrain swerve;
 
   // Initialize the LinearPath and the LinearPath.State to a null value
