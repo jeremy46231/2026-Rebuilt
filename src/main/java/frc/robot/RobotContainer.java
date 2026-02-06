@@ -75,7 +75,7 @@ public class RobotContainer {
     autoRoutines = new AutoRoutines(autoFactory);
 
     Command trajCommand =
-        autoFactory.resetOdometry("Turn.traj").andThen(autoFactory.trajectoryCmd("Turn.traj"));
+        autoFactory.resetOdometry("RedOutpost.traj").andThen(autoFactory.trajectoryCmd("RedOutpost.traj"));
 
     autoChooser.addCmd("sequence", () -> trajCommand);
 
@@ -162,7 +162,7 @@ public class RobotContainer {
           .onTrue(intakeSubsystem.armToDegrees(Constants.Intake.Arm.ARM_POS_RETRACTED));
     }
 
-    // Auto sequence: choreo forward, dtp back
+    // Auto sequence: choreo forward
     Command trajCommand =
         autoFactory
             .resetOdometry("MoveForward.traj")
