@@ -196,12 +196,6 @@ public class RobotContainer {
 
     joystick.x().whileTrue(trajCommand);
 
-    // Auto sequence: choreo forward
-    Command trajCommand =
-        autoFactory
-            .resetOdometry("MoveForward.traj")
-            .andThen(autoFactory.trajectoryCmd("MoveForward.traj"));
-
     joystick.x().whileTrue(trajCommand);
 
     joystick
