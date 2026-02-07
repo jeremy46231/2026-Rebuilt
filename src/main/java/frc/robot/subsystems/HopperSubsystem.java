@@ -100,8 +100,8 @@ public class HopperSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
-    DogLog.log("Subsystem/Hopper/MotorSpeedRotationsPerSecond", hopperMotor.getVelocity().getValueAsDouble());
-    DogLog.log("Subsystem/Hopper/AtSpeed", atSpeed());
+    DogLog.log("Subsystems/Hopper/MotorSpeedRotationsPerSecond", hopperMotor.getVelocity().getValueAsDouble());
+    DogLog.log("Subsystems/sHopper/AtSpeed", atSpeed());
   }
 
   @Override
@@ -132,10 +132,10 @@ public class HopperSubsystem extends SubsystemBase {
         BatterySim.calculateDefaultBatteryLoadedVoltage(hopperMechanismSim.getCurrentDrawAmps());
     RoboRioSim.setVInVoltage(loadedBatteryVoltageVolts);
 
-    DogLog.log("Subsystem/Hopper/Sim/AppliedMotorVoltageVolts", appliedMotorVoltageVolts);
-    DogLog.log("Subsystem/Hopper/Sim/HopperMechanismVelocityRotationsPerSecond", hopperMechanismVelocityRotationsPerSecond);
-    DogLog.log("Subsystem/Hopper/Sim/MotorRotorVelocityRotationsPerSecond", motorRotorVelocityRotationsPerSecond);
-    DogLog.log("Subsystem/Hopper/Sim/MotorCurrentAmps", hopperMechanismSim.getCurrentDrawAmps());
-    DogLog.log("Subsystem/Hopper/Sim/LoadedBatteryVoltageVolts", loadedBatteryVoltageVolts);
+    DogLog.log("Subsystems/Hopper/Sim/AppliedMotorVoltageVolts", appliedMotorVoltageVolts);
+    DogLog.log("Subsystems/Hopper/Sim/HopperMechanismVelocityRotationsPerSecond", hopperMechanismVelocityRotationsPerSecond);
+    DogLog.log("Subsystems/Hopper/Sim/MotorRotorVelocityRotationsPerSecond", motorRotorVelocityRotationsPerSecond);
+    DogLog.log("Subsystems/Hopper/Sim/MotorCurrentAmps", hopperMechanismSim.getCurrentDrawAmps());
+    DogLog.log("Subsystems/Hopper/Sim/LoadedBatteryVoltageVolts", loadedBatteryVoltageVolts);
   }
 }
