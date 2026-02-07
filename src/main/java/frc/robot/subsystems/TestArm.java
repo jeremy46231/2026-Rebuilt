@@ -41,6 +41,7 @@ public class TestArm extends SubsystemBase {
   }
 
   public void setPos() {
+    brake.setDisabled();
     motor.setPosition(50);
   }
 
@@ -53,11 +54,11 @@ public class TestArm extends SubsystemBase {
     brake.setAngle(50);
   }
 
-  
+
   // Commands
 
   public Command SetPos() {
-    return Commands.runOnce(() -> this.setPos(), this);
+    return Commands.runOnce(() -> this.setPos(), this).until(() -> this.isAtPos());
   }
 
   public Command BrakeCommand() {
@@ -69,9 +70,7 @@ public class TestArm extends SubsystemBase {
   }
 
   @Override
-  public void periodic() {
-
-  }
+  public void periodic() {}
 
   @Override
   public void simulationPeriodic() {
