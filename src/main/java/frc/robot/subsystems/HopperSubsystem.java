@@ -91,8 +91,7 @@ public class HopperSubsystem extends SubsystemBase {
     double targetMotorSpeedRotationsPerSecond =
         targetSurfaceSpeedMetersPerSecond
             / Constants.Hopper.MOTOR_ROTS_TO_METERS_OF_PULLEY_TRAVERSAL;
-    return Math.abs(
-      measuredMotorSpeedRotationsPerSecond - targetMotorSpeedRotationsPerSecond)
+    return Math.abs(measuredMotorSpeedRotationsPerSecond - targetMotorSpeedRotationsPerSecond)
         <= Constants.Hopper.TOLERANCE_MOTOR_ROTS_PER_SEC;
   }
 

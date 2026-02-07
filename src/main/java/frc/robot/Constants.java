@@ -27,7 +27,7 @@ public final class Constants {
 
   public static final class Simulation {
     public static final double SIM_LOOP_PERIOD_SECONDS =
-      0.020; // time between updating the simulator
+        0.020; // time between updating the simulator
   }
 
   public static final class Intake {
