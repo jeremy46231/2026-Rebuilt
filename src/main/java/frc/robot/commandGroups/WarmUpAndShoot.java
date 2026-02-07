@@ -9,6 +9,6 @@ public class WarmUpAndShoot extends SequentialCommandGroup {
   public WarmUpAndShoot(ShooterSubsystem shooterSubsystem, HopperSubsystem hopperSubsystem) {
     addCommands(
         shooterSubsystem.ShootAtSpeed(),
-        hopperSubsystem.RunHopper(Constants.Hopper.TARGET_PULLEY_SPEED_M_PER_SEC));
+        hopperSubsystem.runHopperCommand(Constants.Hopper.TARGET_PULLEY_SPEED_M_PER_SEC));
   }
 }
