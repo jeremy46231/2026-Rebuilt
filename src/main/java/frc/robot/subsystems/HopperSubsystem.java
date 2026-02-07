@@ -22,7 +22,6 @@ import frc.robot.Constants;
 import frc.robot.util.LoggedTalonFX;
 
 public class HopperSubsystem extends SubsystemBase {
-
   private final LoggedTalonFX motor;
   private double targetSurfaceSpeed = 0;
 
@@ -30,7 +29,7 @@ public class HopperSubsystem extends SubsystemBase {
   private TalonFXSimState motorSimState;
   private DCMotorSim physicsSim;
 
-  private static final double SIM_DT_SEC = 0.020;
+  private static final double SIM_DT_SEC = 0.020; // time between updating the simulator
   private static final double HOPPER_MECHANISM_REDUCTION = 5.0; // motor:mechanism
   private static final double ESTIMATED_J_KG_M2 = 0.0012;
 
@@ -63,7 +62,7 @@ public class HopperSubsystem extends SubsystemBase {
   private void setupSimulation() {
     motorSimState = motor.getSimState();
     motorSimState.Orientation = ChassisReference.CounterClockwise_Positive;
-    motorSimState.setMotorType(TalonFXSimState.MotorType.KrakenX60);
+    motorSimState.setMotorType(TalonFXSimState.MotorType.KrakenX60); // set the type of motor being simulated
 
     var gearbox = DCMotor.getKrakenX60Foc(1);
 
@@ -99,8 +98,8 @@ public class HopperSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
-    DogLog.log("HopperSubsystem/Speed", motor.getVelocity().getValueAsDouble());
-    DogLog.log("HopperSubsystem/AtSpeed", atSpeed());
+    DogLog.log("Subsystem/Hopper/Speed", motor.getVelocity().getValueAsDouble());
+    DogLog.log("Subsystem/Hopper/AtSpeed", atSpeed());
   }
 
   @Override
@@ -131,10 +130,10 @@ public class HopperSubsystem extends SubsystemBase {
         BatterySim.calculateDefaultBatteryLoadedVoltage(physicsSim.getCurrentDrawAmps());
     RoboRioSim.setVInVoltage(loadedV);
 
-    DogLog.log("Hopper/Sim/AppliedVolts", appliedVolts);
-    DogLog.log("Hopper/Sim/MechVelRps", mechVelRps);
-    DogLog.log("Hopper/Sim/RotorVelRps", rotorVelRps);
-    DogLog.log("Hopper/Sim/CurrentAmps", physicsSim.getCurrentDrawAmps());
-    DogLog.log("Hopper/Sim/BatteryV", loadedV);
+    DogLog.log("Subsystem/Hopper/Sim/AppliedVolts", appliedVolts);
+    DogLog.log("Subsystem/Hopper/Sim/MechVelRps", mechVelRps);
+    DogLog.log("Subsystem/Hopper/Sim/RotorVelRps", rotorVelRps);
+    DogLog.log("Subsystem/Hopper/Sim/CurrentAmps", physicsSim.getCurrentDrawAmps());
+    DogLog.log("Subsystem/Hopper/Sim/BatteryV", loadedV);
   }
 }
