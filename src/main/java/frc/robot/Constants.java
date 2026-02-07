@@ -393,15 +393,15 @@ public final class Constants {
     public static final double RIGHT_X = Units.inchesToMeters(6.70);
     public static final double RIGHT_Y = Units.inchesToMeters(-4.125);
     public static final double RIGHT_Z = Units.inchesToMeters(40.875);
-    public static final double RIGHT_ROLL = Units.degreesToRadians(0.0);
-    public static final double RIGHT_PITCH = Units.degreesToRadians(-12.5);
-    public static final double RIGHT_YAW = Units.degreesToRadians(40);
+    public static final double RIGHT_ROLL = Units.degreesToRadians(180);
+    public static final double RIGHT_PITCH = Units.degreesToRadians(171.5);
+    public static final double RIGHT_YAW = Units.degreesToRadians(0.0);
 
     public static final double LEFT_X = Units.inchesToMeters(6.70);
     public static final double LEFT_Y = Units.inchesToMeters(4.125);
     public static final double LEFT_Z = Units.inchesToMeters(40.875);
-    public static final double LEFT_ROLL = Units.degreesToRadians(0.0);
-    public static final double LEFT_PITCH = Units.degreesToRadians(8.7);
+    public static final double LEFT_ROLL = Units.degreesToRadians(180);
+    public static final double LEFT_PITCH = Units.degreesToRadians(171.5);
     public static final double LEFT_YAW = Units.degreesToRadians(0.0);
 
     public static final double COLOR_X = Units.inchesToMeters(8.867);

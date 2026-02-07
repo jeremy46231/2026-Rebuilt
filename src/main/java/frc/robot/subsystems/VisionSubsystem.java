@@ -23,6 +23,8 @@ import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.PhotonTrackedTarget;
 
 public class VisionSubsystem extends SubsystemBase {
+
+
   // static member that contains array of all VisionSubsytem cameras
   private static VisionSubsystem[] cameraList =
       new VisionSubsystem[Constants.Vision.Cameras.values().length];
@@ -70,14 +72,14 @@ public class VisionSubsystem extends SubsystemBase {
   public VisionSubsystem(Constants.Vision.Cameras cameraID) {
     this.cameraID = cameraID;
     photonCamera = new PhotonCamera(cameraID.toString());
-    Transform3d cameraToRobot = Constants.Vision.getCameraTransform(cameraID);
+    Transform3d robotToCamera = Constants.Vision.getCameraTransform(cameraID);
 
     // load field layout
     this.fieldLayout = AprilTagFieldLayout.loadField(AprilTagFields.k2026RebuiltWelded);
 
     // initialize poseEstimator
 
-    poseEstimator = new PhotonPoseEstimator(fieldLayout, cameraToRobot);
+    poseEstimator = new PhotonPoseEstimator(fieldLayout, robotToCamera);
 
     cameraTitle = cameraID.getLoggingName();
     latestVisionResult = null;
@@ -96,7 +98,8 @@ public class VisionSubsystem extends SubsystemBase {
     visionEst = Optional.empty();
     latestVisionResult = null;
 
-    for (PhotonPipelineResult result : photonCamera.getAllUnreadResults()) {
+    List<PhotonPipelineResult> results = photonCamera.getAllUnreadResults();
+    for (PhotonPipelineResult result : results) {
       latestVisionResult = result;
       visionEst = poseEstimator.estimateCoprocMultiTagPose(result);
       if (visionEst.isEmpty()) {
@@ -106,12 +109,6 @@ public class VisionSubsystem extends SubsystemBase {
 
     DogLog.log("Subsystems/Vision/" + cameraTitle + "/CameraConnected", true);
 
-    // add all unread results to results <List>
-    List<PhotonPipelineResult> results = photonCamera.getAllUnreadResults();
-
-    // Go through all results (if there are any) and update the latest result with
-    // the last
-    for (var result : results) latestVisionResult = result;
   }
 
   public void addFilteredPose(CommandSwerveDrivetrain swerve) {
@@ -164,7 +161,8 @@ public class VisionSubsystem extends SubsystemBase {
     // Extract pose estimate
     EstimatedRobotPose estimatedPose = visionEst.get();
     Pose2d measuredPose = estimatedPose.estimatedPose.toPose2d();
-    DogLog.log("Subsystems/Vision/MeasuredPose", measuredPose);
+    DogLog.log("Subsystems/Vision/" + cameraTitle + "/MeasuredPose", measuredPose);
+
 
     // Get detected tags
     tags = latestVisionResult.getTargets();
