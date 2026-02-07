@@ -71,7 +71,7 @@ public class Shoot extends Command {
     }
 
     DogLog.log(
-        "Shoot/tof",
+        "Shoot/timeOfFlightSeconds",
         2
             * shootingSpeed(target, Constants.Shooter.TARGETING_CALCULATION_PRECISION)
             * Math.sin(Math.toRadians(Constants.Shooter.SHOOTER_ANGLE_FROM_HORIZONTAL_DEGREES))
@@ -88,7 +88,7 @@ public class Shoot extends Command {
               new Rotation3d()));
     }
 
-    DogLog.log("Subsystems/ShooterSubsystem/Shoot/targetAngle", targetAngle);
+    DogLog.log("Subsystems/ShooterSubsystem/Shoot/targetAngleRadians", targetAngle);
 
     Pose3d gunOffset =
         MiscMath.RotatedPosAroundVertical(
@@ -96,7 +96,7 @@ public class Shoot extends Command {
             drivetrain.getState().Pose.getRotation().getRadians());
     Vector3 gunPos = Vector3.add(new Vector3(drivetrain.getState().Pose), new Vector3(gunOffset));
     Vector3 relativePos = Vector3.subtract(new Vector3(target), gunPos);
-    DogLog.log("Subsystems/ShooterSubsystem/Shoot/distanceToTarget", relativePos.magnitude());
+    DogLog.log("Subsystems/ShooterSubsystem/Shoot/distanceToTargetMeters", relativePos.magnitude());
   }
 
   // Called once the command ends or is interrupted.
@@ -129,7 +129,7 @@ public class Shoot extends Command {
         (drivetrain.getState().Pose.getRotation().getRadians() + (2 * Math.PI)) % (2 * Math.PI);
 
     DogLog.log(
-        "Subsystems/ShooterSubsystem/Shoot/rotationalError",
+        "Subsystems/ShooterSubsystem/Shoot/rotationalErrorRadians",
         Math.abs(desiredRobotHullAngle - robotHullAngle));
     boolean hullAimed =
         Math.abs(desiredRobotHullAngle - robotHullAngle)
