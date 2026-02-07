@@ -24,7 +24,6 @@ import org.photonvision.targeting.PhotonTrackedTarget;
 
 public class VisionSubsystem extends SubsystemBase {
 
-
   // static member that contains array of all VisionSubsytem cameras
   private static VisionSubsystem[] cameraList =
       new VisionSubsystem[Constants.Vision.Cameras.values().length];
@@ -108,7 +107,6 @@ public class VisionSubsystem extends SubsystemBase {
     }
 
     DogLog.log("Subsystems/Vision/" + cameraTitle + "/CameraConnected", true);
-
   }
 
   public void addFilteredPose(CommandSwerveDrivetrain swerve) {
@@ -162,7 +160,6 @@ public class VisionSubsystem extends SubsystemBase {
     EstimatedRobotPose estimatedPose = visionEst.get();
     Pose2d measuredPose = estimatedPose.estimatedPose.toPose2d();
     DogLog.log("Subsystems/Vision/" + cameraTitle + "/MeasuredPose", measuredPose);
-
 
     // Get detected tags
     tags = latestVisionResult.getTargets();
