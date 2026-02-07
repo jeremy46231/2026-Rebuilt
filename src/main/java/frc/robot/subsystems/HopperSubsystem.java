@@ -29,10 +29,6 @@ public class HopperSubsystem extends SubsystemBase {
   private TalonFXSimState hopperMotorSimState;
   private DCMotorSim hopperMechanismSim;
 
-  private static final double SIM_LOOP_PERIOD_SECONDS =
-      0.020; // time between updating the simulator
-  private static final double ESTIMATED_HOPPER_MOI_KG_M2 = 0.0012;
-
   public HopperSubsystem() {
     CurrentLimitsConfigs currentLimitConfigs =
         new CurrentLimitsConfigs()
@@ -72,7 +68,7 @@ public class HopperSubsystem extends SubsystemBase {
         new DCMotorSim(
             LinearSystemId.createDCMotorSystem(
                 krakenGearboxModel,
-                ESTIMATED_HOPPER_MOI_KG_M2,
+                Constants.Hopper.ESTIMATED_HOPPER_MOI_KG_M2,
                 1.0 / Constants.Hopper.MOTOR_ROTS_TO_PULLEY_ROTS),
             krakenGearboxModel);
   }
@@ -129,7 +125,7 @@ public class HopperSubsystem extends SubsystemBase {
     double appliedMotorVoltageVolts =
         hopperMotorSimState.getMotorVoltageMeasure().in(edu.wpi.first.units.Units.Volts);
     hopperMechanismSim.setInputVoltage(appliedMotorVoltageVolts);
-    hopperMechanismSim.update(SIM_LOOP_PERIOD_SECONDS);
+    hopperMechanismSim.update(Constants.Simulation.SIM_LOOP_PERIOD_SECONDS);
 
     // 3) Mechanism-side sim -> rotor-side sensor state
     double hopperMechanismPositionRotations = hopperMechanismSim.getAngularPositionRotations();
