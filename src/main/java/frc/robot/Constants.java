@@ -380,9 +380,10 @@ public final class Constants {
 
     public static final int MOTOR_PORT = 9; // TODO: put actual port
 
-    public static final double kP = .05; // TODO: get actual vals
+    public static final double kP = .1; // TODO: get actual vals
     public static final double kI = 0;
     public static final double kD = 0;
+    public static final double kV = 0.12;
 
     public static final double HOPPER_STATOR_LIMIT = 30.0;
     public static final double HOPPER_SUPPLY_LIMIT = 30.0;

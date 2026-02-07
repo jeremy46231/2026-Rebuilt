@@ -43,7 +43,8 @@ public class HopperSubsystem extends SubsystemBase {
         new Slot0Configs()
             .withKP(Constants.Hopper.kP)
             .withKI(Constants.Hopper.kI)
-            .withKD(Constants.Hopper.kD);
+            .withKD(Constants.Hopper.kD)
+            .withKV(Constants.Hopper.kV);
 
     motor = new LoggedTalonFX(Constants.Hopper.MOTOR_PORT);
 
