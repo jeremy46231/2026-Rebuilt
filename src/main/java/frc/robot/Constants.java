@@ -83,7 +83,7 @@ public final class Constants {
   }
 
   public static class Swerve {
-    public static final SwerveType WHICH_SWERVE_ROBOT = SwerveType.SERRANO;
+    public static final SwerveType WHICH_SWERVE_ROBOT = SwerveType.COBRA;
 
     public static final double targetPositionError = 0.05;
     public static final double targetAngleError = 0.02;
@@ -380,7 +380,7 @@ public final class Constants {
 
     public static final int MOTOR_PORT = 9; // TODO: put actual port
 
-    public static final double kP = .4; // TODO: get actual vals
+    public static final double kP = .05; // TODO: get actual vals
     public static final double kI = 0;
     public static final double kD = 0;
 
