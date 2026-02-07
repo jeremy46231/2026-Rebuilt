@@ -146,7 +146,7 @@ public final class Constants {
       SERRANO(3.067, 0, 0, 4.167, 0, 0, 3.667, 0, 0),
       PROTO(0, 0, 0, 0, 0, 0, 0, 0, 0),
       JAMES_HARDEN(0, 0, 0, 0, 0, 0, 0, 0, 0),
-      COBRA(3.167, 0, 0, 3.067, 0, 0, 2.867, 0, 0);
+      COBRA(3.467, 0, 0, 3.567, 0, 0, 2.867, 0, 0);
       public final double kPX;
       public final double kIX;
       public final double kDX;

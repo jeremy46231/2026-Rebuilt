@@ -196,23 +196,21 @@ public class RobotContainer {
 
     joystick.x().whileTrue(trajCommand);
 
-    joystick.x().whileTrue(trajCommand);
-
     joystick
-        .x()
+        .povUp()
         .whileTrue(
             new DriveToPose(
                 drivetrain,
                 () ->
                     MiscUtils.plus(
-                        drivetrain.getCurrentState().Pose, new Translation2d(-5, 0)))); // x is neg
+                        drivetrain.getCurrentState().Pose, new Translation2d(2, 0))));
 
     joystick
         .povDown()
         .whileTrue(
             new DriveToPose(
                 drivetrain,
-                () -> MiscUtils.plus(drivetrain.getCurrentState().Pose, new Translation2d(0, 4))));
+                () -> MiscUtils.plus(drivetrain.getCurrentState().Pose, new Translation2d(0, 2)))); //pos is left
 
     joystick
         .y()
@@ -222,7 +220,7 @@ public class RobotContainer {
                 () ->
                     MiscUtils.plusWithRotation(
                         drivetrain.getCurrentState().Pose,
-                        new Pose2d(new Translation2d(2, 2), new Rotation2d(1.5708)))));
+                        new Pose2d(new Translation2d(1, 1), new Rotation2d(1.5708)))));
 
     drivetrain.registerTelemetry(logger::telemeterize);
   }
