@@ -69,8 +69,8 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
   private final SwerveRequest.SysIdSwerveRotation m_rotationCharacterization =
       new SwerveRequest.SysIdSwerveRotation();
 
-  private final SwerveRequest.ApplyFieldSpeeds m_pathApplyFieldSpeeds =
-      new SwerveRequest.ApplyFieldSpeeds();
+  private final SwerveRequest.ApplyRobotSpeeds m_pathApplyFieldSpeeds =
+      new SwerveRequest.ApplyRobotSpeeds();
 
   private ProfiledPIDController headingProfiledPIDController =
       new ProfiledPIDController(
