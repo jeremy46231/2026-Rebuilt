@@ -24,6 +24,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
+import frc.robot.commands.Shoot;
 import frc.robot.generated.TunerConstants.TunerSwerveDrivetrain;
 import java.util.function.Supplier;
 
@@ -232,7 +233,9 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     targetSpeeds.vxMetersPerSecond += m_pathXController.calculate(pose.getX(), sample.x);
     targetSpeeds.vyMetersPerSecond += m_pathYController.calculate(pose.getY(), sample.y);
     targetSpeeds.omegaRadiansPerSecond +=
-        m_pathThetaController.calculate(pose.getRotation().getRadians(), sample.heading);
+        (Shoot.running
+            ? calculateRequiredRotationalRate(new Rotation2d(Shoot.targetAngle))
+            : m_pathThetaController.calculate(pose.getRotation().getRadians(), sample.heading));
 
     setControl(
         m_pathApplyFieldSpeeds
