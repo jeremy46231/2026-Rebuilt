@@ -33,7 +33,9 @@ public class HopperSubsystem extends SubsystemBase {
     CurrentLimitsConfigs currentLimitConfigs =
         new CurrentLimitsConfigs()
             .withStatorCurrentLimit(Constants.Hopper.HOPPER_STATOR_LIMIT_AMPS)
-            .withSupplyCurrentLimit(Constants.Hopper.HOPPER_SUPPLY_LIMIT_AMPS);
+            .withSupplyCurrentLimit(Constants.Hopper.HOPPER_SUPPLY_LIMIT_AMPS)
+            .withStatorCurrentLimitEnable(true)
+            .withSupplyCurrentLimitEnable(true);
 
     Slot0Configs s0c =
         new Slot0Configs()
