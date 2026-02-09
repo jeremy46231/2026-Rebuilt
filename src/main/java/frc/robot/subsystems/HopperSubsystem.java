@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.simulation.BatterySim;
 import edu.wpi.first.wpilibj.simulation.DCMotorSim;
+import edu.wpi.first.wpilibj.simulation.FlywheelSim;
 import edu.wpi.first.wpilibj.simulation.RoboRioSim;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -32,10 +33,10 @@ public class HopperSubsystem extends SubsystemBase {
   public HopperSubsystem() {
     CurrentLimitsConfigs currentLimitConfigs =
         new CurrentLimitsConfigs()
-            .withStatorCurrentLimit(Constants.Hopper.HOPPER_STATOR_LIMIT)
-            .withSupplyCurrentLimit(Constants.Hopper.HOPPER_SUPPLY_LIMIT);
+            .withStatorCurrentLimit(Constants.Hopper.HOPPER_STATOR_LIMIT_AMPS)
+            .withSupplyCurrentLimit(Constants.Hopper.HOPPER_SUPPLY_LIMIT_AMPS);
 
-    Slot0Configs velocityPidConfigs =
+    Slot0Configs s0c =
         new Slot0Configs()
             .withKP(Constants.Hopper.kP)
             .withKI(Constants.Hopper.kI)
@@ -47,7 +48,7 @@ public class HopperSubsystem extends SubsystemBase {
     MotorOutputConfigs motorOutputConfigs =
         new MotorOutputConfigs().withInverted(InvertedValue.Clockwise_Positive);
 
-    hopperMotor.getConfigurator().apply(velocityPidConfigs);
+    hopperMotor.getConfigurator().apply(s0c);
     hopperMotor.getConfigurator().apply(currentLimitConfigs);
     hopperMotor.getConfigurator().apply(motorOutputConfigs);
 
@@ -59,8 +60,7 @@ public class HopperSubsystem extends SubsystemBase {
   private void setupSimulation() {
     hopperMotorSimState = hopperMotor.getSimState();
     hopperMotorSimState.Orientation = ChassisReference.Clockwise_Positive;
-    hopperMotorSimState.setMotorType(
-        TalonFXSimState.MotorType.KrakenX60); // set the type of motor being simulated
+    hopperMotorSimState.setMotorType(TalonFXSimState.MotorType.KrakenX60);
 
     var krakenGearboxModel = DCMotor.getKrakenX60Foc(1);
 
@@ -68,9 +68,9 @@ public class HopperSubsystem extends SubsystemBase {
         new DCMotorSim(
             LinearSystemId.createDCMotorSystem(
                 krakenGearboxModel,
-                Constants.Hopper.ESTIMATED_HOPPER_MOI_KG_M2,
-                1.0 / Constants.Hopper.MOTOR_ROTS_TO_PULLEY_ROTS),
-            krakenGearboxModel);
+                Constants.Hopper.HOPPER_SIM_MECHANISM_MOI_KG_M2,
+                1.0/Constants.Hopper.MOTOR_ROTATIONS_PER_HOPPER_PULLEY_ROTATION),
+            krakenGearboxModel); // add stddevs later if it makes sense
   }
 
   public void runHopper(double targetSurfaceSpeedMetersPerSecond) {
@@ -78,7 +78,7 @@ public class HopperSubsystem extends SubsystemBase {
     hopperMotor.setControl(
         new VelocityVoltage(
             targetSurfaceSpeedMetersPerSecond
-                / Constants.Hopper.MOTOR_ROTS_TO_METERS_OF_PULLEY_TRAVERSAL));
+                * Constants.Hopper.MOTOR_ROTATIONS_PER_HOPPER_BELT_METER));
   }
 
   public void stop() {
@@ -86,13 +86,18 @@ public class HopperSubsystem extends SubsystemBase {
     hopperMotor.setControl(new VelocityVoltage(0));
   }
 
+  public double getFloorSpeedMPS() {
+    double measuredMotorSpeedRotationsPerSecond = hopperMotor.getVelocity().getValueAsDouble();
+    return measuredMotorSpeedRotationsPerSecond * Constants.Hopper.MOTOR_ROTATIONS_PER_HOPPER_BELT_METER;
+  }
+
   public boolean atSpeed() {
     double measuredMotorSpeedRotationsPerSecond = hopperMotor.getVelocity().getValueAsDouble();
     double targetMotorSpeedRotationsPerSecond =
         targetSurfaceSpeedMetersPerSecond
-            / Constants.Hopper.MOTOR_ROTS_TO_METERS_OF_PULLEY_TRAVERSAL;
+            * Constants.Hopper.MOTOR_ROTATIONS_PER_HOPPER_BELT_METER;
     return Math.abs(measuredMotorSpeedRotationsPerSecond - targetMotorSpeedRotationsPerSecond)
-        <= Constants.Hopper.TOLERANCE_MOTOR_ROTS_PER_SEC;
+        <= Constants.Hopper.HOPPER_VELOCITY_TOLERANCE_ROTATIONS_PER_SECOND;
   }
 
   // Commands
@@ -110,7 +115,7 @@ public class HopperSubsystem extends SubsystemBase {
     DogLog.log(
         "Subsystems/Hopper/MotorSpeedRotationsPerSecond",
         hopperMotor.getVelocity().getValueAsDouble());
-    DogLog.log("Subsystems/sHopper/AtSpeed", atSpeed());
+    DogLog.log("Subsystems/Hopper/AtSpeed", atSpeed());
   }
 
   @Override
@@ -127,16 +132,20 @@ public class HopperSubsystem extends SubsystemBase {
     hopperMechanismSim.update(Constants.Simulation.SIM_LOOP_PERIOD_SECONDS);
 
     // 3) Mechanism-side sim -> rotor-side sensor state
-    double hopperMechanismPositionRotations = hopperMechanismSim.getAngularPositionRotations();
+    // FlywheelSim tracks the pulley/belt mechanism (after gear reduction)
     double hopperMechanismVelocityRotationsPerSecond =
         hopperMechanismSim.getAngularVelocityRadPerSec() / (2.0 * Math.PI);
+    double hopperMechanismPositionRotations =
+        hopperMechanismSim.getAngularPositionRotations();
 
+    // Convert mechanism rotations to motor rotor rotations
+    // Motor spins faster: 5 motor rotations = 1 pulley rotation
     double motorRotorPositionRotations =
-        hopperMechanismPositionRotations * 1.0 / Constants.Hopper.MOTOR_ROTS_TO_PULLEY_ROTS;
+        hopperMechanismPositionRotations
+            * Constants.Hopper.MOTOR_ROTATIONS_PER_HOPPER_PULLEY_ROTATION;
     double motorRotorVelocityRotationsPerSecond =
         hopperMechanismVelocityRotationsPerSecond
-            * 1.0
-            / Constants.Hopper.MOTOR_ROTS_TO_PULLEY_ROTS;
+            * Constants.Hopper.MOTOR_ROTATIONS_PER_HOPPER_PULLEY_ROTATION;
 
     hopperMotorSimState.setRawRotorPosition(motorRotorPositionRotations);
     hopperMotorSimState.setRotorVelocity(motorRotorVelocityRotationsPerSecond);
