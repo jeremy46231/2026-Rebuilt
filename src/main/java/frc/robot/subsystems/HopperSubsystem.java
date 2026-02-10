@@ -32,10 +32,10 @@ public class HopperSubsystem extends SubsystemBase {
   public HopperSubsystem() {
     CurrentLimitsConfigs currentLimitConfigs =
         new CurrentLimitsConfigs()
-            .withStatorCurrentLimit(Constants.Hopper.HOPPER_STATOR_LIMIT_AMPS)
-            .withSupplyCurrentLimit(Constants.Hopper.HOPPER_SUPPLY_LIMIT_AMPS)
             .withStatorCurrentLimitEnable(true)
-            .withSupplyCurrentLimitEnable(true);
+            .withSupplyCurrentLimitEnable(true)
+            .withStatorCurrentLimit(Constants.Hopper.HOPPER_STATOR_LIMIT_AMPS)
+            .withSupplyCurrentLimit(Constants.Hopper.HOPPER_SUPPLY_LIMIT_AMPS);
 
     Slot0Configs s0c =
         new Slot0Configs()
@@ -97,7 +97,7 @@ public class HopperSubsystem extends SubsystemBase {
     return measuredMotorSpeedRotationsPerSecond * Constants.Hopper.AGITATOR_ROTATIONS_PER_MOTOR_ROTATION;
   }
 
-  public boolean atSpeed() {
+  public boolean atTargetSpeed() {
     double measuredMotorSpeedRotationsPerSecond = hopperMotor.getVelocity().getValueAsDouble();
     double targetMotorSpeedRotationsPerSecond =
         targetSurfaceSpeedMetersPerSecond
@@ -121,7 +121,7 @@ public class HopperSubsystem extends SubsystemBase {
     DogLog.log(
         "Subsystems/Hopper/MotorSpeedRotationsPerSecond",
         hopperMotor.getVelocity().getValueAsDouble());
-    DogLog.log("Subsystems/Hopper/AtSpeed", atSpeed());
+    DogLog.log("Subsystems/Hopper/AtTargetSpeed", atTargetSpeed());
   }
 
   @Override
