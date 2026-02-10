@@ -651,6 +651,24 @@ public final class Constants {
     public static final double ANGULAR_TOLERANCE_FOR_AUTO_AIM_RAD = .1;
 
     public static final int TARGETING_CALCULATION_PRECISION = 5;
+
+    public static final double MOTOR_ROTS_PER_WARMUP_1_ROTS = 1.125;
+
+    /** Motor to middle warm-up roller: 16t→24t pulley = 24/16 = 1.5:1 */
+    public static final double MOTOR_ROTS_PER_WARMUP_2_ROTS = 1.5;
+
+    /** Motor to bottom warm-up roller: 12t→24t pulley = 24/12 = 2.0:1 */
+    public static final double MOTOR_ROTS_PER_WARMUP_3_ROTS = 2.0;
+
+    // Moment of Inertia (needs to be calculated - MRD doesn't provide)
+    /** 2" polycarbonate roller with silicone casing - TODO: Calculate / FIND actual MOI */
+    public static final double WARMUP_1_MOI_KG_M2 = 0.0008;
+
+    /** 2" polycarbonate roller with silicone casing - TODO: Calculate / FIND actual MOI */
+    public static final double WARMUP_2_MOI_KG_M2 = 0.0008;
+
+    /** 2" polycarbonate roller with silicone casing - TODO: Calculate / FIND actual MOI */
+    public static final double WARMUP_3_MOI_KG_M2 = 0.0008;
   }
 
   public static class OI {

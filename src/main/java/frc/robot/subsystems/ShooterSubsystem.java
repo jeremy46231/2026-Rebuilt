@@ -13,6 +13,9 @@ import com.ctre.phoenix6.signals.MotorAlignmentValue;
 import com.ctre.phoenix6.sim.TalonFXSimState;
 
 import dev.doglog.DogLog;
+import edu.wpi.first.math.system.plant.DCMotor;
+import edu.wpi.first.math.system.plant.LinearSystemId;
+import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.simulation.DCMotorSim;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -24,11 +27,11 @@ public class ShooterSubsystem extends SubsystemBase {
   private final LoggedTalonFX warmUpMotor1, warmUpMotor2, warmUpMotor3, shooter;
 
   private TalonFXSimState warmUpMotor1SimState, warmUpMotor2SimState, warmUpMotor3SimState;
-  private DCMotorSim warmUpMotor1Sim, warmUpMotor2Sim, warmUpMotor3Sim;
+  private DCMotorSim roller1Sim, roller2Sim, roller3Sim;
 
   private final VelocityVoltage velocityRequest = new VelocityVoltage(0);
 
-  private static double targetSpeed = 0;
+  private double targetSpeed = 0;
 
   public ShooterSubsystem() {
 
@@ -66,6 +69,42 @@ public class ShooterSubsystem extends SubsystemBase {
     m1config.apply(clc);
     m2config.apply(clc);
     m3config.apply(clc);
+
+    warmUpMotor1SimState = warmUpMotor1.getSimState();
+    warmUpMotor2SimState = warmUpMotor2.getSimState();
+    warmUpMotor3SimState = warmUpMotor3.getSimState();
+
+    var krakenGearboxModel = DCMotor.getKrakenX60Foc(1);
+    roller1Sim = new DCMotorSim(
+        LinearSystemId.createDCMotorSystem(
+            krakenGearboxModel, 
+            Constants.Shooter.WARMUP_1_MOI_KG_M2, 
+            Constants.Shooter.MOTOR_ROTS_PER_WARMUP_1_ROTS
+        ), 
+        krakenGearboxModel
+    );
+
+    roller2Sim = new DCMotorSim(
+        LinearSystemId.createDCMotorSystem(
+            krakenGearboxModel, 
+            Constants.Shooter.WARMUP_2_MOI_KG_M2, 
+            Constants.Shooter.MOTOR_ROTS_PER_WARMUP_2_ROTS
+        ), 
+        krakenGearboxModel
+    );
+
+    roller3Sim = new DCMotorSim(
+        LinearSystemId.createDCMotorSystem(
+            krakenGearboxModel, 
+            Constants.Shooter.WARMUP_3_MOI_KG_M2, 
+            Constants.Shooter.MOTOR_ROTS_PER_WARMUP_3_ROTS
+        ), 
+        krakenGearboxModel
+    );
+
+    warmUpMotor1SimState.setSupplyVoltage(RobotController.getBatteryVoltage());
+    warmUpMotor2SimState.setSupplyVoltage(RobotController.getBatteryVoltage());
+    warmUpMotor3SimState.setSupplyVoltage(RobotController.getBatteryVoltage());
   }
 
   public double calculateFtToRPS(double speed) {
@@ -106,7 +145,7 @@ public class ShooterSubsystem extends SubsystemBase {
   }
 
   // Comands
-  public Command ShootAtSpeed() {
+  public Command shootAtSpeedCommand() {
     return Commands.runEnd(() -> this.setSpeed(Constants.Shooter.SHOOT_FOR_AUTO), this::stop, this);
   }
 
@@ -119,6 +158,44 @@ public class ShooterSubsystem extends SubsystemBase {
 
   @Override
   public void simulationPeriodic() {
-    // This method will be called once per scheduler run during simulation
+    double batteryVoltage = RobotController.getBatteryVoltage();
+    warmUpMotor1SimState.setSupplyVoltage(batteryVoltage);
+    warmUpMotor2SimState.setSupplyVoltage(batteryVoltage);
+    warmUpMotor3SimState.setSupplyVoltage(batteryVoltage);
+
+    double warmUp1Voltage = warmUpMotor1SimState.getMotorVoltage();
+    double warmUp2Voltage = warmUpMotor2SimState.getMotorVoltage();
+    double warmUp3Voltage = warmUpMotor3SimState.getMotorVoltage();
+
+    roller1Sim.setInputVoltage(warmUp1Voltage);
+    roller2Sim.setInputVoltage(warmUp2Voltage);
+    roller3Sim.setInputVoltage(warmUp3Voltage);
+
+    roller1Sim.update(Constants.Simulation.SIM_LOOP_PERIOD_SECONDS);
+    roller2Sim.update(Constants.Simulation.SIM_LOOP_PERIOD_SECONDS);
+    roller3Sim.update(Constants.Simulation.SIM_LOOP_PERIOD_SECONDS);
+
+    double warmUp1MotorVelocity = roller1Sim.getAngularVelocityRadPerSec() / (2.0 * Math.PI);
+    double warmUp2MotorVelocity = roller2Sim.getAngularVelocityRadPerSec() / (2.0 * Math.PI);
+    double warmUp3MotorVelocity = roller3Sim.getAngularVelocityRadPerSec() / (2.0 * Math.PI);
+
+    warmUpMotor1SimState.setRotorVelocity(warmUp1MotorVelocity);
+    warmUpMotor2SimState.setRotorVelocity(warmUp2MotorVelocity);
+    warmUpMotor3SimState.setRotorVelocity(warmUp3MotorVelocity);
+
+    double warmUpMotor1RotorPositionRotations =
+        roller1Sim.getAngularPositionRotations()
+            * Constants.Shooter.MOTOR_ROTS_PER_WARMUP_1_ROTS;
+      double warmUpMotor2RotorPositionRotations =
+        roller2Sim.getAngularPositionRotations()
+            * Constants.Shooter.MOTOR_ROTS_PER_WARMUP_2_ROTS;
+
+            double warmUpMotor3RotorPositionRotations =
+        roller3Sim.getAngularPositionRotations()
+            * Constants.Shooter.MOTOR_ROTS_PER_WARMUP_3_ROTS;
+
+    warmUpMotor1SimState.setRawRotorPosition(warmUpMotor1RotorPositionRotations);
+    warmUpMotor2SimState.setRawRotorPosition(warmUpMotor2RotorPositionRotations);
+    warmUpMotor3SimState.setRawRotorPosition(warmUpMotor3RotorPositionRotations);
   }
 }
