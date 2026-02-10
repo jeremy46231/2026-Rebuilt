@@ -623,104 +623,35 @@ public final class Constants {
   }
 
   public static final class Shooter {
+    public static final int WARMUP_MOTOR_1_ID = 35; // TODO CHANGE WHEN GET NEW ROBOT
+    public static final int WARMUP_MOTOR_2_ID = 34; // / TODO CHANGE WHEN GETTING NEW ROBOT
+    public static final int WARMUP_MOTOR_3_ID =32; // TODO CHANGE WHEN GETTING NEW ROBOT
 
-    public static final class Aiming {
-      public static final Pose3d OFFSET_FROM_ROBOT_CENTER = new Pose3d();
-      public static final boolean SHOOTS_BACKWARDS = false;
+    public static final double SHOOTER_SPEED_TOLERANCE_RPS = 5.0; // rps
 
-      public static final double ANGULAR_TOLERANCE_FOR_AUTO_AIM_RAD = .1;
+    public static final double KP = 0.0; // TODO
+    public static final double KI = 0.0; // TODO
+    public static final double KD = 0.0; // TODO
+    public static final double KV = 0.12; // TODO
+    public static final double KA = 0.0; // TODO
 
-      public static final int TARGETING_CALCULATION_PRECISION = 5;
-    }
-    // Control Constants (shared by all motors)
-    public static final double KP = 0.1; // TODO: Tune
-    public static final double KI = 0.0;
-    public static final double KD = 0.0; // TODO: Tune
-    public static final double KV = 0.12; // TODO: Characterize (V*s/rotation)
-    public static final double KA = 0.0; // TODO: Characterize if needed
+    public static final double STATOR_CURRENT_LIMIT = 30.0;
+    public static final double SUPPLY_CURRENT_LIMIT = 30.0;
 
-    // Current Limits
-    public static final double STATOR_CURRENT_LIMIT = 60.0; // Amps
-    public static final double SUPPLY_CURRENT_LIMIT = 40.0; // Amps
+    public static final double MOTOR_ROTS_PER_SHOOTER_ROTS = 1.25;
+    public static final double SHOOTER_WHEEL_DIAMETER_IN = 3.0;
+    public static final double SHOOT_FOR_AUTO = 104.72;
 
-    // Operational speeds
-    /** Target surface speed for autonomous shooting (ft/s) */
-    public static final double SHOOT_FOR_AUTO = 90.0; // TODO: Tune (will be divided by 2)
+    public static final Pose3d OFFSET_FROM_ROBOT_CENTER = new Pose3d();
 
-    /** Warm-up roller 1 (top/fastest) - directly drives shooter wheel */
-    public static final class WarmUp1 {
-      public static final int CAN_ID = -1; // TODO: Set actual CAN ID
-      
-      /** Motor to roller gear ratio: 16t:18t pulley = 1.125:1 */
-      public static final double MOTOR_ROTS_PER_ROLLER_ROTS = 1.125;
-      
-      /** 2" polycarbonate roller with silicone casing */
-      public static final double ROLLER_DIAMETER_INCHES = 2.0;
-      
-      /** Moment of inertia - calculated for 2" roller */
-      public static final double MOI_KG_M2 = 0.0008; // TODO: Calculate actual MOI
-    }
+    public static final double SHOOTER_ANGLE_FROM_HORIZONTAL_DEGREES = 75;
 
-    /** Warm-up roller 2 (middle) */
-    public static final class WarmUp2 {
-      public static final int CAN_ID = -1; // TODO: Set actual CAN ID
-      
-      /** Motor to roller gear ratio: 16t:24t pulley = 1.5:1 */
-      public static final double MOTOR_ROTS_PER_ROLLER_ROTS = 1.5;
-      
-      /** 2" polycarbonate roller with silicone casing */
-      public static final double ROLLER_DIAMETER_INCHES = 2.0;
-      
-      /** Moment of inertia - calculated for 2" roller */
-      public static final double MOI_KG_M2 = 0.0008; // TODO: Calculate actual MOI
-    }
+    public static final boolean SHOOTS_BACKWARDS = false;
 
-    /** Warm-up roller 3 (bottom/slowest) */
-    public static final class WarmUp3 {
-      public static final int CAN_ID = -1; // TODO: Set actual CAN ID
-      
-      /** Motor to roller gear ratio: 12t:24t pulley = 2.0:1 */
-      public static final double MOTOR_ROTS_PER_ROLLER_ROTS = 2.0;
-      
-      /** 2" polycarbonate roller with silicone casing */
-      public static final double ROLLER_DIAMETER_INCHES = 2.0;
-      
-      /** Moment of inertia - calculated for 2" roller */
-      public static final double MOI_KG_M2 = 0.0008; // TODO: Calculate actual MOI
-    }
+    public static final double ANGULAR_TOLERANCE_FOR_AUTO_AIM_RAD = .1;
 
-    /** Shooter wheel (final 3" roller) - belt-driven by WarmUp1 */
-    public static final class ShooterWheel {
-      /** 3" polycarbonate roller with silicone casing */
-      public static final double DIAMETER_INCHES = 3.0;
-      
-      /** Belt ratio from WarmUp1 to Shooter: 18t:20t */
-      public static final double BELT_RATIO_FROM_WARMUP1 = 20.0 / 18.0; // 1.111:1
-      
-      /** Moment of inertia - calculated for 3" roller (larger than 2") */
-      public static final double MOI_KG_M2 = 0.0018; // TODO: Calculate actual MOI
-      
-      /** Hood angle for shooting */
-      public static final double HOOD_ANGLE_DEGREES = 75.0;
-      
-      /** Speed range from MRD table */
-      public static final double MAX_SURFACE_SPEED_FT_PER_SEC = 52.36;
-      public static final double MIN_SURFACE_SPEED_FT_PER_SEC = 35.60;
-    }
-
-    /** Belt ratios between consecutive rollers */
-    public static final class BeltRatios {
-      /** Shooter to WarmUp1: 18t:20t */
-      public static final double SHOOTER_TO_WARMUP1 = 20.0 / 18.0;
-      
-      /** WarmUp1 to WarmUp2: 15t:20t */
-      public static final double WARMUP1_TO_WARMUP2 = 20.0 / 15.0;
-      
-      /** WarmUp2 to WarmUp3: 15t:20t */
-      public static final double WARMUP2_TO_WARMUP3 = 20.0 / 15.0;
-    }
+    public static final int TARGETING_CALCULATION_PRECISION = 5;
   }
-
 
   public static class OI {
     public static final double LEFT_JOYSTICK_DEADBAND = 0.07;
