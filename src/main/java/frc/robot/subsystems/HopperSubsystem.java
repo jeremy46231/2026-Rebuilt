@@ -70,7 +70,7 @@ public class HopperSubsystem extends SubsystemBase {
             LinearSystemId.createDCMotorSystem(
                 krakenGearboxModel,
                 Constants.Hopper.HOPPER_SIM_MECHANISM_MOI_KG_M2,
-                1.0/Constants.Hopper.MOTOR_ROTATIONS_PER_HOPPER_PULLEY_ROTATION),
+                1.0 / Constants.Hopper.MOTOR_ROTATIONS_PER_HOPPER_PULLEY_ROTATION),
             krakenGearboxModel); // add stddevs later if it makes sense
   }
 
@@ -89,19 +89,20 @@ public class HopperSubsystem extends SubsystemBase {
 
   public double getFloorSpeedMPS() {
     double measuredMotorSpeedRotationsPerSecond = hopperMotor.getVelocity().getValueAsDouble();
-    return measuredMotorSpeedRotationsPerSecond * Constants.Hopper.HOPPER_BELT_METERS_PER_MOTOR_ROTATION;
+    return measuredMotorSpeedRotationsPerSecond
+        * Constants.Hopper.HOPPER_BELT_METERS_PER_MOTOR_ROTATION;
   }
 
   public double getAgitatorSpeedRPS() {
     double measuredMotorSpeedRotationsPerSecond = hopperMotor.getVelocity().getValueAsDouble();
-    return measuredMotorSpeedRotationsPerSecond * Constants.Hopper.AGITATOR_ROTATIONS_PER_MOTOR_ROTATION;
+    return measuredMotorSpeedRotationsPerSecond
+        * Constants.Hopper.AGITATOR_ROTATIONS_PER_MOTOR_ROTATION;
   }
 
   public boolean atTargetSpeed() {
     double measuredMotorSpeedRotationsPerSecond = hopperMotor.getVelocity().getValueAsDouble();
     double targetMotorSpeedRotationsPerSecond =
-        targetSurfaceSpeedMetersPerSecond
-            * Constants.Hopper.MOTOR_ROTATIONS_PER_HOPPER_BELT_METER;
+        targetSurfaceSpeedMetersPerSecond * Constants.Hopper.MOTOR_ROTATIONS_PER_HOPPER_BELT_METER;
     return Math.abs(measuredMotorSpeedRotationsPerSecond - targetMotorSpeedRotationsPerSecond)
         <= Constants.Hopper.HOPPER_VELOCITY_TOLERANCE_ROTATIONS_PER_SECOND;
   }
@@ -141,8 +142,7 @@ public class HopperSubsystem extends SubsystemBase {
     // DCMotorSim tracks the pulley/belt mechanism (after gear reduction)
     double hopperMechanismVelocityRotationsPerSecond =
         hopperMechanismSim.getAngularVelocityRadPerSec() / (2.0 * Math.PI);
-    double hopperMechanismPositionRotations =
-        hopperMechanismSim.getAngularPositionRotations();
+    double hopperMechanismPositionRotations = hopperMechanismSim.getAngularPositionRotations();
 
     // Convert mechanism rotations to motor rotor rotations
     // Motor spins faster: 5 motor rotations = 1 pulley rotation

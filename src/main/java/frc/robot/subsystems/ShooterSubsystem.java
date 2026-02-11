@@ -11,7 +11,6 @@ import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.signals.MotorAlignmentValue;
 import com.ctre.phoenix6.sim.TalonFXSimState;
-
 import dev.doglog.DogLog;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
@@ -25,7 +24,6 @@ import frc.robot.util.LoggedTalonFX;
 
 public class ShooterSubsystem extends SubsystemBase {
   private final LoggedTalonFX warmUpMotor1, warmUpMotor2, warmUpMotor3, shooter;
-
   private TalonFXSimState warmUpMotor1SimState, warmUpMotor2SimState, warmUpMotor3SimState;
   private DCMotorSim roller1Sim, roller2Sim, roller3Sim;
 
@@ -41,7 +39,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
     Follower follower =
         new Follower(Constants.Shooter.WARMUP_MOTOR_1_ID, MotorAlignmentValue.Aligned);
-  
+
     warmUpMotor2.setControl(follower);
     warmUpMotor3.setControl(follower);
     shooter = warmUpMotor1;
@@ -75,32 +73,29 @@ public class ShooterSubsystem extends SubsystemBase {
     warmUpMotor3SimState = warmUpMotor3.getSimState();
 
     var krakenGearboxModel = DCMotor.getKrakenX60Foc(1);
-    roller1Sim = new DCMotorSim(
-        LinearSystemId.createDCMotorSystem(
-            krakenGearboxModel, 
-            Constants.Shooter.WARMUP_1_MOI_KG_M2, 
-            Constants.Shooter.MOTOR_ROTS_PER_WARMUP_1_ROTS
-        ), 
-        krakenGearboxModel
-    );
+    roller1Sim =
+        new DCMotorSim(
+            LinearSystemId.createDCMotorSystem(
+                krakenGearboxModel,
+                Constants.Shooter.WARMUP_1_MOI_KG_M2,
+                Constants.Shooter.MOTOR_ROTS_PER_WARMUP_1_ROTS),
+            krakenGearboxModel);
 
-    roller2Sim = new DCMotorSim(
-        LinearSystemId.createDCMotorSystem(
-            krakenGearboxModel, 
-            Constants.Shooter.WARMUP_2_MOI_KG_M2, 
-            Constants.Shooter.MOTOR_ROTS_PER_WARMUP_2_ROTS
-        ), 
-        krakenGearboxModel
-    );
+    roller2Sim =
+        new DCMotorSim(
+            LinearSystemId.createDCMotorSystem(
+                krakenGearboxModel,
+                Constants.Shooter.WARMUP_2_MOI_KG_M2,
+                Constants.Shooter.MOTOR_ROTS_PER_WARMUP_2_ROTS),
+            krakenGearboxModel);
 
-    roller3Sim = new DCMotorSim(
-        LinearSystemId.createDCMotorSystem(
-            krakenGearboxModel, 
-            Constants.Shooter.WARMUP_3_MOI_KG_M2, 
-            Constants.Shooter.MOTOR_ROTS_PER_WARMUP_3_ROTS
-        ), 
-        krakenGearboxModel
-    );
+    roller3Sim =
+        new DCMotorSim(
+            LinearSystemId.createDCMotorSystem(
+                krakenGearboxModel,
+                Constants.Shooter.WARMUP_3_MOI_KG_M2,
+                Constants.Shooter.MOTOR_ROTS_PER_WARMUP_3_ROTS),
+            krakenGearboxModel);
 
     warmUpMotor1SimState.setSupplyVoltage(RobotController.getBatteryVoltage());
     warmUpMotor2SimState.setSupplyVoltage(RobotController.getBatteryVoltage());
@@ -115,10 +110,10 @@ public class ShooterSubsystem extends SubsystemBase {
   }
 
   public double calculateRPSToFt(double motorRPS) {
-      // Convert motor RPS to shooter wheel RPS
-      double shooterWheelRPS = motorRPS / Constants.Shooter.MOTOR_ROTS_PER_SHOOTER_ROTS;
-      // Convert shooter wheel RPS to surface speed
-      return shooterWheelRPS * (Constants.Shooter.SHOOTER_WHEEL_DIAMETER_IN * Math.PI / 12);
+    // Convert motor RPS to shooter wheel RPS
+    double shooterWheelRPS = motorRPS / Constants.Shooter.MOTOR_ROTS_PER_SHOOTER_ROTS;
+    // Convert shooter wheel RPS to surface speed
+    return shooterWheelRPS * (Constants.Shooter.SHOOTER_WHEEL_DIAMETER_IN * Math.PI / 12);
   }
 
   // speed based on shooter wheel which is the one flinging the ball with a max of 52.36 and a min
@@ -153,7 +148,7 @@ public class ShooterSubsystem extends SubsystemBase {
   public void periodic() {
     DogLog.log("Doglog/shooter/targetSpeed", targetSpeed);
     DogLog.log("Doglog/shooter/isAtSpeed", isAtSpeed());
-    DogLog.log("Doglog.shooter/currentSpeed", getCurrentSpeed());
+    DogLog.log("Doglog/shooter/currentSpeed", getCurrentSpeed());
   }
 
   @Override
@@ -184,15 +179,12 @@ public class ShooterSubsystem extends SubsystemBase {
     warmUpMotor3SimState.setRotorVelocity(warmUp3MotorVelocity);
 
     double warmUpMotor1RotorPositionRotations =
-        roller1Sim.getAngularPositionRotations()
-            * Constants.Shooter.MOTOR_ROTS_PER_WARMUP_1_ROTS;
-      double warmUpMotor2RotorPositionRotations =
-        roller2Sim.getAngularPositionRotations()
-            * Constants.Shooter.MOTOR_ROTS_PER_WARMUP_2_ROTS;
+        roller1Sim.getAngularPositionRotations() * Constants.Shooter.MOTOR_ROTS_PER_WARMUP_1_ROTS;
+    double warmUpMotor2RotorPositionRotations =
+        roller2Sim.getAngularPositionRotations() * Constants.Shooter.MOTOR_ROTS_PER_WARMUP_2_ROTS;
 
-            double warmUpMotor3RotorPositionRotations =
-        roller3Sim.getAngularPositionRotations()
-            * Constants.Shooter.MOTOR_ROTS_PER_WARMUP_3_ROTS;
+    double warmUpMotor3RotorPositionRotations =
+        roller3Sim.getAngularPositionRotations() * Constants.Shooter.MOTOR_ROTS_PER_WARMUP_3_ROTS;
 
     warmUpMotor1SimState.setRawRotorPosition(warmUpMotor1RotorPositionRotations);
     warmUpMotor2SimState.setRawRotorPosition(warmUpMotor2RotorPositionRotations);

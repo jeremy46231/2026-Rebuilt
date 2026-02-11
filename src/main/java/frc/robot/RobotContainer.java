@@ -155,10 +155,10 @@ public class RobotContainer {
       joystick.x().whileTrue(intakeSubsystem.runIntake());
 
       // left trigger + x -> arm to initial pos (0)
-    //   joystick
-    //       .leftTrigger()
-    //       .and(joystick.x())
-    //       .onTrue(intakeSubsystem.armToDegrees(Constants.Intake.Arm.ARM_POS_INITIAL));
+      //   joystick
+      //       .leftTrigger()
+      //       .and(joystick.x())
+      //       .onTrue(intakeSubsystem.armToDegrees(Constants.Intake.Arm.ARM_POS_INITIAL));
 
       // left trigger + a -> arm to extended pos (15)
       joystick
