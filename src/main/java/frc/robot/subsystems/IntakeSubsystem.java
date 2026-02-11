@@ -49,7 +49,6 @@ public class IntakeSubsystem extends SubsystemBase {
   private DCMotorSim rollersMechanismSim;
   private SingleJointedArmSim armMechanismSim;
 
-
   public IntakeSubsystem() {
     rollersMotor = new LoggedTalonFX(Constants.Intake.Rollers.CAN_ID);
     armMotor = new LoggedTalonFX(Constants.Intake.Arm.CAN_ID);
@@ -93,19 +92,22 @@ public class IntakeSubsystem extends SubsystemBase {
     // motor's encoder
     cancoder = new CANcoder(Constants.Intake.Arm.ENCODER_PORT);
     CANcoderConfiguration ccConfig = new CANcoderConfiguration();
-    MagnetSensorConfigs magnetSensorConfigs = new MagnetSensorConfigs().withAbsoluteSensorDiscontinuityPoint(Rotations.of(1))
-        .withSensorDirection(SensorDirectionValue.CounterClockwise_Positive)
-        .withMagnetOffset(Rotations.of(Constants.Intake.Arm.ENCODER_OFFSET));
-        
+    MagnetSensorConfigs magnetSensorConfigs =
+        new MagnetSensorConfigs()
+            .withAbsoluteSensorDiscontinuityPoint(Rotations.of(1))
+            .withSensorDirection(SensorDirectionValue.CounterClockwise_Positive)
+            .withMagnetOffset(Rotations.of(Constants.Intake.Arm.ENCODER_OFFSET));
+
     cancoder.getConfigurator().apply(ccConfig);
     cancoder.getConfigurator().apply(magnetSensorConfigs);
 
     // add the CANcoder as a feedback source for the motor's built-in encoder
-    FeedbackConfigs feedbackConfigs = new FeedbackConfigs()
-        .withFeedbackRemoteSensorID(cancoder.getDeviceID())
-        .withFeedbackSensorSource(FeedbackSensorSourceValue.FusedCANcoder)
-        .withSensorToMechanismRatio(Constants.Intake.Arm.CANCODER_ROTS_PER_ARM_ROTS)
-        .withRotorToSensorRatio(Constants.Intake.Arm.ARM_DEGREES_PER_MOTOR_ROTS);
+    FeedbackConfigs feedbackConfigs =
+        new FeedbackConfigs()
+            .withFeedbackRemoteSensorID(cancoder.getDeviceID())
+            .withFeedbackSensorSource(FeedbackSensorSourceValue.FusedCANcoder)
+            .withSensorToMechanismRatio(Constants.Intake.Arm.CANCODER_ROTS_PER_ARM_ROTS)
+            .withRotorToSensorRatio(Constants.Intake.Arm.ARM_DEGREES_PER_MOTOR_ROTS);
 
     armMotorConfig.apply(feedbackConfigs);
 
@@ -130,7 +132,12 @@ public class IntakeSubsystem extends SubsystemBase {
     var kraken44GearboxModel = DCMotor.getKrakenX44Foc(1);
 
     rollersMechanismSim =
-        new DCMotorSim(LinearSystemId.createDCMotorSystem(kraken60GearboxModel, Constants.Intake.Rollers.SIM_MOI_KG_M2, Constants.Intake.Rollers.MOTOR_ROTS_PER_ROLLERS_ROTS), kraken60GearboxModel);
+        new DCMotorSim(
+            LinearSystemId.createDCMotorSystem(
+                kraken60GearboxModel,
+                Constants.Intake.Rollers.SIM_MOI_KG_M2,
+                Constants.Intake.Rollers.MOTOR_ROTS_PER_ROLLERS_ROTS),
+            kraken60GearboxModel);
 
     armMechanismSim =
         new SingleJointedArmSim(
@@ -146,7 +153,8 @@ public class IntakeSubsystem extends SubsystemBase {
 
   public void run(double speedRollersRotationsPerSecond) {
     rollersMotor.setControl(
-        new VelocityVoltage(speedRollersRotationsPerSecond * Constants.Intake.Rollers.MOTOR_ROTS_PER_ROLLERS_ROTS));
+        new VelocityVoltage(
+            speedRollersRotationsPerSecond * Constants.Intake.Rollers.MOTOR_ROTS_PER_ROLLERS_ROTS));
   }
 
   public void stop() {
@@ -154,16 +162,19 @@ public class IntakeSubsystem extends SubsystemBase {
   }
 
   public void setArmDegrees(double angleDeg) {
-    targetAngleDeg = MathUtil.clamp(angleDeg, Constants.Intake.Arm.ARM_POS_MIN, Constants.Intake.Arm.ARM_POS_MAX);
+    targetAngleDeg =
+        MathUtil.clamp(
+            angleDeg, Constants.Intake.Arm.ARM_POS_MIN, Constants.Intake.Arm.ARM_POS_MAX);
 
     double targetMotorRotations = targetAngleDeg * Constants.Intake.Arm.ARM_DEGREES_PER_MOTOR_ROTS;
 
-    armMotor.setControl(
-        new PositionTorqueCurrentFOC(targetMotorRotations));
+    armMotor.setControl(new PositionTorqueCurrentFOC(targetMotorRotations));
   }
 
   public Rotation2d getArmAbsolutePosition() {
-    return new Rotation2d((Units.rotationsToRadians(getCancoderPositionRaw() * Constants.Intake.Arm.CANCODER_ROTS_PER_ARM_ROTS)));
+    return new Rotation2d(
+        (Units.rotationsToRadians(
+            getCancoderPositionRaw() * Constants.Intake.Arm.CANCODER_ROTS_PER_ARM_ROTS)));
   }
 
   public double getCancoderPositionRaw() {
@@ -172,13 +183,15 @@ public class IntakeSubsystem extends SubsystemBase {
 
   public boolean atTargetSpeed() {
     return Math.abs(
-            rollersMotor.getVelocity().getValueAsDouble() - Constants.Intake.Rollers.TARGET_MOTOR_RPS)
+            rollersMotor.getVelocity().getValueAsDouble()
+                - Constants.Intake.Rollers.TARGET_MOTOR_RPS)
         <= Constants.Intake.Rollers.TOLERANCE_MOTOR_ROTS_PER_SEC;
   }
 
   // Commands
   public Command runIntake() {
-    return Commands.runEnd(() -> this.run(Constants.Intake.Rollers.TARGET_MOTOR_RPS), this::stop, this);
+    return Commands.runEnd(
+        () -> this.run(Constants.Intake.Rollers.TARGET_MOTOR_RPS), this::stop, this);
   }
 
   public Command armToDegrees(double degrees) {
@@ -197,7 +210,8 @@ public class IntakeSubsystem extends SubsystemBase {
         rollersMotor.getPosition().getValueAsDouble());
     // arm
     DogLog.log("Subsystems/Intake/Arm/CANcoder Position (raw)", getCancoderPositionRaw());
-    DogLog.log("Subsystems/Intake/Arm/AbsolutePosition (degrees)", getArmAbsolutePosition().getDegrees());
+    DogLog.log(
+        "Subsystems/Intake/Arm/AbsolutePosition (degrees)", getArmAbsolutePosition().getDegrees());
     DogLog.log("Subsystems/Intake/Arm/TargetAngleDeg", targetAngleDeg);
   }
 
@@ -236,8 +250,10 @@ public class IntakeSubsystem extends SubsystemBase {
     double armMechVelRps = armMechanismSim.getVelocityRadPerSec() / (2.0 * Math.PI);
     double armMechPosRot = armMechAngleRad / (2.0 * Math.PI);
 
-    double rollersRotorPosRot = rollersMechPosRot * Constants.Intake.Rollers.MOTOR_ROTS_PER_ROLLERS_ROTS;
-    double rollersRotorVelRps = rollersMechVelRps * Constants.Intake.Rollers.MOTOR_ROTS_PER_ROLLERS_ROTS;
+    double rollersRotorPosRot =
+        rollersMechPosRot * Constants.Intake.Rollers.MOTOR_ROTS_PER_ROLLERS_ROTS;
+    double rollersRotorVelRps =
+        rollersMechVelRps * Constants.Intake.Rollers.MOTOR_ROTS_PER_ROLLERS_ROTS;
 
     double armRotorPosRot = armMechPosRot * Constants.Intake.Arm.MOTOR_ROTS_PER_ARM_ROTS;
     double armRotorVelRps = armMechVelRps * Constants.Intake.Arm.MOTOR_ROTS_PER_ARM_ROTS;

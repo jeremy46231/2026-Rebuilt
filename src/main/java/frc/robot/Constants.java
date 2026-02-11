@@ -82,36 +82,38 @@ public final class Constants {
   // }
 
   public static final class Intake {
-  
-  /** Constants for the intake deployment arm (four-bar linkage) */
-  public static final class Arm {
-    public static final double ARM_LENGTH_METERS = 0.35;
 
-    public static final int CAN_ID = -1; // TODO: VERIFY
-    public static final int ENCODER_PORT = 0; // TODO: VERIFY
-    
-    public static final double MOTOR_ROTS_PER_ARM_ROTS = (700.0/9.0);
-    public static final double ARM_ROTS_PER_MOTOR_ROTS = 1.0 / MOTOR_ROTS_PER_ARM_ROTS;
+    /** Constants for the intake deployment arm (four-bar linkage) */
+    public static final class Arm {
+      public static final double ARM_LENGTH_METERS = 0.35;
 
-    public static final double MOTOR_ROTS_PER_ARM_DEGREES = Units.rotationsToDegrees(ARM_ROTS_PER_MOTOR_ROTS);
+      public static final int CAN_ID = -1; // TODO: VERIFY
+      public static final int ENCODER_PORT = 0; // TODO: VERIFY
 
-    public static final double ARM_DEGREES_PER_MOTOR_ROTS = 1.0 / MOTOR_ROTS_PER_ARM_DEGREES;
-    
-    /** Absolute encoder ratio: 2.666:1 between encoder and axle */
-    public static final double CANCODER_ROTS_PER_ARM_ROTS = (8.0/3.0);
-    public static final double ARM_ROTS_PER_CANCODER_ROTS = 1.0 / CANCODER_ROTS_PER_ARM_ROTS;
-    public static final double ENCODER_OFFSET = 0.0; // TODO: Calibrate on robot
-    
-    // Control Constants (Position closed-loop and torque control)
-    // Note: MRD specifies <insert> for most values - these need characterization/tuning
-    public static final double KV = 0.12; // V*s/rot - TODO: Verify on new robot
-    public static final double KP = 0.0; // V/rot - TODO: Verify on new robot
-    public static final double KI = 0.0; 
-    public static final double KD = 0.0; // V*s/rot - TODO: Verify on new robot
-    
-    // Current Limits
-    public static final double STATOR_CURRENT_LIMIT = 40.0; // Amps - TODO: Verify with team
-    public static final double ARM_DEGREES_UPPER_LIMIT = 95.0;
+      public static final double MOTOR_ROTS_PER_ARM_ROTS = (700.0 / 9.0);
+      public static final double ARM_ROTS_PER_MOTOR_ROTS = 1.0 / MOTOR_ROTS_PER_ARM_ROTS;
+
+      public static final double MOTOR_ROTS_PER_ARM_DEGREES =
+          Units.rotationsToDegrees(ARM_ROTS_PER_MOTOR_ROTS);
+
+      public static final double ARM_DEGREES_PER_MOTOR_ROTS = 1.0 / MOTOR_ROTS_PER_ARM_DEGREES;
+
+      /** Absolute encoder ratio: 2.666:1 between encoder and axle */
+      public static final double CANCODER_ROTS_PER_ARM_ROTS = (8.0 / 3.0);
+
+      public static final double ARM_ROTS_PER_CANCODER_ROTS = 1.0 / CANCODER_ROTS_PER_ARM_ROTS;
+      public static final double ENCODER_OFFSET = 0.0; // TODO: Calibrate on robot
+
+      // Control Constants (Position closed-loop and torque control)
+      // Note: MRD specifies <insert> for most values - these need characterization/tuning
+      public static final double KV = 0.12; // V*s/rot - TODO: Verify on new robot
+      public static final double KP = 0.0; // V/rot - TODO: Verify on new robot
+      public static final double KI = 0.0;
+      public static final double KD = 0.0; // V*s/rot - TODO: Verify on new robot
+
+      // Current Limits
+      public static final double STATOR_CURRENT_LIMIT = 40.0; // Amps - TODO: Verify with team
+      public static final double ARM_DEGREES_UPPER_LIMIT = 95.0;
       public static final double ARM_POS_RETRACTED = 90.0;
       public static final double ARM_POS_EXTENDED = 15.0;
       public static final double ARM_POS_MAX = 90.0;
@@ -119,80 +121,88 @@ public final class Constants {
       public static final double SIM_ARM_POS_MIN = 10.0; // for the simulator
       public static final double SIM_ARM_POS_MAX = 95.0;
       public static final double ARM_POS_IDLE = 45.0; // subject to change
-    
-    public static final double POSITION_TOLERANCE_DEGREES = 1.0;
 
-    // Simulation
-    public static final double SIM_MOI_KG_M2 = 0.0025;
-  }
-  
-  /** Constants for the intake roller wheels */
-  public static final class Rollers {
-    // Hardware Configuration
-    public static final int CAN_ID = -1; // TODO: Get CAN ID from MRD table (currently blank)
-    
-    // Gear Ratios & Conversions
-    /** 
-     * End-to-end reduction: 2.6667:1
-     * Breakdown: Motor → 12t:32t pulley (9mm, 70t belt) → top rollers → 17t:17t pulley (9mm, 65t belt) → bottom rollers
+      public static final double POSITION_TOLERANCE_DEGREES = 1.0;
+
+      // Simulation
+      public static final double SIM_MOI_KG_M2 = 0.0025;
+    }
+
+    /** Constants for the intake roller wheels */
+    public static final class Rollers {
+      // Hardware Configuration
+      public static final int CAN_ID = -1; // TODO: Get CAN ID from MRD table (currently blank)
+
+      // Gear Ratios & Conversions
+      /**
+       * End-to-end reduction: 2.6667:1 Breakdown: Motor → 12t:32t pulley (9mm, 70t belt) → top
+       * rollers → 17t:17t pulley (9mm, 65t belt) → bottom rollers
+       */
+      public static final double MOTOR_ROTS_PER_ROLLERS_ROTS = 8.0 / 3.0;
+
+      public static final double ROLLER_ROTS_PER_MOTOR_ROTS = 1.0 / MOTOR_ROTS_PER_ROLLERS_ROTS;
+
+      // Wheel Specifications
+      /** Roller wheel diameter (inches) */
+      public static final double ROLLER_DIAMETER_INCHES = 3.0;
+
+      public static final double ROLLER_CIRCUMFERENCE_INCHES = ROLLER_DIAMETER_INCHES * Math.PI;
+
+      /** Designed top speed: ~25 ft/s surface speed */
+      public static final double DESIGNED_SURFACE_SPEED_FT_PER_SEC = 25.0;
+
+      public static final double DESIGNED_SURFACE_SPEED_METERS_PER_SEC =
+          Units.feetToMeters(DESIGNED_SURFACE_SPEED_FT_PER_SEC);
+      public static final double DESIGNED_SURFACE_SPEED_IN_PER_SEC =
+          DESIGNED_SURFACE_SPEED_FT_PER_SEC * 12.0;
+
+      /** Target roller RPM to achieve designed surface speed */
+      public static final double TARGET_ROLLER_RPM =
+          (DESIGNED_SURFACE_SPEED_IN_PER_SEC * 60.0) / ROLLER_CIRCUMFERENCE_INCHES;
+
+      /** Target roller RPS (rotations per second) */
+      public static final double TARGET_ROLLER_RPS = TARGET_ROLLER_RPM / 60.0;
+
+      /** Target motor velocity (RPS) to achieve designed roller speed */
+      public static final double TARGET_MOTOR_RPS = TARGET_ROLLER_RPS * MOTOR_ROTS_PER_ROLLERS_ROTS;
+
+      // Control Constants (Kraken x60, velocity closed-loop)
+      public static final double KV = 0.14; // V*s/rps - from MRD
+      public static final double KP = 0.5; // TODO: MRD shows <insert>
+      public static final double KI = 0.0; // TODO: MRD shows <insert>
+      public static final double KD = 0.0; // TODO: MRD shows <insert>
+
+      // Current Limits
+      public static final double STATOR_CURRENT_LIMIT = 40.0; // Amps - TODO: Verify with team
+      public static final double SUPPLY_CURRENT_LIMIT = 30.0; // Amps - TODO: Verify with team
+
+      // Ball Detection (monitors roller current to estimate ball intake)
+      /** Current threshold indicating balls are being intaken */
+      public static final double BALL_DETECTION_CURRENT_THRESHOLD_AMPS =
+          15.0; // TODO: Tune empirically
+
+      /** Debounce time for ball detection to filter noise */
+      public static final double BALL_DETECTION_DEBOUNCE_SEC = 0.1; // TODO: Tune
+
+      public static final double SIM_MOI_KG_M2 =
+          0.01; // TODO: BETTER ESTIMATION CAN BE MADE USING DESIGN
+
+      public static final double TOLERANCE_MOTOR_ROTS_PER_SEC = 0.3; // TODO: OBSERVE BEHAVIOR
+    }
+
+    /**
+     * Constants for power retract behavior during shooting. WARNING: Per MRD, only use after balls
+     * have been partially emptied to avoid expelling balls from hopper.
      */
-    public static final double MOTOR_ROTS_PER_ROLLERS_ROTS = 8.0 / 3.0; 
-    public static final double ROLLER_ROTS_PER_MOTOR_ROTS = 1.0 / MOTOR_ROTS_PER_ROLLERS_ROTS;
-    
-    // Wheel Specifications
-    /** Roller wheel diameter (inches) */
-    public static final double ROLLER_DIAMETER_INCHES = 3.0;
-    public static final double ROLLER_CIRCUMFERENCE_INCHES = ROLLER_DIAMETER_INCHES * Math.PI;
-    
-    /** Designed top speed: ~25 ft/s surface speed */
-    public static final double DESIGNED_SURFACE_SPEED_FT_PER_SEC = 25.0;
-    public static final double DESIGNED_SURFACE_SPEED_METERS_PER_SEC = Units.feetToMeters(DESIGNED_SURFACE_SPEED_FT_PER_SEC);
-    public static final double DESIGNED_SURFACE_SPEED_IN_PER_SEC = DESIGNED_SURFACE_SPEED_FT_PER_SEC * 12.0;
-    
-    /** Target roller RPM to achieve designed surface speed */
-    public static final double TARGET_ROLLER_RPM = 
-        (DESIGNED_SURFACE_SPEED_IN_PER_SEC * 60.0) / ROLLER_CIRCUMFERENCE_INCHES;
-    
-    /** Target roller RPS (rotations per second) */
-    public static final double TARGET_ROLLER_RPS = TARGET_ROLLER_RPM / 60.0;
-    
-    /** Target motor velocity (RPS) to achieve designed roller speed */
-    public static final double TARGET_MOTOR_RPS = TARGET_ROLLER_RPS * MOTOR_ROTS_PER_ROLLERS_ROTS;
-    
-    // Control Constants (Kraken x60, velocity closed-loop)
-    public static final double KV = 0.14; // V*s/rps - from MRD
-    public static final double KP = 0.5; // TODO: MRD shows <insert>
-    public static final double KI = 0.0; // TODO: MRD shows <insert>
-    public static final double KD = 0.0; // TODO: MRD shows <insert>
-    
-    // Current Limits
-    public static final double STATOR_CURRENT_LIMIT = 40.0; // Amps - TODO: Verify with team
-    public static final double SUPPLY_CURRENT_LIMIT = 30.0; // Amps - TODO: Verify with team
-    
-    // Ball Detection (monitors roller current to estimate ball intake)
-    /** Current threshold indicating balls are being intaken */
-    public static final double BALL_DETECTION_CURRENT_THRESHOLD_AMPS = 15.0; // TODO: Tune empirically
-    
-    /** Debounce time for ball detection to filter noise */
-    public static final double BALL_DETECTION_DEBOUNCE_SEC = 0.1; // TODO: Tune
-
-    public static final double SIM_MOI_KG_M2 = 0.01; // TODO: BETTER ESTIMATION CAN BE MADE USING DESIGN
-
-    public static final double TOLERANCE_MOTOR_ROTS_PER_SEC = 0.3; // TODO: OBSERVE BEHAVIOR
+    public static final class PowerRetract {
+      /**
+       * Torque current for power retract mode (TorqueCurrentFOC). Applies constant force to help
+       * push balls from hopper into shooter to increase BPS.
+       */
+      public static final double TORQUE_CURRENT_AMPS = 20.0; // TODO: Tune empirically
+    }
   }
-  
-  /** 
-   * Constants for power retract behavior during shooting.
-   * WARNING: Per MRD, only use after balls have been partially emptied to avoid expelling balls from hopper.
-   */
-  public static final class PowerRetract {
-    /** 
-     * Torque current for power retract mode (TorqueCurrentFOC).
-     * Applies constant force to help push balls from hopper into shooter to increase BPS.
-     */
-    public static final double TORQUE_CURRENT_AMPS = 20.0; // TODO: Tune empirically
-  }
-}
+
   public static class Swerve {
     public static final SwerveType WHICH_SWERVE_ROBOT = SwerveType.COBRA;
 
@@ -627,7 +637,7 @@ public final class Constants {
   public static final class Shooter {
     public static final int WARMUP_MOTOR_1_ID = 35; // TODO CHANGE WHEN GET NEW ROBOT
     public static final int WARMUP_MOTOR_2_ID = 34; // / TODO CHANGE WHEN GETTING NEW ROBOT
-    public static final int WARMUP_MOTOR_3_ID =32; // TODO CHANGE WHEN GETTING NEW ROBOT
+    public static final int WARMUP_MOTOR_3_ID = 32; // TODO CHANGE WHEN GETTING NEW ROBOT
 
     public static final double SHOOTER_SPEED_TOLERANCE_RPS = 5.0; // rps
 
