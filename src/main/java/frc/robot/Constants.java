@@ -15,8 +15,8 @@ import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Distance;
 
 public final class Constants {
-  public static final boolean hopperOnRobot = false;
-  public static final boolean intakeOnRobot = true;
+  public static final boolean hopperOnRobot = true;
+  public static final boolean intakeOnRobot = false;
   public static final boolean visionOnRobot = false;
   public static final boolean shooterOnRobot = false;
   public static final boolean climberOnRobot = false;
@@ -523,10 +523,10 @@ public final class Constants {
     public static final int MOTOR_PORT = 9;
 
     // --- Closed-loop velocity gains (Phoenix Slot0) ---
-    public static final double kP = 0.07;
+    public static final double kP = 0.05;
     public static final double kI = 0.0;
     public static final double kD = 0.0;
-    public static final double kV = 0.12;
+    public static final double kV = 0.124;
 
     // --- Current limits ---
     public static final double HOPPER_STATOR_LIMIT_AMPS = 30.0;

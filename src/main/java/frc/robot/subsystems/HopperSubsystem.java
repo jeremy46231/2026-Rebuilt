@@ -70,7 +70,7 @@ public class HopperSubsystem extends SubsystemBase {
             LinearSystemId.createDCMotorSystem(
                 krakenGearboxModel,
                 Constants.Hopper.HOPPER_SIM_MECHANISM_MOI_KG_M2,
-                1.0 / Constants.Hopper.MOTOR_ROTATIONS_PER_HOPPER_PULLEY_ROTATION),
+                Constants.Hopper.MOTOR_ROTATIONS_PER_HOPPER_PULLEY_ROTATION),
             krakenGearboxModel); // add stddevs later if it makes sense
   }
 
@@ -123,6 +123,7 @@ public class HopperSubsystem extends SubsystemBase {
         "Subsystems/Hopper/MotorSpeedRotationsPerSecond",
         hopperMotor.getVelocity().getValueAsDouble());
     DogLog.log("Subsystems/Hopper/AtTargetSpeed", atTargetSpeed());
+    DogLog.log("Subsystems/Hopper/targetMotorSpeedRotationsPerSecond", targetSurfaceSpeedMetersPerSecond * Constants.Hopper.MOTOR_ROTATIONS_PER_HOPPER_BELT_METER);
   }
 
   @Override
