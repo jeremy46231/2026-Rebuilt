@@ -11,8 +11,6 @@ import frc.robot.subsystems.CommandSwerveDrivetrain;
 public class TurnTowardsTarget extends Command {
     private final SwerveRequest.FieldCentric fieldCentricDrive =
         new SwerveRequest.FieldCentric().withDriveRequestType(DriveRequestType.Velocity);
-    private final SwerveRequest.RobotCentric robotCentricDrive =
-        new SwerveRequest.RobotCentric().withDriveRequestType(DriveRequestType.Velocity);
 
     protected final CommandSwerveDrivetrain swerveDrivetrain;
 
@@ -24,5 +22,9 @@ public class TurnTowardsTarget extends Command {
         double turn = swerveDrivetrain.calculateRequiredRotationalRate(new Rotation2d(Shoot.targetAngle));
         SwerveRequest drive = fieldCentricDrive.withVelocityX(0).withVelocityY(0).withRotationalRate(turn);
         this.swerveDrivetrain.setControl(drive);
+    }
+
+    public boolean isFinished() {
+        return Shoot.pointingAtTarget(swerveDrivetrain);
     }
 }
