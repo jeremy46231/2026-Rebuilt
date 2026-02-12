@@ -10,6 +10,7 @@ import choreo.auto.AutoChooser;
 import choreo.auto.AutoFactory;
 import choreo.auto.AutoRoutine;
 import choreo.auto.AutoTrajectory;
+import dev.doglog.DogLog;
 
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
@@ -70,7 +71,6 @@ public class RobotContainer {
   public final ShooterSubsystem lebron = Constants.shooterOnRobot ? new ShooterSubsystem() : null;
 
   private final AutoFactory autoFactory;
-
   public final AutoRoutine autoRoutine; //new
 
   private final AutoChooser autoChooser = new AutoChooser();
@@ -99,13 +99,14 @@ public class RobotContainer {
             .resetOdometry("NiceAndLongPath.traj")
             .andThen(autoFactory.trajectoryCmd("NiceAndLongPath.traj"));
 
+
             
     autoRoutine = autoFactory.newRoutine("MoveForwardStop.traj");
 
-    AutoTrajectory moveForwardStopTraj = autoRoutine.trajectory("MoveForwardStop");
-    moveForwardStopTraj.atTime("waitPlease").onTrue(new WaitCommand(5));
-    Command moveForwardStop = autoRoutine.cmd();
+    AutoTrajectory moveForwardStopTraj = autoRoutine.trajectory("MoveForwardStop.traj");
+    moveForwardStopTraj.atTime("waitPlease").onTrue(new InstantCommand(() -> DogLog.log("reached marker", true)));
     
+    Command moveForwardStop = autoRoutine.cmd();
 
     autoChooser.addCmd("redClimb", () -> redClimb);
     autoChooser.addCmd("redDepot", () -> redDepot);
