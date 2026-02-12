@@ -2,9 +2,13 @@ package frc.robot.commands;
 
 import com.ctre.phoenix6.Utils;
 import com.ctre.phoenix6.swerve.utility.LinearPath;
+import com.ctre.phoenix6.swerve.utility.WheelForceCalculator;
+import com.ctre.phoenix6.swerve.utility.WheelForceCalculator.Feedforwards;
+
 import dev.doglog.DogLog;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -42,34 +46,41 @@ public class DriveToPose extends Command {
 
   double startTime;
 
+  private final WheelForceCalculator wheelForceCalculator;
+  private WheelForceCalculator.Feedforwards feedforwards;
+
+  private double previousTime;
+  private ChassisSpeeds prev = new ChassisSpeeds();
+
+  
   /**
    * @param swerve Swerve Subsystem.
    * @param targetPose Target Pose (static).
    */
-  public DriveToPose(CommandSwerveDrivetrain swerve, Pose2d targetPose) {
-    // Use addRequirements() here to declare subsystem dependencies.
-    this.swerve = swerve;
-    this.targetPose = targetPose;
+//   public DriveToPose(CommandSwerveDrivetrain swerve, Pose2d targetPose) { //dont use this
+//     // Use addRequirements() here to declare subsystem dependencies.
+//     this.swerve = swerve;
+//     this.targetPose = targetPose;
 
-    path =
-        new LinearPath(
-            new TrapezoidProfile.Constraints(
-                Constants.Swerve.WHICH_SWERVE_ROBOT
-                    .SWERVE_DRIVE_TO_POSE_PROFILE_VALUES
-                    .maxVelocityLinear,
-                Constants.Swerve.WHICH_SWERVE_ROBOT
-                    .SWERVE_DRIVE_TO_POSE_PROFILE_VALUES
-                    .maxAccelerationLinear),
-            new TrapezoidProfile.Constraints(
-                Constants.Swerve.WHICH_SWERVE_ROBOT
-                    .SWERVE_DRIVE_TO_POSE_PROFILE_VALUES
-                    .maxVelocityAngular,
-                Constants.Swerve.WHICH_SWERVE_ROBOT
-                    .SWERVE_DRIVE_TO_POSE_PROFILE_VALUES
-                    .maxAccelerationAngular)); // constants
+//     path =
+//         new LinearPath(
+//             new TrapezoidProfile.Constraints(
+//                 Constants.Swerve.WHICH_SWERVE_ROBOT
+//                     .SWERVE_DRIVE_TO_POSE_PROFILE_VALUES
+//                     .maxVelocityLinear,
+//                 Constants.Swerve.WHICH_SWERVE_ROBOT
+//                     .SWERVE_DRIVE_TO_POSE_PROFILE_VALUES
+//                     .maxAccelerationLinear),
+//             new TrapezoidProfile.Constraints(
+//                 Constants.Swerve.WHICH_SWERVE_ROBOT
+//                     .SWERVE_DRIVE_TO_POSE_PROFILE_VALUES
+//                     .maxVelocityAngular,
+//                 Constants.Swerve.WHICH_SWERVE_ROBOT
+//                     .SWERVE_DRIVE_TO_POSE_PROFILE_VALUES
+//                     .maxAccelerationAngular)); // constants
 
-    addRequirements(swerve);
-  }
+//     addRequirements(swerve);
+//   }
 
   /**
    * @param swerve Swerve Subsystem.
@@ -80,6 +91,10 @@ public class DriveToPose extends Command {
     this.swerve = swerve;
     this.targetPoseSupplier = targetPoseSupplier;
     this.targetPose = targetPoseSupplier.get();
+
+    Translation2d[] swerveModulePositions = new Translation2d[Constants.Swerve.WHICH_SWERVE_ROBOT.ROBOT_DIMENSIONS.length.div(2.0)]; //array
+
+    wheelForceCalculator = new WheelForceCalculator(swerveModulePositions, 58.967, 3.67); //constants
 
     path =
         new LinearPath(
@@ -108,6 +123,9 @@ public class DriveToPose extends Command {
 
     startTime = Utils.getCurrentTimeSeconds();
 
+    previousTime = Utils.getCurrentTimeSeconds();
+    prev = new ChassisSpeeds();
+
     if (targetPoseSupplier != null) {
       targetPose = targetPoseSupplier.get();
     }
@@ -124,13 +142,15 @@ public class DriveToPose extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    double currTime = Utils.getCurrentTimeSeconds() - startTime;
+    double currTime = Utils.getCurrentTimeSeconds();
+    double dt = currTime - previousTime;
+    previousTime = currTime;
 
     if (pathState != null) {
-      pathState = path.calculate(currTime, pathState, targetPose);
+      pathState = path.calculate(currTime - startTime, pathState, targetPose);
 
       // Generate the next speeds for the robot
-      ChassisSpeeds speeds =
+      ChassisSpeeds targetSpeeds =
           new ChassisSpeeds(
               pathState.speeds.vxMetersPerSecond
                   + xController.calculate(
@@ -143,8 +163,19 @@ public class DriveToPose extends Command {
                       swerve.getCurrentState().Pose.getRotation().getRadians(),
                       pathState.pose.getRotation().getRadians()));
 
+      feedforwards = null;
+      if (dt > 0.0001) {
+      feedforwards =
+          wheelForceCalculator.calculate(
+              dt,
+              prev,
+              targetSpeeds);
+      }
+
+      prev = targetSpeeds;
+
       // Apply the generated speeds
-      swerve.applyFieldSpeeds(speeds);
+      swerve.applyFieldSpeeds(targetSpeeds, feedforwards);
     }
   }
 
