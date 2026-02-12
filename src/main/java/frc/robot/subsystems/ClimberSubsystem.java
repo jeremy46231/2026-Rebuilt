@@ -25,6 +25,8 @@ public class ClimberSubsystem extends SubsystemBase {
 
   private final Servo brake;
 
+  private double targetAngle = 0;
+
   public ClimberSubsystem() {
     CurrentLimitsConfigs regClc =
         new CurrentLimitsConfigs()
@@ -157,15 +159,15 @@ public class ClimberSubsystem extends SubsystemBase {
   }
 
   public Command SetMuscleUpToAngle(double angle) {
-    return Commands.runOnce(() -> setMuscleUpPosition(angle), this);
+    return Commands.runOnce(() -> setMuscleUpPosition(angle), this).until(() -> isMuscleUpAtPosition());
   }
 
   public Command SetPullUpToPosition(double position) {
-    return Commands.runOnce(() -> setPullUpPosition(position), this);
+    return Commands.runOnce(() -> setPullUpPosition(position), this).until(() -> isPullUpAtPosition());
   }
 
   public Command SetSitUpToAngle(double angle) {
-    return Commands.runOnce(() -> setSitUpPosition(angle), this);
+    return Commands.runOnce(() -> setSitUpPosition(angle), this).until(() -> isSitUpAtPosition());
   }
 
   public Command L1ClimbAuto() {
