@@ -404,8 +404,10 @@ public final class Constants {
 
     // initializes cameras for use in VisionSubsystem
     public static enum Cameras {
-      RIGHT_CAM("rightCam"),
-      LEFT_CAM("leftCam"),
+      FRONT_RIGHT_CAM("frontRightCam"),
+      FRONT_LEFT_CAM("frontLeftCam"),
+      REAR_RIGHT_CAM("rearRightCam"),
+      REAR_LEFT_CAM("rearLeftCam"),
       COLOR_CAM("colorCam");
 
       private String loggingName;
@@ -437,19 +439,19 @@ public final class Constants {
     public static final double SPEED_COEFFICIENT_THETA = 0.5;
 
     // placeholder constants for now; will be updated once robot is delivered
-    public static final double RIGHT_X = Units.inchesToMeters(6.70);
-    public static final double RIGHT_Y = Units.inchesToMeters(-4.125);
-    public static final double RIGHT_Z = Units.inchesToMeters(40.875);
-    public static final double RIGHT_ROLL = Units.degreesToRadians(180); // 180
-    public static final double RIGHT_PITCH = Units.degreesToRadians(171.5); // 171.5
-    public static final double RIGHT_YAW = Units.degreesToRadians(0.0);
+    public static final double FRONT_RIGHT_X = Units.inchesToMeters(6.70);
+    public static final double FRONT_RIGHT_Y = Units.inchesToMeters(-4.125);
+    public static final double FRONT_RIGHT_Z = Units.inchesToMeters(40.875);
+    public static final double FRONT_RIGHT_ROLL = Units.degreesToRadians(180); // 180
+    public static final double FRONT_RIGHT_PITCH = Units.degreesToRadians(171.5); // 171.5
+    public static final double FRONT_RIGHT_YAW = Units.degreesToRadians(0.0);
 
-    public static final double LEFT_X = Units.inchesToMeters(6.70);
-    public static final double LEFT_Y = Units.inchesToMeters(4.125);
-    public static final double LEFT_Z = Units.inchesToMeters(40.875);
-    public static final double LEFT_ROLL = Units.degreesToRadians(180);
-    public static final double LEFT_PITCH = Units.degreesToRadians(171.5);
-    public static final double LEFT_YAW = Units.degreesToRadians(0.0);
+    public static final double FRONT_LEFT_X = Units.inchesToMeters(6.70);
+    public static final double FRONT_LEFT_Y = Units.inchesToMeters(4.125);
+    public static final double FRONT_LEFT_Z = Units.inchesToMeters(40.875);
+    public static final double FRONT_LEFT_ROLL = Units.degreesToRadians(180);
+    public static final double FRONT_LEFT_PITCH = Units.degreesToRadians(171.5);
+    public static final double FRONT_LEFT_YAW = Units.degreesToRadians(0.0);
 
     public static final double COLOR_X = Units.inchesToMeters(8.867);
     public static final double COLOR_Y = Units.inchesToMeters(12.478);
@@ -461,18 +463,30 @@ public final class Constants {
     // initializing Transform3d for use in future field visualization
     public static Transform3d getCameraTransform(Cameras camera) {
       switch (camera) {
-        case RIGHT_CAM:
+        case FRONT_RIGHT_CAM:
           return new Transform3d(
-              new Translation3d(RIGHT_X, RIGHT_Y, RIGHT_Z),
-              new Rotation3d(RIGHT_ROLL, RIGHT_PITCH, RIGHT_YAW));
-        case LEFT_CAM:
+              new Translation3d(FRONT_RIGHT_X, FRONT_RIGHT_Y, FRONT_RIGHT_Z),
+              new Rotation3d(FRONT_RIGHT_ROLL, FRONT_RIGHT_PITCH, FRONT_RIGHT_YAW));
+
+        case FRONT_LEFT_CAM:
           return new Transform3d(
-              new Translation3d(LEFT_X, LEFT_Y, LEFT_Z),
-              new Rotation3d(LEFT_ROLL, LEFT_PITCH, LEFT_YAW));
+              new Translation3d(FRONT_LEFT_X, FRONT_LEFT_Y, FRONT_LEFT_Z),
+              new Rotation3d(FRONT_LEFT_ROLL, FRONT_LEFT_PITCH, FRONT_LEFT_YAW));
+
+        case REAR_RIGHT_CAM:
+          return new Transform3d(
+              new Translation3d(FRONT_RIGHT_X, FRONT_RIGHT_Y, FRONT_RIGHT_Z),
+              new Rotation3d(FRONT_RIGHT_ROLL, FRONT_RIGHT_PITCH, FRONT_RIGHT_YAW));
+
+        case REAR_LEFT_CAM:
+          return new Transform3d(
+              new Translation3d(FRONT_LEFT_X, FRONT_LEFT_Y, FRONT_LEFT_Z),
+              new Rotation3d(FRONT_LEFT_ROLL, FRONT_LEFT_PITCH, FRONT_LEFT_YAW));
+
         case COLOR_CAM:
           return new Transform3d(
-              new Translation3d(LEFT_X, LEFT_Y, LEFT_Z),
-              new Rotation3d(LEFT_ROLL, LEFT_PITCH, LEFT_YAW));
+              new Translation3d(FRONT_LEFT_X, FRONT_LEFT_Y, FRONT_LEFT_Z),
+              new Rotation3d(FRONT_LEFT_ROLL, FRONT_LEFT_PITCH, FRONT_LEFT_YAW));
         default:
           throw new IllegalArgumentException("Unknown camera ID: " + camera);
       }
