@@ -159,61 +159,71 @@ public class ClimberSubsystem extends SubsystemBase {
   }
 
   public Command SetMuscleUpToAngle(double angle) {
-    return Commands.runOnce(() -> setMuscleUpPosition(angle), this).until(() -> isMuscleUpAtPosition());
+    return Commands.runOnce(() -> setMuscleUpPosition(angle), this)
+        .until(() -> isMuscleUpAtPosition());
   }
 
   public Command SetPullUpToPosition(double position) {
-    return Commands.runOnce(() -> setPullUpPosition(position), this).until(() -> isPullUpAtPosition());
+    return Commands.runOnce(() -> setPullUpPosition(position), this)
+        .until(() -> isPullUpAtPosition());
   }
 
   public Command SetSitUpToAngle(double angle) {
     return Commands.runOnce(() -> setSitUpPosition(angle), this).until(() -> isSitUpAtPosition());
   }
 
-  public Command L1ClimbAuto() {
+
+  public Command L1Climb() {
     return Commands.sequence(
-        SetPullUpToPosition(Constants.Climber.PullUp.REACH_POS),
+        SetPullUpToPosition(Constants.Climber.PullUp.L1_REACH_POS),
         SetSitUpToAngle(Constants.Climber.SitUp.SIT_UP_ANGLE),
-        SetPullUpToPosition(Constants.Climber.PullUp.PULL_DOWN_POS));
+        SetPullUpToPosition(Constants.Climber.PullUp.PULL_DOWN_POS),
+        brakeCommand());
+    // not sure if brake should be here
   }
 
-  public Command LxClimb(int x) {
-    Command[] commands = new Command[x + 1];
-
-    for (int i = 0; i < x; i++) {
-      commands[i] =
-          Commands.sequence(
-              SetSitUpToAngle(Constants.Climber.SitUp.SIT_UP_ANGLE),
-              SetPullUpToPosition(Constants.Climber.PullUp.REACH_POS),
-              SetMuscleUpToAngle(Constants.Climber.MuscleUp.MUSCLE_UP_BACK),
-              SetPullUpToPosition(Constants.Climber.PullUp.PULL_DOWN_POS),
-              SetMuscleUpToAngle(Constants.Climber.MuscleUp.MUSCLE_UP_FORWARD),
-              SetSitUpToAngle(Constants.Climber.SitUp.SIT_BACK_ANGLE));
-    }
-
-    commands[x] = brakeCommand();
-
-    return Commands.sequence(commands);
+  public Command L2Climb() {
+    return Commands.sequence(
+        SetMuscleUpToAngle(Constants.Climber.MuscleUp.L1_MUSCLE_UP_FORWARD),
+        SetSitUpToAngle(Constants.Climber.SitUp.SIT_BACK_ANGLE),
+        SetPullUpToPosition(Constants.Climber.PullUp.L2_REACH_POS),
+        SetSitUpToAngle(Constants.Climber.SitUp.SIT_UP_ANGLE),
+        SetMuscleUpToAngle(Constants.Climber.MuscleUp.MUSCLE_UP_BACK),
+        SetPullUpToPosition(Constants.Climber.PullUp.PULL_DOWN_POS),
+        SetMuscleUpToAngle(Constants.Climber.MuscleUp.L2_MUSCLE_UP_FORWARD),
+        SetSitUpToAngle(Constants.Climber.SitUp.SIT_BACK_ANGLE),
+        brakeCommand());
+    // not sure if brake should be here. It doesn't affect L3 climb?
   }
 
-  // public Command L3Climb(int x) {
-  //   // for (int i = 0; i < 3; i++) from old command
+  public Command L3Climb() {
+    return Commands.sequence(
+        SetPullUpToPosition(Constants.Climber.PullUp.L3_REACH_POS),
+        SetSitUpToAngle(Constants.Climber.SitUp.SIT_UP_ANGLE),
+        SetMuscleUpToAngle(Constants.Climber.MuscleUp.MUSCLE_UP_BACK),
+        SetPullUpToPosition(Constants.Climber.PullUp.L3_REACH_POS),
+        SetMuscleUpToAngle(Constants.Climber.MuscleUp.L3_MUSCLE_UP_FORWARD),
+        SetSitUpToAngle(Constants.Climber.SitUp.SIT_BACK_ANGLE),
+        brakeCommand());
+  }
 
-  //   Command singleCycle =
-  //       Commands.sequence(
-  //           SetPullUpToPosition(Constants.Climber.PullUp.REACH_POS),
-  //           SetSitUpToAngle(Constants.Climber.SitUp.SIT_UP_ANGLE),
-  //           SetMuscleUpToAngle(Constants.Climber.MuscleUp.MUSCLE_UP_BACK),
-  //           SetPullUpToPosition(Constants.Climber.PullUp.PULL_DOWN_POS),
-  //           SetMuscleUpToAngle(Constants.Climber.MuscleUp.MUSCLE_UP_FORWARD),
-  //           SetSitUpToAngle(Constants.Climber.SitUp.SIT_BACK_ANGLE));
+  // public Command LxClimb(int x) {
+  //   Command[] commands = new Command[x + 1];
 
-  //   Command[] list = new Command[x];
-  //   for (int i = 0; i < x; i++){
-  //     list[x] = singleCycle;
+  //   for (int i = 0; i < x; i++) {
+  //     commands[i] =
+  //         Commands.sequence(
+  //             SetSitUpToAngle(Constants.Climber.SitUp.SIT_UP_ANGLE),
+  //             SetPullUpToPosition(Constants.Climber.PullUp.REACH_POS),
+  //             SetMuscleUpToAngle(Constants.Climber.MuscleUp.MUSCLE_UP_BACK),
+  //             SetPullUpToPosition(Constants.Climber.PullUp.PULL_DOWN_POS),
+  //             SetMuscleUpToAngle(Constants.Climber.MuscleUp.MUSCLE_UP_FORWARD),
+  //             SetSitUpToAngle(Constants.Climber.SitUp.SIT_BACK_ANGLE));
   //   }
 
-  //   return Commands.sequence(Commands.repeat());
+  //   commands[x] = brakeCommand();
+
+  //   return Commands.sequence(commands);
   // }
 
   @Override
