@@ -590,10 +590,10 @@ public final class Constants {
 
     public static final double SHOOTER_SPEED_TOLERANCE_RPS = 5.0; // rps
 
-    public static final double KP = 0.0; // TODO
+    public static final double KP = 0.35; // TODO
     public static final double KI = 0.0; // TODO
     public static final double KD = 0.0; // TODO
-    public static final double KV = 0.12; // TODO
+    public static final double KV = 0.123; // TODO
     public static final double KA = 0.0; // TODO
 
     public static final double STATOR_CURRENT_LIMIT = 30.0;
