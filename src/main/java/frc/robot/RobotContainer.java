@@ -69,7 +69,7 @@ public class RobotContainer {
   public final ShooterSubsystem lebron = Constants.shooterOnRobot ? new ShooterSubsystem() : null;
 
   private final AutoFactory autoFactory;
-  public final AutoRoutine autoRoutine; // new
+//   public final AutoRoutine autoRoutine; // new
 
   private final AutoChooser autoChooser = new AutoChooser();
 
@@ -97,14 +97,14 @@ public class RobotContainer {
             .resetOdometry("NiceAndLongPath.traj")
             .andThen(autoFactory.trajectoryCmd("NiceAndLongPath.traj"));
 
-    autoRoutine = autoFactory.newRoutine("MoveForwardStop.traj");
+    // autoRoutine = autoFactory.newRoutine("MoveForwardStop.traj");
 
-    AutoTrajectory moveForwardStopTraj = autoRoutine.trajectory("MoveForwardStop.traj");
-    moveForwardStopTraj
-        .atTime("waitPlease")
-        .onTrue(new InstantCommand(() -> DogLog.log("reached marker", true)));
+    // AutoTrajectory moveForwardStopTraj = autoRoutine.trajectory("MoveForwardStop.traj");
+    // moveForwardStopTraj
+    //     .atTime("waitPlease")
+    //     .onTrue(new InstantCommand(() -> DogLog.log("reached marker", true)));
 
-    Command moveForwardStop = autoRoutine.cmd();
+    // Command moveForwardStop = autoRoutine.cmd();
 
     autoChooser.addCmd("redClimb", () -> redClimb);
     autoChooser.addCmd("redDepot", () -> redDepot);
@@ -112,7 +112,7 @@ public class RobotContainer {
     autoChooser.addCmd("moveForward", () -> moveForward);
     autoChooser.addCmd("niceLongPath", () -> niceAndLongPath);
 
-    autoChooser.addCmd("moveForwardStop", () -> moveForwardStop);
+    // autoChooser.addCmd("moveForwardStop", () -> moveForwardStop);
 
     SmartDashboard.putData("Auto Chooser", autoChooser);
 
