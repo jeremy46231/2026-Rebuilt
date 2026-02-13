@@ -68,13 +68,15 @@ public class RobotContainer {
       Constants.intakeOnRobot ? new IntakeSubsystem() : null;
   public final ShooterSubsystem lebron = Constants.shooterOnRobot ? new ShooterSubsystem() : null;
 
-  private final AutoFactory autoFactory;
+  private final AutoFactory autoFactory; // no marker
 
-  public final AutoRoutine autoRoutine; // new
+  public final AutoRoutine autoRoutine; // with markers
 
   private final AutoChooser autoChooser = new AutoChooser();
 
   public RobotContainer() {
+
+    // paths without marker
     autoFactory = drivetrain.createAutoFactory();
 
     Command redClimb =
@@ -98,23 +100,18 @@ public class RobotContainer {
             .resetOdometry("NiceAndLongPath.traj")
             .andThen(autoFactory.trajectoryCmd("NiceAndLongPath.traj"));
 
-    
-
-
-
-
+    // paths with marker
     autoRoutine = autoFactory.newRoutine("MoveForwardStop.traj");
     AutoTrajectory moveForwardStopTraj = autoRoutine.trajectory("MoveForwardStop.traj");
 
-    autoRoutine.active().onTrue(moveForwardStopTraj.resetOdometry().andThen(moveForwardStopTraj.cmd()));
-
+    autoRoutine
+        .active()
+        .onTrue(moveForwardStopTraj.resetOdometry().andThen(moveForwardStopTraj.cmd()));
     moveForwardStopTraj
         .atTime("waitPlease")
         .onTrue(new InstantCommand(() -> DogLog.log("reached marker", true)));
 
     Command moveForwardStop = autoRoutine.cmd();
-
-
 
     autoChooser.addCmd("redClimb", () -> redClimb);
     autoChooser.addCmd("redDepot", () -> redDepot);
