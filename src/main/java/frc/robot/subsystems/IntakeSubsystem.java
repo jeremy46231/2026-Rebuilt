@@ -183,11 +183,26 @@ public class IntakeSubsystem extends SubsystemBase {
   }
 
   // Commands
+  // public Command runIntake() {
+  //   return Commands.startEnd(
+  //       () -> rollersMotor.setControl(new VelocityVoltage(Constants.Intake.Rollers.TARGET_MOTOR_RPS)), () -> {
+  //         this.stop();
+  //         DogLog.log("Subsystems/Intake/Rollers/Cooked", 5);
+  //         DogLog.log("Subsystems/Intake/Rollers/Cooked", 1);
+  //       }, this);
+  // }
   public Command runIntake() {
     return Commands.startEnd(
-        () -> this.run(Constants.Intake.Rollers.TARGET_ROLLER_RPS), this::stop, this);
-  }
-
+        () -> {
+            DogLog.log("Subsystems/Intake/Command/Started", true);
+            rollersMotor.setControl(new VelocityVoltage(Constants.Intake.Rollers.TARGET_MOTOR_RPS));
+        },
+        () -> {
+            DogLog.log("Subsystems/Intake/Command/Ended", true);
+            this.stop();
+        },
+        this);
+}
   public Command armToDegrees(double degrees) {
     return Commands.runOnce(() -> {
         targetAngleDeg = degrees;
