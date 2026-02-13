@@ -170,17 +170,18 @@ public class ClimberSubsystem extends SubsystemBase {
     return Commands.runOnce(() -> setSitUpPosition(angle), this).until(() -> isSitUpAtPosition());
   }
 
+  // for auton: separate command group
   public Command L1Climb() {
     return Commands.sequence(
         SetPullUpToPosition(Constants.Climber.PullUp.L1_REACH_POS),
         SetSitUpToAngle(Constants.Climber.SitUp.SIT_UP_ANGLE),
         SetPullUpToPosition(Constants.Climber.PullUp.PULL_DOWN_POS),
         brakeCommand());
-    // not sure if brake should be here
   }
 
   public Command L2Climb() {
     return Commands.sequence(
+        L1Climb(),
         SetMuscleUpToAngle(Constants.Climber.MuscleUp.L1_MUSCLE_UP_FORWARD),
         SetSitUpToAngle(Constants.Climber.SitUp.SIT_BACK_ANGLE),
         SetPullUpToPosition(Constants.Climber.PullUp.L2_REACH_POS),
@@ -190,38 +191,19 @@ public class ClimberSubsystem extends SubsystemBase {
         SetMuscleUpToAngle(Constants.Climber.MuscleUp.L2_MUSCLE_UP_FORWARD),
         SetSitUpToAngle(Constants.Climber.SitUp.SIT_BACK_ANGLE),
         brakeCommand());
-    // not sure if brake should be here. It doesn't affect L3 climb?
   }
 
   public Command L3Climb() {
     return Commands.sequence(
+        L2Climb(),
         SetPullUpToPosition(Constants.Climber.PullUp.L3_REACH_POS),
         SetSitUpToAngle(Constants.Climber.SitUp.SIT_UP_ANGLE),
         SetMuscleUpToAngle(Constants.Climber.MuscleUp.MUSCLE_UP_BACK),
-        SetPullUpToPosition(Constants.Climber.PullUp.L3_REACH_POS),
+        SetPullUpToPosition(Constants.Climber.PullUp.PULL_DOWN_POS),
         SetMuscleUpToAngle(Constants.Climber.MuscleUp.L3_MUSCLE_UP_FORWARD),
         SetSitUpToAngle(Constants.Climber.SitUp.SIT_BACK_ANGLE),
         brakeCommand());
   }
-
-  // public Command LxClimb(int x) {
-  //   Command[] commands = new Command[x + 1];
-
-  //   for (int i = 0; i < x; i++) {
-  //     commands[i] =
-  //         Commands.sequence(
-  //             SetSitUpToAngle(Constants.Climber.SitUp.SIT_UP_ANGLE),
-  //             SetPullUpToPosition(Constants.Climber.PullUp.REACH_POS),
-  //             SetMuscleUpToAngle(Constants.Climber.MuscleUp.MUSCLE_UP_BACK),
-  //             SetPullUpToPosition(Constants.Climber.PullUp.PULL_DOWN_POS),
-  //             SetMuscleUpToAngle(Constants.Climber.MuscleUp.MUSCLE_UP_FORWARD),
-  //             SetSitUpToAngle(Constants.Climber.SitUp.SIT_BACK_ANGLE));
-  //   }
-
-  //   commands[x] = brakeCommand();
-
-  //   return Commands.sequence(commands);
-  // }
 
   @Override
   public void periodic() {
