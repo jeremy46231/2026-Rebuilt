@@ -68,7 +68,7 @@ public class HopperSubsystem extends SubsystemBase {
             LinearSystemId.createDCMotorSystem(
                 krakenGearboxModel,
                 Constants.Hopper.HOPPER_SIM_MECHANISM_MOI_KG_M2,
-                1.0 / Constants.Hopper.MOTOR_ROTATIONS_PER_HOPPER_PULLEY_ROTATION),
+                Constants.Hopper.MOTOR_ROTATIONS_PER_HOPPER_PULLEY_ROTATION),
             krakenGearboxModel); // add stddevs later if it makes sense
   }
 
@@ -82,7 +82,7 @@ public class HopperSubsystem extends SubsystemBase {
 
   public void stop() {
     targetSurfaceSpeedMetersPerSecond = 0.0;
-    hopperMotor.setControl(new VelocityVoltage(0));
+    hopperMotor.setControl(new VelocityVoltage(targetSurfaceSpeedMetersPerSecond * Constants.Hopper.MOTOR_ROTATIONS_PER_HOPPER_BELT_METER));
   }
 
   public double getFloorSpeedMPS() {
@@ -107,20 +107,29 @@ public class HopperSubsystem extends SubsystemBase {
 
   // Commands
   public Command runHopperCommand() {
-    return Commands.runEnd(
-        () -> this.runHopper(targetSurfaceSpeedMetersPerSecond), this::stop, this);
+    return Commands.startEnd(
+        () -> {
+          targetSurfaceSpeedMetersPerSecond = Constants.Hopper.HOPPER_BELT_TARGET_SPEED_METERS_PER_SECOND;
+          this.runHopper(targetSurfaceSpeedMetersPerSecond);
+        }
+          , this::stop, this);
   }
 
+  // Commands
   public Command runHopperCommand(double speedMetersPerSec) {
-    return Commands.runEnd(() -> this.runHopper(speedMetersPerSec), this::stop, this);
+    return Commands.startEnd(
+        () -> {
+          targetSurfaceSpeedMetersPerSecond = speedMetersPerSec;
+          this.runHopper(targetSurfaceSpeedMetersPerSecond);
+        }
+          , this::stop, this);
   }
 
   @Override
   public void periodic() {
-    DogLog.log(
-        "Subsystems/Hopper/MotorSpeedRotationsPerSecond",
-        hopperMotor.getVelocity().getValueAsDouble());
-    DogLog.log("Subsystems/Hopper/AtTargetSpeed", atTargetSpeed());
+    DogLog.log("Subsystems/Hopper/TargetMotorSpeed(RPS)", targetSurfaceSpeedMetersPerSecond * Constants.Hopper.MOTOR_ROTATIONS_PER_HOPPER_BELT_METER);
+    DogLog.log("Subsystems/Hopper/CurrentMotorSpeed(RPS)", hopperMotor.getVelocity().getValueAsDouble());
+    DogLog.log("Subsystems/Hopper/AppliedVolts", hopperMotor.getMotorVoltage().getValueAsDouble());
   }
 
   @Override
@@ -158,15 +167,5 @@ public class HopperSubsystem extends SubsystemBase {
     double loadedBatteryVoltageVolts =
         BatterySim.calculateDefaultBatteryLoadedVoltage(hopperMechanismSim.getCurrentDrawAmps());
     RoboRioSim.setVInVoltage(loadedBatteryVoltageVolts);
-
-    DogLog.log("Subsystems/Hopper/Sim/AppliedMotorVoltageVolts", appliedMotorVoltageVolts);
-    DogLog.log(
-        "Subsystems/Hopper/Sim/HopperMechanismVelocityRotationsPerSecond",
-        hopperMechanismVelocityRotationsPerSecond);
-    DogLog.log(
-        "Subsystems/Hopper/Sim/MotorRotorVelocityRotationsPerSecond",
-        motorRotorVelocityRotationsPerSecond);
-    DogLog.log("Subsystems/Hopper/Sim/MotorCurrentAmps", hopperMechanismSim.getCurrentDrawAmps());
-    DogLog.log("Subsystems/Hopper/Sim/LoadedBatteryVoltageVolts", loadedBatteryVoltageVolts);
   }
 }
