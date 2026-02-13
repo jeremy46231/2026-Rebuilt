@@ -25,8 +25,6 @@ public class ClimberSubsystem extends SubsystemBase {
 
   private final Servo brake;
 
-  private double targetAngle = 0;
-
   public ClimberSubsystem() {
     CurrentLimitsConfigs regClc =
         new CurrentLimitsConfigs()
@@ -134,16 +132,16 @@ public class ClimberSubsystem extends SubsystemBase {
   }
 
   public void stopSitUp() {
-    sitUpMotor.stopMotor();
+    sitUpMotor.setPosition(sitUpTargetDeg);
   }
 
   public void stopPullUp() {
-    pullUpMotorL.stopMotor();
-    pullUpMotorR.stopMotor();
+    pullUpMotorL.setPosition(pullUpTargetPosition);
+    pullUpMotorR.setPosition(pullUpTargetPosition);
   }
 
   public void stopMuscleUp() {
-    muscleUpMotor.stopMotor();
+    muscleUpMotor.setPosition(muscleUpTargetDeg);
   }
 
   public void brakeClimb() {
