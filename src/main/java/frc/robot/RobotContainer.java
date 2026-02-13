@@ -98,9 +98,12 @@ public class RobotContainer {
             .resetOdometry("NiceAndLongPath.traj")
             .andThen(autoFactory.trajectoryCmd("NiceAndLongPath.traj"));
 
+    
 
 
-    autoRoutine = autoFactory.newRoutine("CristianoRonaldo.chor");
+
+
+    autoRoutine = autoFactory.newRoutine("MoveForwardStop.traj");
     AutoTrajectory moveForwardStopTraj = autoRoutine.trajectory("MoveForwardStop.traj");
 
     autoRoutine.active().onTrue(moveForwardStopTraj.resetOdometry().andThen(moveForwardStopTraj.cmd()));
@@ -110,6 +113,8 @@ public class RobotContainer {
         .onTrue(new InstantCommand(() -> DogLog.log("reached marker", true)));
 
     Command moveForwardStop = autoRoutine.cmd();
+
+
 
     autoChooser.addCmd("redClimb", () -> redClimb);
     autoChooser.addCmd("redDepot", () -> redDepot);
