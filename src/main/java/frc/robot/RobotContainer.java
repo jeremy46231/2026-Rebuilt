@@ -23,7 +23,6 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.commandGroups.ClimbCommands.L1Climb;
 import frc.robot.commandGroups.ClimbCommands.L2Climb;
 import frc.robot.commandGroups.ClimbCommands.L3Climb;
-import frc.robot.Constants.Vision;
 import frc.robot.commandGroups.WarmUpAndShoot;
 import frc.robot.commands.Shoot;
 import frc.robot.commands.SwerveCommands.SwerveJoystickCommand;
@@ -35,7 +34,6 @@ import frc.robot.subsystems.HopperSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.VisionSubsystem;
-
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
@@ -80,14 +78,14 @@ public class RobotContainer {
 
   private final AutoChooser autoChooser = new AutoChooser();
 
-  public final VisionSubsystem visionRight = Constants.visionOnRobot ? new VisionSubsystem(Constants.Vision.Cameras.RIGHT_CAM) : null;
-  public final VisionSubsystem visionLeft = Constants.visionOnRobot ? new VisionSubsystem(Constants.Vision.Cameras.LEFT_CAM) : null;
-  public final FuelGaugeDetection visionFuelGauge = Constants.visionOnRobot ? new FuelGaugeDetection(Constants.Vision.Cameras.COLOR_CAM) : null;
-  
+  public final VisionSubsystem visionRight =
+      Constants.visionOnRobot ? new VisionSubsystem(Constants.Vision.Cameras.RIGHT_CAM) : null;
+  public final VisionSubsystem visionLeft =
+      Constants.visionOnRobot ? new VisionSubsystem(Constants.Vision.Cameras.LEFT_CAM) : null;
+  public final FuelGaugeDetection visionFuelGauge =
+      Constants.visionOnRobot ? new FuelGaugeDetection(Constants.Vision.Cameras.COLOR_CAM) : null;
 
   public RobotContainer() {
-
-
 
     autoFactory = drivetrain.createAutoFactory();
     autoRoutines = new AutoRoutines(autoFactory);

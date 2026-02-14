@@ -65,7 +65,7 @@ public class FuelGaugeDetection extends SubsystemBase {
           latestRawArea = rawArea;
           latestSmoothedArea = smoothedRawArea;
           latestMultipleBallsArea = smoothedMultipleBalls;
-          
+
           DogLog.log("Subsystems/FuelGauge/RawArea", rawArea);
           DogLog.log("Subsystems/FuelGauge/SmoothedRawArea", smoothedRawArea);
           DogLog.log("Subsystems/FuelGauge/MultipleBallsArea", smoothedMultipleBalls);
@@ -132,8 +132,13 @@ public class FuelGaugeDetection extends SubsystemBase {
     return targets.stream().max((a, b) -> Double.compare(a.getArea(), b.getArea()));
   }
 
-  public double getMultipleBallsArea() { return latestMultipleBallsArea; }
-  public FuelGauge getMultipleBallsGauge() { return latestMultipleBallsGauge; }
+  public double getMultipleBallsArea() {
+    return latestMultipleBallsArea;
+  }
+
+  public FuelGauge getMultipleBallsGauge() {
+    return latestMultipleBallsGauge;
+  }
 
   public double getLargestBallsAvg(int numBalls) {
     double sum = 0.0;

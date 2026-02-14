@@ -2,19 +2,21 @@ package frc.robot.commandGroups;
 
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.Constants;
+import frc.robot.subsystems.FuelGaugeDetection;
 import frc.robot.subsystems.HopperSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
-import frc.robot.subsystems.FuelGaugeDetection;
 
 public class ExpelToFullyRetract extends SequentialCommandGroup {
   public ExpelToFullyRetract(
       ShooterSubsystem shooterSubsystem,
       IntakeSubsystem intakeSubsystem,
       HopperSubsystem hopperSubsystem,
-      FuelGaugeDetection  fuelGaugeDetection) {
+      FuelGaugeDetection fuelGaugeDetection) {
     addCommands(
-        shooterSubsystem.shootAtSpeed().until(() -> hopperSubsystem.isHopperSufficientlyEmpty(fuelGaugeDetection)),
+        shooterSubsystem
+            .shootAtSpeed()
+            .until(() -> hopperSubsystem.isHopperSufficientlyEmpty(fuelGaugeDetection)),
         intakeSubsystem.armToDegrees(Constants.Intake.Arm.ARM_POS_RETRACTED));
   }
 }
