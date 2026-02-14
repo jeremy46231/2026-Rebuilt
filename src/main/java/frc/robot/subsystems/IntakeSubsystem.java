@@ -161,7 +161,7 @@ public class IntakeSubsystem extends SubsystemBase {
 
   public void stopRollers() {
     targetRollersRPS = 0;
-    rollersMotor.setControl(m_velocityRequest.withVelocity(targetRollersRPS));
+    rollersMotor.setControl(m_velocityRequest.withVelocity(targetRollersRPS * Constants.Intake.Rollers.MOTOR_ROTS_PER_ROLLERS_ROTS));
   }
 
   public void setArmDegrees(double angleDeg) {
