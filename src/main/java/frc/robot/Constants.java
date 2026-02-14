@@ -42,13 +42,12 @@ public final class Constants {
       public static final double MOTOR_ROTS_PER_ARM_ROTS = (700.0 / 9.0);
       public static final double ARM_ROTS_PER_MOTOR_ROTS = 1.0 / MOTOR_ROTS_PER_ARM_ROTS;
 
-    public static final double ARM_DEGREES_PER_MOTOR_ROTS = 
-        360.0 / MOTOR_ROTS_PER_ARM_ROTS;
-        // = 360 / 77.777 = 4.629 degrees per motor rotation
+      public static final double ARM_DEGREES_PER_MOTOR_ROTS = 360.0 / MOTOR_ROTS_PER_ARM_ROTS;
+      // = 360 / 77.777 = 4.629 degrees per motor rotation
 
-    public static final double MOTOR_ROTS_PER_ARM_DEGREES = 
-        MOTOR_ROTS_PER_ARM_ROTS / 360.0;
-    // = 77.777 / 360 = 0.216 motor rotations per degree
+      public static final double MOTOR_ROTS_PER_ARM_DEGREES = MOTOR_ROTS_PER_ARM_ROTS / 360.0;
+
+      // = 77.777 / 360 = 0.216 motor rotations per degree
       // public static final double MOTOR_ROTS_PER_ARM_DEGREES =
       //     Units.degreesToRotations(ARM_ROTS_PER_MOTOR_ROTS);
 
@@ -142,7 +141,7 @@ public final class Constants {
       public static final double BALL_DETECTION_DEBOUNCE_SEC = 0.1; // TODO: Tune
 
       public static final double SIM_MOI_KG_M2 =
-          0.0003 ; // TODO: BETTER ESTIMATION CAN BE MADE USING DESIGN
+          0.0003; // TODO: BETTER ESTIMATION CAN BE MADE USING DESIGN
 
       public static final double TOLERANCE_MOTOR_ROTS_PER_SEC = 0.3; // TODO: OBSERVE BEHAVIOR
     }

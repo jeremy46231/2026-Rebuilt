@@ -30,8 +30,7 @@ public class ShooterSubsystem extends SubsystemBase {
     warmUpMotor2 = new LoggedTalonFX(Constants.Shooter.warmUpMotor2);
     warmUpMotor3 = new LoggedTalonFX(Constants.Shooter.warmUpMotor3);
 
-    Follower follower =
-        new Follower(Constants.Shooter.warmUpMotor1, MotorAlignmentValue.Aligned);
+    Follower follower = new Follower(Constants.Shooter.warmUpMotor1, MotorAlignmentValue.Aligned);
     warmUpMotor1.setControl(follower);
     warmUpMotor2.setControl(follower);
     warmUpMotor3.setControl(follower);

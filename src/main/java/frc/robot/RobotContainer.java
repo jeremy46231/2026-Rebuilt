@@ -17,7 +17,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.commands.Shoot;
 import frc.robot.commands.SwerveCommands.SwerveJoystickCommand;
 import frc.robot.generated.TunerConstants;
@@ -156,28 +155,28 @@ public class RobotContainer {
       joystick.y().whileTrue(intakeSubsystem.armToDegrees(0.0));
 
       // left trigger + x -> arm to initial pos (0)
-    //   joystick
-    //       .leftTrigger()
-    //       .and(joystick.x())
-    //       .onTrue(intakeSubsystem.armToDegrees(Constants.Intake.Arm.ARM_POS_RETRACTED));
+      //   joystick
+      //       .leftTrigger()
+      //       .and(joystick.x())
+      //       .onTrue(intakeSubsystem.armToDegrees(Constants.Intake.Arm.ARM_POS_RETRACTED));
 
       // left trigger + a -> arm to extended pos (15)
-    //   joystick
-    //       .leftTrigger()
-    //       .and(joystick.a())
-    //       .onTrue(intakeSubsystem.armToDegrees(Constants.Intake.Arm.ARM_POS_EXTENDED));
+      //   joystick
+      //       .leftTrigger()
+      //       .and(joystick.a())
+      //       .onTrue(intakeSubsystem.armToDegrees(Constants.Intake.Arm.ARM_POS_EXTENDED));
 
-    //   // left trigger + b -> arm to idle pos (45)
-    //   joystick
-    //       .leftTrigger()
-    //       .and(joystick.b())
-    //       .onTrue(intakeSubsystem.armToDegrees(Constants.Intake.Arm.ARM_POS_IDLE));
+      //   // left trigger + b -> arm to idle pos (45)
+      //   joystick
+      //       .leftTrigger()
+      //       .and(joystick.b())
+      //       .onTrue(intakeSubsystem.armToDegrees(Constants.Intake.Arm.ARM_POS_IDLE));
 
-    //   // left trigger + y -> arm to retracted pos (90)
-    //   joystick
-    //       .leftTrigger()
-    //       .and(joystick.y())
-    //       .onTrue(intakeSubsystem.armToDegrees(Constants.Intake.Arm.ARM_POS_RETRACTED));
+      //   // left trigger + y -> arm to retracted pos (90)
+      //   joystick
+      //       .leftTrigger()
+      //       .and(joystick.y())
+      //       .onTrue(intakeSubsystem.armToDegrees(Constants.Intake.Arm.ARM_POS_RETRACTED));
     }
 
     // Auto sequence: choreo forward
@@ -189,7 +188,7 @@ public class RobotContainer {
     // joystick.x().whileTrue(trajCommand);
 
     if (Constants.hopperOnRobot) {
-    //   joystick.x().whileTrue(hopperSubsystem.runHopperCommand(4.0));
+      //   joystick.x().whileTrue(hopperSubsystem.runHopperCommand(4.0));
     }
 
     drivetrain.registerTelemetry(logger::telemeterize);
