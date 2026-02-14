@@ -222,10 +222,10 @@ public class IntakeSubsystem extends SubsystemBase {
     DogLog.log("Subsystems/Intake/Rollers/Target Speed", Constants.Intake.INTAKE_TARGET_SPEED);
     DogLog.log("Subsystems/Intake/Rollers/At target speed", atSpeed());
     DogLog.log(
-        "Subsystems/Intake/Rollers/Motor Velocity (rots/s)",
+        "Subsystems/Intake/Rollers/Motor Velocity (rots per sec)",
         intakeMotor.getVelocity().getValueAsDouble());
     DogLog.log(
-        "Subsystems/Intake/Rollers/Motor Velocity (ft/s)",
+        "Subsystems/Intake/Rollers/Motor Velocity (ft per sec)",
         intakeMotor.getVelocity().getValueAsDouble()
             * Constants.Intake.INTAKE_ROTS_PER_SEC_TO_FEET_PER_SEC);
     DogLog.log(
