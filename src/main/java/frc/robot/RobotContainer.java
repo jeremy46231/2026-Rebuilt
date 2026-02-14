@@ -18,6 +18,9 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
+import frc.robot.commandGroups.ClimbCommands.L1Climb;
+import frc.robot.commandGroups.ClimbCommands.L2Climb;
+import frc.robot.commandGroups.ClimbCommands.L3Climb;
 import frc.robot.commands.Shoot;
 import frc.robot.commands.SwerveCommands.SwerveJoystickCommand;
 import frc.robot.generated.TunerConstants;
@@ -125,6 +128,12 @@ public class RobotContainer {
             drivetrain);
 
     drivetrain.setDefaultCommand(swerveJoystickCommand);
+
+    if (Constants.climberOnRobot) {
+      joystick.povUp().onTrue(new L3Climb(climberSubsystem, drivetrain));
+      joystick.povRight().onTrue(new L2Climb(climberSubsystem, drivetrain));
+      joystick.povDown().onTrue(new L1Climb(climberSubsystem, drivetrain));
+    }
 
     if (Constants.shooterOnRobot) {
       joystick.rightTrigger().whileTrue(new Shoot(drivetrain, lebron, hopperSubsystem, redside));
