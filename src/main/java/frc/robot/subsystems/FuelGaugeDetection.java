@@ -78,8 +78,8 @@ public class FuelGaugeDetection extends SubsystemBase {
     }
 
     if (!list.isEmpty()) {
-      for (double i : list) {
-        smoothedArea += i;
+      for (double rawArea : list) {
+        smoothedArea += rawArea;
       }
       smoothedArea = smoothedArea / list.size();
     } else {
