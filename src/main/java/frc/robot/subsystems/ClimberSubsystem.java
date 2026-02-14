@@ -171,6 +171,7 @@ public class ClimberSubsystem extends SubsystemBase {
   }
 
   // separate command groups to incorporate driveToPose
+
   public Command L1ClimbCommand() {
     return Commands.sequence(
         PullUpCommand(Constants.Climber.PullUp.L1_REACH_POS),
@@ -181,6 +182,7 @@ public class ClimberSubsystem extends SubsystemBase {
 
   public Command L2ClimbCommand() {
     return Commands.sequence(
+        // rest of L1 climb
         MuscleUpCommand(Constants.Climber.MuscleUp.L1_MUSCLE_UP_FORWARD),
         SitUpCommand(Constants.Climber.SitUp.SIT_BACK_ANGLE),
         // L2 Climb
@@ -189,29 +191,19 @@ public class ClimberSubsystem extends SubsystemBase {
         MuscleUpCommand(Constants.Climber.MuscleUp.MUSCLE_UP_BACK),
         PullUpCommand(Constants.Climber.PullUp.PULL_DOWN_POS),
         MuscleUpCommand(Constants.Climber.MuscleUp.L2_MUSCLE_UP_FORWARD),
-        SitUpCommand(Constants.Climber.SitUp.SIT_BACK_ANGLE),
-        brakeCommand());
+        SitUpCommand(Constants.Climber.SitUp.SIT_BACK_ANGLE));
   }
 
   public Command L3ClimbCommand() {
     return Commands.sequence(
-        MuscleUpCommand(Constants.Climber.MuscleUp.L1_MUSCLE_UP_FORWARD),
-        SitUpCommand(Constants.Climber.SitUp.SIT_BACK_ANGLE),
-        // L2 Climb
-        PullUpCommand(Constants.Climber.PullUp.L2_REACH_POS),
-        SitUpCommand(Constants.Climber.SitUp.SIT_UP_ANGLE),
-        MuscleUpCommand(Constants.Climber.MuscleUp.MUSCLE_UP_BACK),
-        PullUpCommand(Constants.Climber.PullUp.PULL_DOWN_POS),
-        MuscleUpCommand(Constants.Climber.MuscleUp.L2_MUSCLE_UP_FORWARD),
-        SitUpCommand(Constants.Climber.SitUp.SIT_BACK_ANGLE),
+        L2ClimbCommand(),
         // L3 climb
         PullUpCommand(Constants.Climber.PullUp.L3_REACH_POS),
         SitUpCommand(Constants.Climber.SitUp.SIT_UP_ANGLE),
         MuscleUpCommand(Constants.Climber.MuscleUp.MUSCLE_UP_BACK),
         PullUpCommand(Constants.Climber.PullUp.PULL_DOWN_POS),
         MuscleUpCommand(Constants.Climber.MuscleUp.L3_MUSCLE_UP_FORWARD),
-        SitUpCommand(Constants.Climber.SitUp.SIT_BACK_ANGLE),
-        brakeCommand());
+        SitUpCommand(Constants.Climber.SitUp.SIT_BACK_ANGLE));
   }
 
   @Override
