@@ -194,11 +194,9 @@ public class IntakeSubsystem extends SubsystemBase {
   public Command runIntake() {
     return Commands.startEnd(
         () -> {
-            DogLog.log("Subsystems/Intake/Command/Started", true);
             rollersMotor.setControl(new VelocityVoltage(Constants.Intake.Rollers.TARGET_MOTOR_RPS));
         },
         () -> {
-            DogLog.log("Subsystems/Intake/Command/Ended", true);
             this.stop();
         },
         this);
