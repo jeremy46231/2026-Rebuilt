@@ -9,6 +9,7 @@ import dev.doglog.DogLogOptions;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.FuelGaugeDetection;
 import frc.robot.subsystems.VisionSubsystem;
@@ -42,7 +43,7 @@ public class Robot extends TimedRobot {
       visionRight = VisionSubsystem.getInstance(Constants.Vision.Cameras.RIGHT_CAM);
       visionLeft = VisionSubsystem.getInstance(Constants.Vision.Cameras.LEFT_CAM);
       visionColor = FuelGaugeDetection.getInstance(Constants.Vision.Cameras.COLOR_CAM);
-      visionSwerve = m_robotContainer.getDrivetrain();
+      visionSwerve = TunerConstants.createDrivetrain();
 
     } else {
       visionRight = null;
