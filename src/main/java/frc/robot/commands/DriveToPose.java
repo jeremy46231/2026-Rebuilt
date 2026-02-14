@@ -44,11 +44,11 @@ public class DriveToPose extends Command {
 
   double startTime;
 
-  private final WheelForceCalculator wheelForceCalculator;
-  private WheelForceCalculator.Feedforwards feedforwards;
+//   private final WheelForceCalculator wheelForceCalculator;
+//   private WheelForceCalculator.Feedforwards feedforwards;
 
-  private double previousTime;
-  private ChassisSpeeds prev = new ChassisSpeeds();
+//   private double previousTime;
+//   private ChassisSpeeds prev = new ChassisSpeeds();
 
   /**
    * @param swerve Swerve Subsystem.
@@ -108,8 +108,8 @@ public class DriveToPose extends Command {
             Constants.Swerve.WHICH_SWERVE_ROBOT.ROBOT_DIMENSIONS.length.div(-2.0).magnitude(),
             Constants.Swerve.WHICH_SWERVE_ROBOT.ROBOT_DIMENSIONS.width.div(-2.0).magnitude());
 
-    wheelForceCalculator =
-        new WheelForceCalculator(swerveModulePositions, 58.967, 3.67); // constants
+    // wheelForceCalculator =
+    //     new WheelForceCalculator(swerveModulePositions, 58.967, 3.67); // constants
 
     path =
         new LinearPath(
@@ -138,8 +138,8 @@ public class DriveToPose extends Command {
 
     startTime = Utils.getCurrentTimeSeconds();
 
-    previousTime = Utils.getCurrentTimeSeconds();
-    prev = new ChassisSpeeds();
+    // previousTime = Utils.getCurrentTimeSeconds();
+    // prev = new ChassisSpeeds();
 
     if (targetPoseSupplier != null) {
       targetPose = targetPoseSupplier.get();
@@ -158,8 +158,8 @@ public class DriveToPose extends Command {
   @Override
   public void execute() {
     double currTime = Utils.getCurrentTimeSeconds();
-    double dt = currTime - previousTime;
-    previousTime = currTime;
+    // double dt = currTime - previousTime;
+    // previousTime = currTime;
 
     if (pathState == null) return;
 
@@ -177,15 +177,15 @@ public class DriveToPose extends Command {
                     pose.getRotation().getRadians(), path.getRotation().getRadians()));
 
     //   feedforwards = null;
-    if (dt > 0.0001) {
-      feedforwards = wheelForceCalculator.calculate(dt, prev, targetSpeeds);
-    }
+    // if (dt > 0.0001) {
+    //   feedforwards = wheelForceCalculator.calculate(dt, prev, targetSpeeds);
+    // }
 
-    prev = targetSpeeds;
+    // prev = targetSpeeds;
 
     // Apply the generated speeds
-    swerve.applyFieldSpeeds(targetSpeeds, feedforwards);
-    //   swerve.applyOneFieldSpeeds(targetSpeeds);
+    // swerve.applyFieldSpeeds(targetSpeeds, feedforwards);
+      swerve.applyOneFieldSpeeds(targetSpeeds);
   }
 
   private boolean atPosition() {

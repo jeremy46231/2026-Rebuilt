@@ -227,7 +227,7 @@ public class RobotContainer {
             new DriveToPose(
                     drivetrain,
                     () ->
-                        MiscUtils.plus(drivetrain.getCurrentState().Pose, new Translation2d(2, 0))).andThen(new InstantCommand(() -> DogLog.log("first dtp done", true)))
+                        MiscUtils.plus(drivetrain.getCurrentState().Pose, new Translation2d(2, 0)))
                 .andThen(
                     new DriveToPose(
                         drivetrain,
