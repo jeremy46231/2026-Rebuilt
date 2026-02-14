@@ -160,8 +160,8 @@ public class Shoot extends Command {
     Vector3 relativeVel =
         Vector3.mult(
             new Vector3(
-                drivetrain.getFieldSpeed().vxMetersPerSecond,
-                drivetrain.getFieldSpeed().vyMetersPerSecond,
+                drivetrain.getFieldSpeeds().vxMetersPerSecond,
+                drivetrain.getFieldSpeeds().vyMetersPerSecond,
                 0),
             -1);
 
@@ -207,8 +207,8 @@ public class Shoot extends Command {
     Vector3 relativeVel =
         Vector3.mult(
             new Vector3(
-                drivetrain.getFieldSpeed().vxMetersPerSecond,
-                drivetrain.getFieldSpeed().vyMetersPerSecond,
+                drivetrain.getFieldSpeeds().vxMetersPerSecond,
+                drivetrain.getFieldSpeeds().vyMetersPerSecond,
                 0),
             -1);
 

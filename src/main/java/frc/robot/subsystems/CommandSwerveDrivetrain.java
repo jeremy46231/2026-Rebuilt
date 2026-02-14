@@ -342,6 +342,9 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
   //     });
   //     m_simNotifier.startPeriodic(kSimLoopPeriod);
   // }
+  public ChassisSpeeds getFieldSpeeds() {
+    return ChassisSpeeds.fromRobotRelativeSpeeds(currentState.Speeds, currentState.Pose.getRotation());
+  }
 
   public double calculateRequiredRotationalRate(Rotation2d targetRotation) {
     double omega =
