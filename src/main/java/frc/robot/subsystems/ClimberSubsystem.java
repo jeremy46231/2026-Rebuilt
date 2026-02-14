@@ -143,7 +143,7 @@ public class ClimberSubsystem extends SubsystemBase {
     return Commands.sequence(
         SetPullUpToPosition(Constants.Climber.PullUp.REACH_POS),
         SetSitUpToAngle(Constants.Climber.SitUp.SIT_UP_ANGLE),
-        SetPullUpToPosition(Constants.Climber.PullUp.PULL_DOWN_POS));
+        SetPullUpToPosition(Constants.Climber.PullUp.PULL_DOWN_POS_FOR_L1));
   }
 
   public Command L3Climb() {
