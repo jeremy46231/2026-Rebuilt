@@ -152,7 +152,7 @@ public class RobotContainer {
     // INTAKE COMMANDS
     // right bumper -> run intake
     if (Constants.intakeOnRobot) {
-      joystick.x().whileTrue(intakeSubsystem.runRollersCommand());
+      joystick.x().whileTrue(intakeSubsystem.armToDegrees(35.0));
 
       // left trigger + x -> arm to initial pos (0)
     //   joystick

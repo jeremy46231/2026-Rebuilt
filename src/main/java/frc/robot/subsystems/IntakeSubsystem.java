@@ -219,10 +219,13 @@ public class IntakeSubsystem extends SubsystemBase {
   public void periodic() {
     // keep arm at current pos
     setArmDegrees(targetAngleDeg);
-    DogLog.log("Subsystems/Intake/Rollers/targetMotorRPS", Constants.Intake.Rollers.TARGET_MOTOR_RPS);
     DogLog.log("Subsystems/Intake/Rollers/currentMotorRPS", rollersMotor.getVelocity().getValueAsDouble());
     DogLog.log("Subsystems/Intake/Rollers/motorVolts", rollersMotor.getMotorVoltage().getValueAsDouble());
     DogLog.log("Subsystems/Intake/Rollers/setpoint", rollersMotor.getClosedLoopReference().getValueAsDouble());
+
+    DogLog.log("Subsystems/Intake/Arm/currentMotorPos", armMotor.getPosition().getValueAsDouble());
+    DogLog.log("Subsystems/Intake/Arm/motorVolts", armMotor.getMotorVoltage().getValueAsDouble());
+    DogLog.log("Subsystems/Intake/Arm/setpoint", armMotor.getClosedLoopReference().getValueAsDouble());
     // rollers
     // DogLog.log("Subsystems/Intake/Rollers/At target speed", atTargetSpeed());
     // DogLog.log("Subsystems/Intake/Rollers/Target Speed (rps)", Constants.Intake.Rollers.TARGET_MOTOR_RPS);
