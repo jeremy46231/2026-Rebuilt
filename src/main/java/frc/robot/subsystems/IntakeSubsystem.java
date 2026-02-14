@@ -42,6 +42,7 @@ public class IntakeSubsystem extends SubsystemBase {
   private LoggedTalonFX armMotor, rollersMotor;
   private CANcoder cancoder;
   private double targetAngleDeg;
+  private double targetRollersRPS;
 
   // Simulation objects
   private TalonFXSimState rollersMotorSimState;
@@ -50,10 +51,14 @@ public class IntakeSubsystem extends SubsystemBase {
   private DCMotorSim rollersMechanismSim;
   private SingleJointedArmSim armMechanismSim;
 
+  private final VelocityVoltage m_velocityRequest = new VelocityVoltage(0);
+  private final PositionVoltage m_positionRequest = new PositionVoltage(0);
+
   public IntakeSubsystem() {
     rollersMotor = new LoggedTalonFX(Constants.Intake.Rollers.CAN_ID);
     armMotor = new LoggedTalonFX(Constants.Intake.Arm.CAN_ID);
     targetAngleDeg = Constants.Intake.Arm.ARM_POS_RETRACTED;
+    targetRollersRPS = 0;
 
     Slot0Configs rollersSlot0Configs = new Slot0Configs()
         .withKV(Constants.Intake.Rollers.KV)
@@ -147,14 +152,16 @@ public class IntakeSubsystem extends SubsystemBase {
         Units.degreesToRadians(Constants.Intake.Arm.ARM_POS_RETRACTED));
   }
 
-  public void run(double speedRollersRotationsPerSecond) {
+  public void runRollers(double speedRollersRotationsPerSecond) {
+    targetRollersRPS = speedRollersRotationsPerSecond;
     rollersMotor.setControl(
-        new VelocityVoltage(
-            speedRollersRotationsPerSecond * Constants.Intake.Rollers.MOTOR_ROTS_PER_ROLLERS_ROTS));
+        m_velocityRequest.withVelocity(
+            targetRollersRPS * Constants.Intake.Rollers.MOTOR_ROTS_PER_ROLLERS_ROTS));
   }
 
-  public void stop() {
-    rollersMotor.setControl(new VelocityVoltage(0));
+  public void stopRollers() {
+    targetRollersRPS = 0;
+    rollersMotor.setControl(m_velocityRequest.withVelocity(targetRollersRPS));
   }
 
   public void setArmDegrees(double angleDeg) {
@@ -163,7 +170,7 @@ public class IntakeSubsystem extends SubsystemBase {
 
     double targetMotorRotations = targetAngleDeg / Constants.Intake.Arm.ARM_DEGREES_PER_MOTOR_ROTS;
 
-    armMotor.setControl(new PositionVoltage(targetMotorRotations));
+    armMotor.setControl(m_positionRequest.withPosition(targetMotorRotations));
   }
 
   public Rotation2d getArmAbsolutePosition() {
@@ -179,28 +186,32 @@ public class IntakeSubsystem extends SubsystemBase {
   public boolean atTargetSpeed() {
     return Math.abs(
         rollersMotor.getVelocity().getValueAsDouble()
-            - Constants.Intake.Rollers.TARGET_MOTOR_RPS) <= Constants.Intake.Rollers.TOLERANCE_MOTOR_ROTS_PER_SEC;
+            - targetRollersRPS * Constants.Intake.Rollers.MOTOR_ROTS_PER_ROLLERS_ROTS) <= Constants.Intake.Rollers.TOLERANCE_MOTOR_ROTS_PER_SEC;
   }
 
-  // Commands
-  // public Command runIntake() {
-  //   return Commands.startEnd(
-  //       () -> rollersMotor.setControl(new VelocityVoltage(Constants.Intake.Rollers.TARGET_MOTOR_RPS)), () -> {
-  //         this.stop();
-  //         DogLog.log("Subsystems/Intake/Rollers/Cooked", 5);
-  //         DogLog.log("Subsystems/Intake/Rollers/Cooked", 1);
-  //       }, this);
-  // }
-  public Command runIntake() {
+  public Command runRollersCommand() {
     return Commands.startEnd(
         () -> {
-            rollersMotor.setControl(new VelocityVoltage(Constants.Intake.Rollers.TARGET_MOTOR_RPS));
+          this.runRollers(targetRollersRPS * Constants.Intake.Rollers.MOTOR_ROTS_PER_ROLLERS_ROTS);
         },
         () -> {
-            this.stop();
+          this.stopRollers();
         },
         this);
-}
+  }
+
+
+  public Command runRollersCommand(double targetRollers_RPS) {
+    return Commands.startEnd(
+        () -> {
+          this.runRollers(targetRollers_RPS * Constants.Intake.Rollers.MOTOR_ROTS_PER_ROLLERS_ROTS);
+        },
+        () -> {
+          this.stopRollers();
+        },
+        this);
+  }
+
   public Command armToDegrees(double degrees) {
     return Commands.runOnce(() -> {
         targetAngleDeg = degrees;
