@@ -147,14 +147,17 @@ public class RobotContainer {
             drivetrain);
 
     drivetrain.setDefaultCommand(swerveJoystickCommand);
+    if (Constants.shooterOnRobot) {
+      lebron.setDefaultCommand(Commands.run(lebron::stop, lebron));
+    }
 
-    lebron.setDefaultCommand(Commands.run(lebron::stop, lebron));
-
-    intakeSubsystem.setDefaultCommand(
-        new ConditionalCommand(
-            intakeSubsystem.armToDegrees(Constants.Intake.Arm.ARM_POS_RETRACTED),
-            intakeSubsystem.armToDegrees(Constants.Intake.Arm.ARM_POS_IDLE),
-            () -> hopperSubsystem.isHopperSufficientlyEmpty(visionFuelGauge))); //
+    if (Constants.intakeOnRobot) {
+      intakeSubsystem.setDefaultCommand(
+          new ConditionalCommand(
+              intakeSubsystem.armToDegrees(Constants.Intake.Arm.ARM_POS_RETRACTED),
+              intakeSubsystem.armToDegrees(Constants.Intake.Arm.ARM_POS_IDLE),
+              () -> hopperSubsystem.isHopperSufficientlyEmpty(visionFuelGauge)));
+    }
 
     if (Constants.climberOnRobot) {
       joystick.povUp().onTrue(new L3Climb(climberSubsystem, drivetrain));
