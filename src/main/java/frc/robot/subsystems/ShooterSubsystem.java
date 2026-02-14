@@ -26,7 +26,6 @@ public class ShooterSubsystem extends SubsystemBase {
   private static double tolerance = 5; // rps
 
   public ShooterSubsystem() {
-
     warmUpMotor1 = new LoggedTalonFX(Constants.Shooter.warmUpMotor1);
     warmUpMotor2 = new LoggedTalonFX(Constants.Shooter.warmUpMotor2);
     warmUpMotor3 = new LoggedTalonFX(Constants.Shooter.warmUpMotor3);

@@ -36,16 +36,23 @@ public final class Constants {
     public static final class Arm {
       public static final double ARM_LENGTH_METERS = 0.35;
 
-      public static final int CAN_ID = 10; // TODO: VERIFY
-      public static final int ENCODER_PORT = 0; // TODO: VERIFY
+      public static final int CAN_ID = 14; // TODO: VERIFY
+      public static final int ENCODER_PORT = 16; // TODO: VERIFY
 
       public static final double MOTOR_ROTS_PER_ARM_ROTS = (700.0 / 9.0);
       public static final double ARM_ROTS_PER_MOTOR_ROTS = 1.0 / MOTOR_ROTS_PER_ARM_ROTS;
 
-      public static final double MOTOR_ROTS_PER_ARM_DEGREES =
-          Units.rotationsToDegrees(ARM_ROTS_PER_MOTOR_ROTS);
+    public static final double ARM_DEGREES_PER_MOTOR_ROTS = 
+        360.0 / MOTOR_ROTS_PER_ARM_ROTS;
+        // = 360 / 77.777 = 4.629 degrees per motor rotation
 
-      public static final double ARM_DEGREES_PER_MOTOR_ROTS = 1.0 / MOTOR_ROTS_PER_ARM_DEGREES;
+    public static final double MOTOR_ROTS_PER_ARM_DEGREES = 
+        MOTOR_ROTS_PER_ARM_ROTS / 360.0;
+    // = 77.777 / 360 = 0.216 motor rotations per degree
+      // public static final double MOTOR_ROTS_PER_ARM_DEGREES =
+      //     Units.degreesToRotations(ARM_ROTS_PER_MOTOR_ROTS);
+
+      // public static final double ARM_DEGREES_PER_MOTOR_ROTS = 1.0 / MOTOR_ROTS_PER_ARM_DEGREES;
 
       /** Absolute encoder ratio: 2.666:1 between encoder and axle */
       public static final double CANCODER_ROTS_PER_ARM_ROTS = (8.0 / 3.0);
@@ -55,8 +62,8 @@ public final class Constants {
 
       // Control Constants (Position closed-loop and torque control)
       // Note: MRD specifies <insert> for most values - these need characterization/tuning
-      public static final double KV = 0.12; // V*s/rot - TODO: Verify on new robot
-      public static final double KP = 1; // V/rot - TODO: Verify on new robot
+      public static final double KV = 0.50; // V*s/rot - TODO: Verify on new robot
+      public static final double KP = 100; // V/rot - TODO: Verify on new robot
       public static final double KI = 0.0;
       public static final double KD = 0.8; // V*s/rot - TODO: Verify on new robot
       public static final double KG = 1.0; // TODO: verify
@@ -75,7 +82,7 @@ public final class Constants {
       public static final double POSITION_TOLERANCE_DEGREES = 1.0;
 
       // Simulation
-      public static final double SIM_MOI_KG_M2 = 0.0025;
+      public static final double SIM_MOI_KG_M2 = 0.1;
     }
 
     /** Constants for the intake roller wheels */

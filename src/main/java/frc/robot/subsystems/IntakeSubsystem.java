@@ -86,7 +86,7 @@ public class IntakeSubsystem extends SubsystemBase {
     armMotorConfig.apply(armSlot0Configs);
     armMotorConfig.apply(armCurrentLimitsConfigs);
     armMotorConfig.apply(new MotorOutputConfigs().withNeutralMode(NeutralModeValue.Brake)
-        .withInverted(InvertedValue.CounterClockwise_Positive));
+        .withInverted(InvertedValue.Clockwise_Positive));// changed side
     rollersMotorConfig.apply(rollersSlot0Configs);
     rollersMotorConfig.apply(rollersCurrentLimitsConfigs);
     rollersMotorConfig.apply(
