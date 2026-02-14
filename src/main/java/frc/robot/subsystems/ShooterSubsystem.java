@@ -31,22 +31,25 @@ public class ShooterSubsystem extends SubsystemBase {
     warmUpMotor2 = new LoggedTalonFX(Constants.Shooter.warmUpMotor2.port);
     warmUpMotor3 = new LoggedTalonFX(Constants.Shooter.warmUpMotor3.port);
 
-    Follower follower = new Follower(Constants.Shooter.warmUpMotor1.port, MotorAlignmentValue.Aligned);
+    Follower follower =
+        new Follower(Constants.Shooter.warmUpMotor1.port, MotorAlignmentValue.Aligned);
     warmUpMotor1.setControl(follower);
     warmUpMotor2.setControl(follower);
     warmUpMotor3.setControl(follower);
     shooter = warmUpMotor1;
 
-    Slot0Configs s0c = new Slot0Configs()
-        .withKP(Constants.Shooter.SHOOTER_KP)
-        .withKI(Constants.Shooter.SHOOTER_KI)
-        .withKD(Constants.Shooter.SHOOTER_KD)
-        .withKV(Constants.Shooter.SHOOTER_KV)
-        .withKA(Constants.Shooter.SHOOTER_KA);
+    Slot0Configs s0c =
+        new Slot0Configs()
+            .withKP(Constants.Shooter.SHOOTER_KP)
+            .withKI(Constants.Shooter.SHOOTER_KI)
+            .withKD(Constants.Shooter.SHOOTER_KD)
+            .withKV(Constants.Shooter.SHOOTER_KV)
+            .withKA(Constants.Shooter.SHOOTER_KA);
 
-    CurrentLimitsConfigs clc = new CurrentLimitsConfigs()
-        .withStatorCurrentLimit(Constants.Shooter.STATOR_CURRENT_LIMIT)
-        .withSupplyCurrentLimit(Constants.Shooter.SUPPLY_CURRENT_LIMIT);
+    CurrentLimitsConfigs clc =
+        new CurrentLimitsConfigs()
+            .withStatorCurrentLimit(Constants.Shooter.STATOR_CURRENT_LIMIT)
+            .withSupplyCurrentLimit(Constants.Shooter.SUPPLY_CURRENT_LIMIT);
 
     TalonFXConfigurator m1config = warmUpMotor1.getConfigurator();
     TalonFXConfigurator m2config = warmUpMotor2.getConfigurator();
@@ -90,7 +93,8 @@ public class ShooterSubsystem extends SubsystemBase {
   }
 
   public boolean isAtSpeed() {
-    return Math.abs(calculateFtToRPS(targetSpeed) - shooter.getVelocity().getValueAsDouble()) <= tolerance;
+    return Math.abs(calculateFtToRPS(targetSpeed) - shooter.getVelocity().getValueAsDouble())
+        <= tolerance;
   }
 
   public double getCurrentSpeed() {
