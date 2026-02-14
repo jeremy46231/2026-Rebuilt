@@ -1,15 +1,21 @@
 package frc.robot.subsystems;
 
+import static edu.wpi.first.units.Units.Rotations;
+
+import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.MotionMagicConfigs;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
+import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
+import com.ctre.phoenix6.hardware.CANcoder;
+import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.MotorAlignmentValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+import com.ctre.phoenix6.signals.SensorDirectionValue;
 import dev.doglog.DogLog;
-import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -21,7 +27,7 @@ public class ClimberSubsystem extends SubsystemBase {
 
   private final LoggedTalonFX muscleUpMotor, sitUpMotor, pullUpMotorR, pullUpMotorL;
   private double sitUpTargetDeg, muscleUpTargetDeg, pullUpTargetPosition;
-  private final DutyCycleEncoder muscleUpEncoder, sitUpEncoder;
+  private final CANcoder muscleUpEncoder, sitUpEncoder;
 
   private final Servo brake;
 
@@ -79,8 +85,47 @@ public class ClimberSubsystem extends SubsystemBase {
     pullUpMotorR.getConfigurator().apply(mmc);
     pullUpMotorL.getConfigurator().apply(mmc);
 
-    sitUpEncoder = new DutyCycleEncoder(Constants.Climber.SitUp.ENCODER_PORT);
-    muscleUpEncoder = new DutyCycleEncoder(Constants.Climber.MuscleUp.ENCODER_PORT);
+    // create fusedcancoders
+    sitUpEncoder = new CANcoder(Constants.Climber.SitUp.ENCODER_PORT);
+    muscleUpEncoder = new CANcoder(Constants.Climber.MuscleUp.ENCODER_PORT);
+
+    sitUpEncoder
+        .getConfigurator()
+        .apply(
+            new CANcoderConfiguration()
+                .MagnetSensor.withAbsoluteSensorDiscontinuityPoint(Rotations.of(1))
+                    .withSensorDirection(SensorDirectionValue.CounterClockwise_Positive)
+                    .withMagnetOffset(Rotations.of(Constants.Climber.SitUp.ENCODER_OFFSET)));
+
+    muscleUpEncoder
+        .getConfigurator()
+        .apply(
+            new CANcoderConfiguration()
+                .MagnetSensor.withAbsoluteSensorDiscontinuityPoint(Rotations.of(1))
+                    .withSensorDirection(SensorDirectionValue.CounterClockwise_Positive)
+                    .withMagnetOffset(Rotations.of(Constants.Climber.MuscleUp.ENCODER_OFFSET)));
+
+    sitUpMotor
+        .getConfigurator()
+        .apply(
+            new TalonFXConfiguration()
+                .Feedback.withFeedbackRemoteSensorID(sitUpEncoder.getDeviceID())
+                    .withFeedbackSensorSource(FeedbackSensorSourceValue.FusedCANcoder)
+                    .withSensorToMechanismRatio(
+                        Constants.Climber.SitUp.ENCODER_ROTATIONS_TO_ARM_ROTATIONS)
+                    .withRotorToSensorRatio(
+                        Constants.Climber.SitUp.MOTOR_ROTS_PER_DEGREES_OF_ARM_ROT));
+
+    muscleUpMotor
+        .getConfigurator()
+        .apply(
+            new TalonFXConfiguration()
+                .Feedback.withFeedbackRemoteSensorID(muscleUpEncoder.getDeviceID())
+                    .withFeedbackSensorSource(FeedbackSensorSourceValue.FusedCANcoder)
+                    .withSensorToMechanismRatio(
+                        Constants.Climber.MuscleUp.ENCODER_ROTATIONS_TO_ARM_ROTATIONS)
+                    .withRotorToSensorRatio(
+                        Constants.Climber.MuscleUp.MOTOR_ROTS_PER_DEGREES_OF_ARM_ROT));
   }
 
   public void setSitUpPosition(double degrees) {
@@ -124,11 +169,13 @@ public class ClimberSubsystem extends SubsystemBase {
   }
 
   public double getMuscleUpPosInRotationsFromEncoder() {
-    return muscleUpEncoder.get() * Constants.Climber.MuscleUp.ENCODER_ROTATIONS_TO_ARM_ROTATIONS;
+    return muscleUpEncoder.getAbsolutePosition().getValueAsDouble()
+        * Constants.Climber.MuscleUp.ENCODER_ROTATIONS_TO_ARM_ROTATIONS;
   }
 
   public double getSitUpPosInRotationsFromEncoder() {
-    return sitUpEncoder.get() * Constants.Climber.SitUp.ENCODER_ROTATIONS_TO_ARM_ROTATIONS;
+    return sitUpEncoder.getAbsolutePosition().getValueAsDouble()
+        * Constants.Climber.SitUp.ENCODER_ROTATIONS_TO_ARM_ROTATIONS;
   }
 
   public void stopSitUp() {

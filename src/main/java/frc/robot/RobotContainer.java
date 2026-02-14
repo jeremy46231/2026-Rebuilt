@@ -15,12 +15,15 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.commandGroups.ClimbCommands.L1Climb;
 import frc.robot.commandGroups.ClimbCommands.L2Climb;
 import frc.robot.commandGroups.ClimbCommands.L3Climb;
+import frc.robot.commandGroups.WarmUpAndShoot;
 import frc.robot.commands.Shoot;
 import frc.robot.commands.SwerveCommands.SwerveJoystickCommand;
 import frc.robot.generated.TunerConstants;
@@ -128,6 +131,12 @@ public class RobotContainer {
             drivetrain);
 
     drivetrain.setDefaultCommand(swerveJoystickCommand);
+    lebron.setDefaultCommand(Commands.run(lebron::stop, lebron));
+    intakeSubsystem.setDefaultCommand(
+        new ConditionalCommand(
+            intakeSubsystem.armToDegrees(Constants.Intake.Arm.ARM_POS_RETRACTED),
+            intakeSubsystem.armToDegrees(Constants.Intake.Arm.ARM_POS_IDLE),
+            hopperSubsystem::isHopperSufficientlyEmpty));
 
     if (Constants.climberOnRobot) {
       joystick.povUp().onTrue(new L3Climb(climberSubsystem, drivetrain));
@@ -198,6 +207,10 @@ public class RobotContainer {
 
     if (Constants.hopperOnRobot) {
       joystick.x().whileTrue(hopperSubsystem.runHopperCommand(4.0));
+    }
+
+    if (Constants.shooterOnRobot && Constants.hopperOnRobot) {
+      joystick.leftBumper().onTrue(new WarmUpAndShoot(lebron, hopperSubsystem));
     }
 
     drivetrain.registerTelemetry(logger::telemeterize);

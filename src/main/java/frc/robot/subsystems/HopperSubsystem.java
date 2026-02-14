@@ -95,6 +95,11 @@ public class HopperSubsystem extends SubsystemBase {
         <= Constants.Hopper.TOLERANCE_MOTOR_ROTS_PER_SEC;
   }
 
+  // placeholder boolean function for seeing how many balls are in hopper
+  public boolean isHopperSufficientlyEmpty() {
+    return true;
+  }
+
   // Commands
   public Command runHopperCommand() {
     return Commands.runEnd(
@@ -107,10 +112,14 @@ public class HopperSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
+    DogLog.log("Subsystems/Hopper/Target Speed", targetSurfaceSpeedMetersPerSecond);
+    DogLog.log("Subsystems/Hopper/At target speed", atSpeed());
     DogLog.log(
-        "Subsystems/Hopper/MotorSpeedRotationsPerSecond",
+        "Subsystems/Hopper/Motor Velocity (rots per sec)",
         hopperMotor.getVelocity().getValueAsDouble());
-    DogLog.log("Subsystems/sHopper/AtSpeed", atSpeed());
+    DogLog.log(
+        "Subsystems/Hopper/Motor Current (stator)",
+        hopperMotor.getStatorCurrent().getValueAsDouble());
   }
 
   @Override
