@@ -84,7 +84,10 @@ public class HopperSubsystem extends SubsystemBase {
 
   public void stop() {
     targetSurfaceSpeedMetersPerSecond = 0.0;
-    hopperMotor.setControl(m_velocityRequest.withVelocity(targetSurfaceSpeedMetersPerSecond * Constants.Hopper.MOTOR_ROTATIONS_PER_HOPPER_BELT_METER));
+    hopperMotor.setControl(
+        m_velocityRequest.withVelocity(
+            targetSurfaceSpeedMetersPerSecond
+                * Constants.Hopper.MOTOR_ROTATIONS_PER_HOPPER_BELT_METER));
   }
 
   public double getFloorSpeedMPS() {
@@ -112,8 +115,9 @@ public class HopperSubsystem extends SubsystemBase {
     return Commands.startEnd(
         () -> {
           this.runHopper(Constants.Hopper.HOPPER_BELT_TARGET_SPEED_METERS_PER_SECOND);
-        }
-          , this::stop, this);
+        },
+        this::stop,
+        this);
   }
 
   // Commands
@@ -121,14 +125,18 @@ public class HopperSubsystem extends SubsystemBase {
     return Commands.startEnd(
         () -> {
           this.runHopper(speedMetersPerSec);
-        }
-          , this::stop, this);
+        },
+        this::stop,
+        this);
   }
 
   @Override
   public void periodic() {
-    DogLog.log("Subsystems/Hopper/TargetMotorSpeed(RPS)", targetSurfaceSpeedMetersPerSecond * Constants.Hopper.MOTOR_ROTATIONS_PER_HOPPER_BELT_METER);
-    DogLog.log("Subsystems/Hopper/CurrentMotorSpeed(RPS)", hopperMotor.getVelocity().getValueAsDouble());
+    DogLog.log(
+        "Subsystems/Hopper/TargetMotorSpeed(RPS)",
+        targetSurfaceSpeedMetersPerSecond * Constants.Hopper.MOTOR_ROTATIONS_PER_HOPPER_BELT_METER);
+    DogLog.log(
+        "Subsystems/Hopper/CurrentMotorSpeed(RPS)", hopperMotor.getVelocity().getValueAsDouble());
     DogLog.log("Subsystems/Hopper/AppliedVolts", hopperMotor.getMotorVoltage().getValueAsDouble());
   }
 
@@ -168,11 +176,11 @@ public class HopperSubsystem extends SubsystemBase {
         BatterySim.calculateDefaultBatteryLoadedVoltage(hopperMechanismSim.getCurrentDrawAmps());
     RoboRioSim.setVInVoltage(loadedBatteryVoltageVolts);
 
-
     double hopperSupplyCurrentAmps = hopperMotorSimState.getSupplyCurrent();
 
     // Calculate what the battery voltage should be with this load
-    double targetBatteryV = BatterySim.calculateDefaultBatteryLoadedVoltage(hopperSupplyCurrentAmps);
+    double targetBatteryV =
+        BatterySim.calculateDefaultBatteryLoadedVoltage(hopperSupplyCurrentAmps);
 
     RoboRioSim.setVInVoltage(targetBatteryV);
   }
