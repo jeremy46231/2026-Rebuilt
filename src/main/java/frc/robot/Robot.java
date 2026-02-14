@@ -42,6 +42,13 @@ public class Robot extends TimedRobot {
     }
   }
 
+  @Override
+  public void robotInit() {
+    RobotContainer.setAlliance();
+    DogLog.setOptions(
+        new DogLogOptions().withNtPublish(true).withCaptureDs(true).withLogExtras(true));
+  }
+
   /**
    * This function is called every 20 ms, no matter the mode. Use this for items like diagnostics
    * that you want ran during disabled, autonomous, teleoperated and test.
@@ -55,6 +62,7 @@ public class Robot extends TimedRobot {
     // commands, running already-scheduled commands, removing finished or interrupted commands,
     // and running subsystem periodic() methods.  This must be called from the robot's periodic
     // block in order for anything in the Command-based framework to work.
+
     CommandScheduler.getInstance().run();
 
     if (Constants.visionOnRobot) {
@@ -66,12 +74,6 @@ public class Robot extends TimedRobot {
   /** This function is called once each time the robot enters Disabled mode. */
   @Override
   public void disabledInit() {}
-
-  @Override
-  public void robotInit() {
-    DogLog.setOptions(
-        new DogLogOptions().withNtPublish(true).withCaptureDs(true).withLogExtras(true));
-  }
 
   @Override
   public void disabledPeriodic() {}
