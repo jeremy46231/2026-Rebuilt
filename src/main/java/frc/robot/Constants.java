@@ -16,13 +16,18 @@ import edu.wpi.first.units.measure.Distance;
 
 public final class Constants {
   public static final boolean hopperOnRobot = false;
-  public static final boolean intakeOnRobot = false;
+  public static final boolean intakeOnRobot = true;
   public static final boolean visionOnRobot = false;
   public static final boolean shooterOnRobot = false;
   public static final boolean climberOnRobot = false;
 
   public static class OperatorConstants {
     public static final int kDriverControllerPort = 0;
+  }
+
+  public static final class Simulation {
+    public static final double SIM_LOOP_PERIOD_SECONDS =
+        0.020; // time between updating the simulator
   }
 
   public static final class Intake {
@@ -83,7 +88,10 @@ public final class Constants {
   }
 
   public static class Swerve {
-    public static final SwerveType WHICH_SWERVE_ROBOT = SwerveType.PROTO;
+    public static final SwerveType WHICH_SWERVE_ROBOT = SwerveType.COBRA;
+
+    public static final double targetPositionError = 0.05;
+    public static final double targetAngleError = 0.02;
 
     public static enum SwerveLevel {
       L2(6.75, 21.428571428571427),
@@ -133,6 +141,35 @@ public final class Constants {
       }
     }
 
+    public static enum ChoreoPIDValues {
+      SERRANO(0.1d, 0d, 0d, 0.1d, 0d, 0d, 3.867d, 0d, 0d),
+      PROTO(0d, 0d, 0d, 0d, 0d, 0d, 0d, 0d, 0d),
+      JAMES_HARDEN(0d, 0d, 0d, 0d, 0d, 0d, 0d, 0d, 0d),
+      COBRA(0d, 0d, 0d, 0d, 0d, 0d, 0d, 0d, 0d);
+      public final double kPX, kIX, kDX, kPY, kIY, kDY, kPR, kIR, kDR;
+
+      ChoreoPIDValues(
+          double kPX,
+          double kIX,
+          double kDX,
+          double kPY,
+          double kIY,
+          double kDY,
+          double kPR,
+          double kIR,
+          double kDR) {
+        this.kPX = kPX;
+        this.kIX = kIX;
+        this.kDX = kDX;
+        this.kPY = kPY;
+        this.kIY = kIY;
+        this.kDY = kDY;
+        this.kPR = kPR;
+        this.kIR = kIR;
+        this.kDR = kDR;
+      }
+    }
+
     public static enum RobotDimensions {
       SERRANO(Inches.of(22.52), Inches.of(22.834)), // length, width
       PROTO(Inches.of(22.52), Inches.of(22.834)), // length, width
@@ -168,6 +205,7 @@ public final class Constants {
           SwerveLevel.L3, // what level the swerve drive is
           SwerveDrivePIDValues.SERRANO,
           SwerveSteerPIDValues.SERRANO,
+          ChoreoPIDValues.SERRANO,
           RobotDimensions.SERRANO,
           "Patrice the Pineapple",
           BumperThickness.SERRANO,
@@ -181,6 +219,7 @@ public final class Constants {
           SwerveLevel.L2, // what level the swerve drive is
           SwerveDrivePIDValues.PROTO,
           SwerveSteerPIDValues.PROTO,
+          ChoreoPIDValues.PROTO,
           RobotDimensions.PROTO,
           "rio",
           BumperThickness.PROTO,
@@ -194,6 +233,7 @@ public final class Constants {
           SwerveLevel.L3,
           SwerveDrivePIDValues.JAMES_HARDEN,
           SwerveSteerPIDValues.JAMES_HARDEN,
+          ChoreoPIDValues.JAMES_HARDEN,
           RobotDimensions.JAMES_HARDEN,
           "JamesHarden",
           BumperThickness.JAMES_HARDEN,
@@ -207,6 +247,7 @@ public final class Constants {
           SwerveLevel.FIVEN_L3,
           SwerveDrivePIDValues.COBRA,
           SwerveSteerPIDValues.COBRA,
+          ChoreoPIDValues.COBRA,
           RobotDimensions.COBRA,
           "Viper",
           BumperThickness.COBRA,
@@ -219,6 +260,7 @@ public final class Constants {
       public final SwerveLevel SWERVE_LEVEL;
       public final SwerveDrivePIDValues SWERVE_DRIVE_PID_VALUES;
       public final SwerveSteerPIDValues SWERVE_STEER_PID_VALUES;
+      public final ChoreoPIDValues CHOREO_PID_VALUES;
       public final RobotDimensions ROBOT_DIMENSIONS;
       public final String CANBUS_NAME;
       public final double COUPLE_RATIO;
@@ -233,6 +275,7 @@ public final class Constants {
           SwerveLevel swerveLevel,
           SwerveDrivePIDValues swerveDrivePIDValues,
           SwerveSteerPIDValues swerveSteerPIDValues,
+          ChoreoPIDValues choreoPIDValues,
           RobotDimensions robotDimensions,
           String canbus_name,
           BumperThickness thickness,
@@ -245,6 +288,7 @@ public final class Constants {
         SWERVE_LEVEL = swerveLevel;
         SWERVE_DRIVE_PID_VALUES = swerveDrivePIDValues;
         SWERVE_STEER_PID_VALUES = swerveSteerPIDValues;
+        CHOREO_PID_VALUES = choreoPIDValues;
         ROBOT_DIMENSIONS = robotDimensions;
         CANBUS_NAME = canbus_name;
         BUMPER_THICKNESS = thickness;
@@ -348,16 +392,19 @@ public final class Constants {
     public static final double TARGET_PULLEY_SPEED_M_PER_SEC =
         Units.feetToMeters(TARGET_PULLEY_SPEED_FT_PER_SEC);
 
-    public static final int MOTOR_PORT = -1; // TODO: put actual port
+    public static final int MOTOR_PORT = 9; // TODO: put actual port
 
-    public static final double kP = .4; // TODO: get actual vals
+    public static final double kP = .07; // TODO: get actual vals
     public static final double kI = 0;
     public static final double kD = 0;
+    public static final double kV = 0.12;
 
     public static final double HOPPER_STATOR_LIMIT = 30.0;
     public static final double HOPPER_SUPPLY_LIMIT = 30.0;
 
     public static final double TOLERANCE_MOTOR_ROTS_PER_SEC = .1;
+
+    public static final double ESTIMATED_HOPPER_MOI_KG_M2 = 0.0012;
   }
 
   public static class Vision {

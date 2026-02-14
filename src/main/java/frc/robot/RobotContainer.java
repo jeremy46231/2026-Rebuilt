@@ -6,13 +6,15 @@ package frc.robot;
 
 import static edu.wpi.first.units.Units.*;
 
+import choreo.auto.AutoChooser;
+import choreo.auto.AutoFactory;
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
@@ -65,7 +67,39 @@ public class RobotContainer {
       Constants.intakeOnRobot ? new IntakeSubsystem() : null;
   public final ShooterSubsystem lebron = Constants.shooterOnRobot ? new ShooterSubsystem() : null;
 
+  private final AutoFactory autoFactory;
+
+  private final AutoRoutines autoRoutines;
+
+  private final AutoChooser autoChooser = new AutoChooser();
+
   public RobotContainer() {
+    autoFactory = drivetrain.createAutoFactory();
+    autoRoutines = new AutoRoutines(autoFactory);
+
+    Command redClimb =
+        autoFactory
+            .resetOdometry("RedClimb.traj")
+            .andThen(autoFactory.trajectoryCmd("RedClimb.traj"));
+    Command redDepot =
+        autoFactory
+            .resetOdometry("RedDepot.traj")
+            .andThen(autoFactory.trajectoryCmd("RedClimb.traj"));
+    Command redOutpost =
+        autoFactory
+            .resetOdometry("RedOutpost.traj")
+            .andThen(autoFactory.trajectoryCmd("RedClimb.traj"));
+    Command moveForward =
+        autoFactory
+            .resetOdometry("MoveForward.traj")
+            .andThen(autoFactory.trajectoryCmd("RedClimb.traj"));
+
+    autoChooser.addCmd("redClimb", () -> redClimb);
+    autoChooser.addCmd("redDepot", () -> redDepot);
+    autoChooser.addCmd("redOutpost", () -> redOutpost);
+    autoChooser.addCmd("moveForward", () -> moveForward);
+
+    SmartDashboard.putData("Auto Chooser", autoChooser);
 
     configureBindings();
   }
@@ -127,7 +161,7 @@ public class RobotContainer {
     // INTAKE COMMANDS
     // right bumper -> run intake
     if (Constants.intakeOnRobot) {
-      joystick.rightBumper().whileTrue(intakeSubsystem.runIntake());
+      joystick.x().whileTrue(intakeSubsystem.runIntake());
 
       // left trigger + x -> arm to initial pos (0)
       joystick
@@ -154,6 +188,18 @@ public class RobotContainer {
           .onTrue(intakeSubsystem.armToDegrees(Constants.Intake.Arm.ARM_POS_RETRACTED));
     }
 
+    // Auto sequence: choreo forward
+    Command trajCommand =
+        autoFactory
+            .resetOdometry("MoveForward.traj")
+            .andThen(autoFactory.trajectoryCmd("MoveForward.traj"));
+
+    joystick.x().whileTrue(trajCommand);
+
+    if (Constants.hopperOnRobot) {
+      joystick.x().whileTrue(hopperSubsystem.runHopperCommand(4.0));
+    }
+
     drivetrain.registerTelemetry(logger::telemeterize);
   }
 
@@ -165,6 +211,6 @@ public class RobotContainer {
   }
 
   public Command getAutonomousCommand() {
-    return Commands.print("No autonomous command configured");
+    return autoChooser.selectedCommand();
   }
 }
