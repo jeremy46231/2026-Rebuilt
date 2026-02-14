@@ -170,8 +170,8 @@ public class ClimberSubsystem extends SubsystemBase {
     return Commands.runOnce(() -> setSitUpPosition(angle), this).until(() -> isSitUpAtPosition());
   }
 
-  // for auton: separate command group
-  public Command L1Climb() {
+  // separate command groups to incorporate driveToPose
+  public Command L1ClimbCommand() {
     return Commands.sequence(
         PullUpCommand(Constants.Climber.PullUp.L1_REACH_POS),
         SitUpCommand(Constants.Climber.SitUp.SIT_UP_ANGLE),
@@ -179,15 +179,11 @@ public class ClimberSubsystem extends SubsystemBase {
         brakeCommand());
   }
 
-  public Command L2Climb() {
+  public Command L2ClimbCommand() {
     return Commands.sequence(
-      // L1 Climb
-        PullUpCommand(Constants.Climber.PullUp.L1_REACH_POS),
-        SitUpCommand(Constants.Climber.SitUp.SIT_UP_ANGLE),
-        PullUpCommand(Constants.Climber.PullUp.PULL_DOWN_POS), 
         MuscleUpCommand(Constants.Climber.MuscleUp.L1_MUSCLE_UP_FORWARD),
         SitUpCommand(Constants.Climber.SitUp.SIT_BACK_ANGLE),
-      // L2 Climb
+        // L2 Climb
         PullUpCommand(Constants.Climber.PullUp.L2_REACH_POS),
         SitUpCommand(Constants.Climber.SitUp.SIT_UP_ANGLE),
         MuscleUpCommand(Constants.Climber.MuscleUp.MUSCLE_UP_BACK),
@@ -197,22 +193,18 @@ public class ClimberSubsystem extends SubsystemBase {
         brakeCommand());
   }
 
-  public Command L3Climb() {
+  public Command L3ClimbCommand() {
     return Commands.sequence(
-      // L1 Climb
-        PullUpCommand(Constants.Climber.PullUp.L1_REACH_POS),
-        SitUpCommand(Constants.Climber.SitUp.SIT_UP_ANGLE),
-        PullUpCommand(Constants.Climber.PullUp.PULL_DOWN_POS), 
         MuscleUpCommand(Constants.Climber.MuscleUp.L1_MUSCLE_UP_FORWARD),
         SitUpCommand(Constants.Climber.SitUp.SIT_BACK_ANGLE),
-      // L2 Climb
+        // L2 Climb
         PullUpCommand(Constants.Climber.PullUp.L2_REACH_POS),
         SitUpCommand(Constants.Climber.SitUp.SIT_UP_ANGLE),
         MuscleUpCommand(Constants.Climber.MuscleUp.MUSCLE_UP_BACK),
         PullUpCommand(Constants.Climber.PullUp.PULL_DOWN_POS),
         MuscleUpCommand(Constants.Climber.MuscleUp.L2_MUSCLE_UP_FORWARD),
         SitUpCommand(Constants.Climber.SitUp.SIT_BACK_ANGLE),
-      // L3 climb
+        // L3 climb
         PullUpCommand(Constants.Climber.PullUp.L3_REACH_POS),
         SitUpCommand(Constants.Climber.SitUp.SIT_UP_ANGLE),
         MuscleUpCommand(Constants.Climber.MuscleUp.MUSCLE_UP_BACK),
