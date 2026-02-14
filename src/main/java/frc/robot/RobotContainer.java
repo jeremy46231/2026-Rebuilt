@@ -6,18 +6,29 @@ package frc.robot;
 
 import static edu.wpi.first.units.Units.*;
 
+import choreo.auto.AutoChooser;
+import choreo.auto.AutoFactory;
+import dev.doglog.DogLog;
+
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.commands.DriveToPose;
+import frc.robot.commands.Shoot;
+import frc.robot.commands.SwerveCommands.SwerveJoystickCommand;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.ClimberSubsystem;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
@@ -25,6 +36,8 @@ import frc.robot.subsystems.HopperSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.util.MiscUtils;
+import java.util.function.BooleanSupplier;
+import java.util.function.DoubleSupplier;
 
 public class RobotContainer {
 
@@ -41,7 +54,10 @@ public class RobotContainer {
     private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
     private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
 
-    private final Telemetry logger = new Telemetry(MaxSpeed);
+  private BooleanSupplier redside = () -> redAlliance;
+  private static boolean redAlliance;
+
+  private final Telemetry logger = new Telemetry(MaxSpeed);
 
     private final CommandXboxController joystick = new CommandXboxController(0);
 
@@ -55,117 +71,197 @@ public class RobotContainer {
     public final HopperSubsystem hopper = new HopperSubsystem();
     public final IntakeSubsystem intake = new IntakeSubsystem();
 
-    public RobotContainer() {
+  private final AutoFactory autoFactory;
 
-        configureBindings();
+  private final AutoRoutines autoRoutines;
+
+  private final AutoChooser autoChooser = new AutoChooser();
+
+  public RobotContainer() {
+    autoFactory = drivetrain.createAutoFactory();
+    autoRoutines = new AutoRoutines(autoFactory);
+
+    Command redClimb =
+        autoFactory
+            .resetOdometry("RedClimb.traj")
+            .andThen(autoFactory.trajectoryCmd("RedClimb.traj"));
+    Command redDepot =
+        autoFactory
+            .resetOdometry("RedDepot.traj")
+            .andThen(autoFactory.trajectoryCmd("RedClimb.traj"));
+    Command redOutpost =
+        autoFactory
+            .resetOdometry("RedOutpost.traj")
+            .andThen(autoFactory.trajectoryCmd("RedClimb.traj"));
+    Command moveForward =
+        autoFactory
+            .resetOdometry("MoveForward.traj")
+            .andThen(autoFactory.trajectoryCmd("RedClimb.traj"));
+
+    autoChooser.addCmd("redClimb", () -> redClimb);
+    autoChooser.addCmd("redDepot", () -> redDepot);
+    autoChooser.addCmd("redOutpost", () -> redOutpost);
+    autoChooser.addCmd("moveForward", () -> moveForward);
+
+    SmartDashboard.putData("Auto Chooser", autoChooser);
+
+    configureBindings();
+  }
+
+  private void configureBindings() {
+    Trigger leftTrigger = joystick.leftTrigger();
+    DoubleSupplier frontBackFunction = () -> -joystick.getLeftY(),
+        leftRightFunction = () -> -joystick.getLeftX(),
+        rotationFunction = () -> -joystick.getRightX(),
+        speedFunction =
+            () ->
+                leftTrigger.getAsBoolean()
+                    ? 0d
+                    : 1d; // slowmode when left shoulder is pressed, otherwise fast
+
+    SwerveJoystickCommand swerveJoystickCommand =
+        new SwerveJoystickCommand(
+            frontBackFunction,
+            leftRightFunction,
+            rotationFunction,
+            speedFunction, // slowmode when left shoulder is pressed, otherwise fast
+            (BooleanSupplier) (() -> joystick.leftTrigger().getAsBoolean()),
+            redside,
+            (BooleanSupplier)
+                (() -> joystick.rightTrigger().getAsBoolean()), // must be same as shoot cmd binding
+            drivetrain);
+
+    drivetrain.setDefaultCommand(swerveJoystickCommand);
+
+    if (Constants.shooterOnRobot) {
+      joystick.rightTrigger().whileTrue(new Shoot(drivetrain, lebron, hopperSubsystem, redside));
     }
 
-    private void configureBindings() {
-        // Note that X is defined as forward according to WPILib convention,
-        // and Y is defined as to the left according to WPILib convention.
-        drivetrain.setDefaultCommand(
-                // Drivetrain will execute this command periodically
-                drivetrain.applyRequest(
-                        () -> drive
-                                .withVelocityX(
-                                        -joystick.getLeftY() * MaxSpeed) // Drive forward with negative Y (forward)
-                                .withVelocityY(
-                                        -joystick.getLeftX() * MaxSpeed) // Drive left with negative X (left)
-                                .withRotationalRate(
-                                        -joystick.getRightX()
-                                                * MaxAngularRate) // Drive counterclockwise with negative X (left)
-                ));
+    joystick.a().whileTrue(drivetrain.applyRequest(() -> brake));
+    joystick
+        .b()
+        .whileTrue(
+            drivetrain.applyRequest(
+                () ->
+                    point.withModuleDirection(
+                        new Rotation2d(-joystick.getLeftY(), -joystick.getLeftX()))));
 
-        joystick.a().whileTrue(drivetrain.applyRequest(() -> brake));
-        joystick
-                .b()
-                .whileTrue(
-                        drivetrain.applyRequest(
-                                () -> point.withModuleDirection(
-                                        new Rotation2d(-joystick.getLeftY(), -joystick.getLeftX()))));
+    // Run SysId routines when holding back/start and X/Y.
+    // Note that each routine should be run exactly once in a single log.
+    joystick.back().and(joystick.y()).whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
+    joystick.back().and(joystick.x()).whileTrue(drivetrain.sysIdDynamic(Direction.kReverse));
+    joystick.start().and(joystick.y()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
+    joystick.start().and(joystick.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
 
-        // Run SysId routines when holding back/start and X/Y.
-        // Note that each routine should be run exactly once in a single log.
-        joystick.back().and(joystick.y()).whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
-        joystick.back().and(joystick.x()).whileTrue(drivetrain.sysIdDynamic(Direction.kReverse));
-        joystick.start().and(joystick.y()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
-        joystick.start().and(joystick.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
+    // reset the field-centric heading on left bumper press
+    joystick.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
 
-        // reset the field-centric heading on left bumper press
-        joystick.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
+    // INTAKE COMMANDS
+    // right bumper -> run intake
+    if (Constants.intakeOnRobot) {
+      joystick.x().whileTrue(intakeSubsystem.runIntake());
 
-        // INTAKE COMMANDS
-        // right bumper -> run intake
-        if (Constants.intakeOnRobot) {
-            joystick.rightBumper().whileTrue(intakeSubsystem.runIntake());
+      // left trigger + x -> arm to initial pos (0)
+      joystick
+          .leftTrigger()
+          .and(joystick.x())
+          .onTrue(intakeSubsystem.armToDegrees(Constants.Intake.Arm.ARM_POS_INITIAL));
 
-            // left trigger + x -> arm to initial pos (0)
-            joystick
-                    .leftTrigger()
-                    .and(joystick.x())
-                    .onTrue(intakeSubsystem.armToDegrees(Constants.Intake.Arm.ARM_POS_INITIAL));
+      // left trigger + a -> arm to extended pos (15)
+      joystick
+          .leftTrigger()
+          .and(joystick.a())
+          .onTrue(intakeSubsystem.armToDegrees(Constants.Intake.Arm.ARM_POS_EXTENDED));
 
-            // left trigger + a -> arm to extended pos (15)
-            joystick
-                    .leftTrigger()
-                    .and(joystick.a())
-                    .onTrue(intakeSubsystem.armToDegrees(Constants.Intake.Arm.ARM_POS_EXTENDED));
+      // left trigger + b -> arm to idle pos (45)
+      joystick
+          .leftTrigger()
+          .and(joystick.b())
+          .onTrue(intakeSubsystem.armToDegrees(Constants.Intake.Arm.ARM_POS_IDLE));
 
-            // left trigger + b -> arm to idle pos (45)
-            joystick
-                    .leftTrigger()
-                    .and(joystick.b())
-                    .onTrue(intakeSubsystem.armToDegrees(Constants.Intake.Arm.ARM_POS_IDLE));
-
-            // left trigger + y -> arm to retracted pos (90)
-            joystick
-                    .leftTrigger()
-                    .and(joystick.y())
-                    .onTrue(intakeSubsystem.armToDegrees(Constants.Intake.Arm.ARM_POS_RETRACTED));
-        }
-
-        if (Constants.shooterOnRobot) {
-            joystick.rightTrigger().whileTrue(lebron.ShootAtSpeed());
-        }
-
-        joystick
-                .x()
-                .whileTrue(
-                        new DriveToPose(
-                                drivetrain,
-                                () -> MiscUtils.plus(drivetrain.getCurrentState().Pose, new Translation2d(5, 0))));
-
-        joystick
-                .y()
-                .whileTrue(
-                        new DriveToPose(
-                                drivetrain,
-                                () -> MiscUtils.plusWithRotation(drivetrain.getCurrentState().Pose,
-                                        new Pose2d(new Translation2d(2, 2), new Rotation2d(90)))));
-
-        drivetrain.registerTelemetry(logger::telemeterize);
+      // left trigger + y -> arm to retracted pos (90)
+      joystick
+          .leftTrigger()
+          .and(joystick.y())
+          .onTrue(intakeSubsystem.armToDegrees(Constants.Intake.Arm.ARM_POS_RETRACTED));
     }
 
-    public Command getAutonomousCommand() {
-        return autoShoot();
-        // return Commands.print("No autonomous command configured");
+    if (Constants.hopperOnRobot) {
+      joystick.x().whileTrue(hopperSubsystem.runHopperCommand(4.0));
     }
 
-    public Command autoShoot() {
-    //check if this alr exists in teleop code
-        return new SequentialCommandGroup(
-                shooter.ShootAtSpeed(),
-                new WaitUntilCommand(() -> shooter.isAtSpeed()),
-                hopper.RunHopper(Constants.Hopper.TARGET_PULLEY_SPEED_M_PER_SEC).withTimeout(6.7),
-                Commands.runOnce(() -> shooter.stop()));
+    if (Constants.hopperOnRobot) {
+      joystick.x().whileTrue(hopperSubsystem.runHopperCommand(4.0));
     }
 
-    public Command autoIntake() {
-    //check if this alr exists in teleop code
-        return new SequentialCommandGroup(
-                intake.armToDegrees(6.7),
-                intake.runIntake(),
-                new WaitUntilCommand(() -> intake.hasPiece()),
-                Commands.runOnce(() -> intake.stop()));
-    }
+    joystick
+        .povUp()
+        .whileTrue(
+            new DriveToPose(
+                    drivetrain,
+                    () ->
+                        MiscUtils.plus(drivetrain.getCurrentState().Pose, new Translation2d(2, 0))).andThen(new InstantCommand(() -> DogLog.log("first dtp done", true)))
+                .andThen(
+                    new DriveToPose(
+                        drivetrain,
+                        () ->
+                            MiscUtils.plus(
+                                drivetrain.getCurrentState().Pose, new Translation2d(0, -2)))));
+
+    joystick
+        .povDown()
+        .whileTrue(
+            new DriveToPose(
+                    drivetrain,
+                    () ->
+                        MiscUtils.plusWithRotation(
+                            drivetrain.getCurrentState().Pose,
+                            new Pose2d(new Translation2d(2, 0), new Rotation2d(1.5708))))
+                .andThen(
+                    new DriveToPose(
+                        drivetrain,
+                        () ->
+                            MiscUtils.plusWithRotation(
+                                drivetrain.getCurrentState().Pose,
+                                new Pose2d(new Translation2d(0, -2), new Rotation2d(1.5708))))));
+
+    joystick
+        .povRight()
+        .whileTrue(
+            new DriveToPose(
+                drivetrain,
+                () ->
+                    MiscUtils.plusWithRotation(
+                        drivetrain.getCurrentState().Pose,
+                        new Pose2d(new Translation2d(2, 0), new Rotation2d(1.5708)))));
+
+    joystick
+        .povLeft()
+        .whileTrue(
+            new DriveToPose(
+                drivetrain,
+                () -> MiscUtils.plus(drivetrain.getCurrentState().Pose, new Translation2d(2, 0))));
+
+    drivetrain.registerTelemetry(logger::telemeterize);
+  }
+
+  public static void setAlliance() {
+    redAlliance =
+        (DriverStation.getAlliance().isEmpty())
+            ? false
+            : (DriverStation.getAlliance().get() == Alliance.Red);
+  }
+
+  public Command getAutonomousCommand() {
+    return autoShoot();
+    // return autoChooser.selectedCommand();
+  }
+
+  public Command autoShoot() {
+    return new SequentialCommandGroup(
+        shooter.ShootAtSpeed(),
+        new WaitUntilCommand(() -> shooter.isAtSpeed()),
+        hopper.RunHopper(Constants.Hopper.TARGET_PULLEY_SPEED_M_PER_SEC).withTimeout(6.7),
+        Commands.runOnce(() -> shooter.stop()));
+  }
 }

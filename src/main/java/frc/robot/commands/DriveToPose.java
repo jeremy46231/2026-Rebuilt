@@ -2,9 +2,11 @@ package frc.robot.commands;
 
 import com.ctre.phoenix6.Utils;
 import com.ctre.phoenix6.swerve.utility.LinearPath;
+import com.ctre.phoenix6.swerve.utility.WheelForceCalculator;
 import dev.doglog.DogLog;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -14,7 +16,6 @@ import java.util.function.Supplier;
 
 /** This Command drives the robot in a linear path to a specific pose. */
 public class DriveToPose extends Command {
-  @SuppressWarnings("PMD.UnusedPrivateField")
   private final CommandSwerveDrivetrain swerve;
 
   // Initialize the LinearPath and the LinearPath.State to a null value
@@ -43,17 +44,40 @@ public class DriveToPose extends Command {
 
   double startTime;
 
+  private final WheelForceCalculator wheelForceCalculator;
+  private WheelForceCalculator.Feedforwards feedforwards;
+
+  private double previousTime;
+  private ChassisSpeeds prev = new ChassisSpeeds();
+
   /**
    * @param swerve Swerve Subsystem.
    * @param targetPose Target Pose (static).
    */
-  public DriveToPose(CommandSwerveDrivetrain swerve, Pose2d targetPose) {
-    // Use addRequirements() here to declare subsystem dependencies.
-    this.swerve = swerve;
-    this.targetPose = targetPose;
+  //   public DriveToPose(CommandSwerveDrivetrain swerve, Pose2d targetPose) { //dont use this
+  //     // Use addRequirements() here to declare subsystem dependencies.
+  //     this.swerve = swerve;
+  //     this.targetPose = targetPose;
 
-    addRequirements(swerve);
-  }
+  //     path =
+  //         new LinearPath(
+  //             new TrapezoidProfile.Constraints(
+  //                 Constants.Swerve.WHICH_SWERVE_ROBOT
+  //                     .SWERVE_DRIVE_TO_POSE_PROFILE_VALUES
+  //                     .maxVelocityLinear,
+  //                 Constants.Swerve.WHICH_SWERVE_ROBOT
+  //                     .SWERVE_DRIVE_TO_POSE_PROFILE_VALUES
+  //                     .maxAccelerationLinear),
+  //             new TrapezoidProfile.Constraints(
+  //                 Constants.Swerve.WHICH_SWERVE_ROBOT
+  //                     .SWERVE_DRIVE_TO_POSE_PROFILE_VALUES
+  //                     .maxVelocityAngular,
+  //                 Constants.Swerve.WHICH_SWERVE_ROBOT
+  //                     .SWERVE_DRIVE_TO_POSE_PROFILE_VALUES
+  //                     .maxAccelerationAngular)); // constants
+
+  //     addRequirements(swerve);
+  //   }
 
   /**
    * @param swerve Swerve Subsystem.
@@ -64,6 +88,28 @@ public class DriveToPose extends Command {
     this.swerve = swerve;
     this.targetPoseSupplier = targetPoseSupplier;
     this.targetPose = targetPoseSupplier.get();
+
+    Translation2d[] swerveModulePositions = new Translation2d[4];
+
+    swerveModulePositions[0] =
+        new Translation2d(
+            Constants.Swerve.WHICH_SWERVE_ROBOT.ROBOT_DIMENSIONS.length.div(2.0).magnitude(),
+            Constants.Swerve.WHICH_SWERVE_ROBOT.ROBOT_DIMENSIONS.width.div(2.0).magnitude());
+    swerveModulePositions[1] =
+        new Translation2d(
+            Constants.Swerve.WHICH_SWERVE_ROBOT.ROBOT_DIMENSIONS.length.div(2.0).magnitude(),
+            Constants.Swerve.WHICH_SWERVE_ROBOT.ROBOT_DIMENSIONS.width.div(-2.0).magnitude());
+    swerveModulePositions[2] =
+        new Translation2d(
+            Constants.Swerve.WHICH_SWERVE_ROBOT.ROBOT_DIMENSIONS.length.div(-2.0).magnitude(),
+            Constants.Swerve.WHICH_SWERVE_ROBOT.ROBOT_DIMENSIONS.width.div(2.0).magnitude());
+    swerveModulePositions[3] =
+        new Translation2d(
+            Constants.Swerve.WHICH_SWERVE_ROBOT.ROBOT_DIMENSIONS.length.div(-2.0).magnitude(),
+            Constants.Swerve.WHICH_SWERVE_ROBOT.ROBOT_DIMENSIONS.width.div(-2.0).magnitude());
+
+    wheelForceCalculator =
+        new WheelForceCalculator(swerveModulePositions, 58.967, 3.67); // constants
 
     path =
         new LinearPath(
@@ -88,9 +134,12 @@ public class DriveToPose extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    headingController.enableContinuousInput(-Math.PI, Math.PI);
+
     startTime = Utils.getCurrentTimeSeconds();
 
-    swerve.applyFieldSpeeds(new ChassisSpeeds(0, 0, 0));
+    previousTime = Utils.getCurrentTimeSeconds();
+    prev = new ChassisSpeeds();
 
     if (targetPoseSupplier != null) {
       targetPose = targetPoseSupplier.get();
@@ -99,55 +148,44 @@ public class DriveToPose extends Command {
     pathState =
         new LinearPath.State(swerve.getCurrentState().Pose, swerve.getCurrentState().Speeds);
 
-    // DogLog.log("Init Current Pose", swerve.getCurrentState().Pose);
-    // DogLog.log("Init Target Pose", targetPose);
-    // DogLog.log("Init Path created", path != null);
-    // DogLog.log("Init Path state", pathState != null);
+    DogLog.log("Swerve/Drive To Pose/Init Target Pose X", targetPose.getX());
+    DogLog.log("Swerve/Drive To Pose/Init Target Pose Y", targetPose.getY());
+    DogLog.log(
+        "Swerve/Drive To Pose/Init Target Pose Rotation", targetPose.getRotation().getRadians());
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    double currTime = Utils.getCurrentTimeSeconds() - startTime;
+    double currTime = Utils.getCurrentTimeSeconds();
+    double dt = currTime - previousTime;
+    previousTime = currTime;
 
-    if (pathState != null) {
-      pathState = path.calculate(currTime, pathState, targetPose);
+    if (pathState == null) return;
 
-      // Generate the next speeds for the robot
-      ChassisSpeeds speeds =
-          new ChassisSpeeds(
-              pathState.speeds.vxMetersPerSecond
-                  + xController.calculate(
-                      swerve.getCurrentState().Pose.getX(), pathState.pose.getX()),
-              pathState.speeds.vyMetersPerSecond
-                  + yController.calculate(
-                      swerve.getCurrentState().Pose.getY(), pathState.pose.getY()),
-              pathState.speeds.omegaRadiansPerSecond
-                  + headingController.calculate(
-                      swerve.getCurrentState().Pose.getRotation().getRadians(),
-                      pathState.pose.getRotation().getRadians()));
+    pathState = path.calculate(currTime - startTime, pathState, targetPose);
+    Pose2d pose = swerve.getCurrentState().Pose;
+    Pose2d path = pathState.pose;
 
-      // Apply the generated speeds
-      swerve.applyFieldSpeeds(speeds);
+    // Generate the next speeds for the robot
+    ChassisSpeeds targetSpeeds =
+        new ChassisSpeeds(
+            pathState.speeds.vxMetersPerSecond + xController.calculate(pose.getX(), path.getX()),
+            pathState.speeds.vyMetersPerSecond + yController.calculate(pose.getY(), path.getY()),
+            pathState.speeds.omegaRadiansPerSecond
+                + headingController.calculate(
+                    pose.getRotation().getRadians(), path.getRotation().getRadians()));
+
+    //   feedforwards = null;
+    if (dt > 0.0001) {
+      feedforwards = wheelForceCalculator.calculate(dt, prev, targetSpeeds);
     }
 
-    DogLog.log(
-        "CommandSwerveDrivetrain/DriveToPose/Current Pose X",
-        swerve.getCurrentState().Pose.getX()); // fix logs
-    DogLog.log(
-        "CommandSwerveDrivetrain/DriveToPose/Current Pose Y", swerve.getCurrentState().Pose.getY());
-    DogLog.log(
-        "CommandSwerveDrivetrain/DriveToPose/Current Pose Rotation",
-        swerve.getCurrentState().Pose.getRotation().getRadians());
-    DogLog.log("CommandSwerveDrivetrain/DriveToPose/Target Pose X", targetPose.getX());
-    DogLog.log(
-        "CommandSwerveDrivetrain/DriveToPose/Target Pose Rotation",
-        targetPose.getRotation().getRadians());
-    DogLog.log("CommandSwerveDrivetrain/DriveToPose/Target Pose Y", targetPose.getY());
-    DogLog.log("CommandSwerveDrivetrain/DriveToPose/Curr time", currTime);
-    DogLog.log("CommandSwerveDrivetrain/DriveToPose/Path created", path != null);
-    DogLog.log("CommandSwerveDrivetrain/DriveToPose/Path state", pathState != null);
-    // DogLog.log("Init Target Pose Supplier", targetPoseSupplier.toString());
+    prev = targetSpeeds;
+
+    // Apply the generated speeds
+    swerve.applyFieldSpeeds(targetSpeeds, feedforwards);
+    //   swerve.applyOneFieldSpeeds(targetSpeeds);
   }
 
   private boolean atPosition() {
@@ -155,8 +193,9 @@ public class DriveToPose extends Command {
             <= Constants.Swerve.targetPositionError)
         && (Math.abs(swerve.getCurrentState().Pose.getY() - targetPose.getY())
             <= Constants.Swerve.targetPositionError)
-        && (Math.abs(swerve.getCurrentState().Pose.getRotation().getRadians())
-                - targetPose.getRotation().getRadians()
+        && (Math.abs(
+                swerve.getCurrentState().Pose.getRotation().getRadians()
+                    - targetPose.getRotation().getRadians())
             <= Constants.Swerve.targetAngleError);
   }
 
