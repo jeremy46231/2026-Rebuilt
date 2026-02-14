@@ -127,7 +127,7 @@ public class RobotContainer {
     drivetrain.setDefaultCommand(swerveJoystickCommand);
 
     if (Constants.shooterOnRobot) {
-      joystick.x().whileTrue(new Shoot(drivetrain, lebron, hopperSubsystem, redside));
+      joystick.x().whileTrue(lebron.ShootAtSpeed());
     }
 
     joystick.a().whileTrue(drivetrain.applyRequest(() -> brake));

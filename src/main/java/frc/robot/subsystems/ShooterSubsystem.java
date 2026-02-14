@@ -22,21 +22,20 @@ public class ShooterSubsystem extends SubsystemBase {
 
   private final VelocityVoltage velocityRequest = new VelocityVoltage(0);
 
-  private static double targetSpeed = 0;
-  private static double tolerance = 5; // rps
+  private double targetSpeed = 0;
 
   public ShooterSubsystem() {
 
-    warmUpMotor1 = new LoggedTalonFX(Constants.Shooter.warmUpMotor1.port);
-    warmUpMotor2 = new LoggedTalonFX(Constants.Shooter.warmUpMotor2.port);
-    warmUpMotor3 = new LoggedTalonFX(Constants.Shooter.warmUpMotor3.port);
+    warmUpMotor1 = new LoggedTalonFX(Constants.Shooter.WARMUP_1_ID);
+    warmUpMotor2 = new LoggedTalonFX(Constants.Shooter.WARMUP_2_ID);
+    warmUpMotor3 = new LoggedTalonFX(Constants.Shooter.WARMUP_3_ID);
 
     Follower follower =
-        new Follower(Constants.Shooter.warmUpMotor1.port, MotorAlignmentValue.Aligned);
+        new Follower(Constants.Shooter.WARMUP_1_ID, MotorAlignmentValue.Aligned);
+
     warmUpMotor1.setControl(follower);
     warmUpMotor2.setControl(follower);
-    warmUpMotor3.setControl(follower);
-    shooter = warmUpMotor1;
+    shooter = warmUpMotor3;
 
     Slot0Configs s0c =
         new Slot0Configs()
@@ -100,7 +99,7 @@ public class ShooterSubsystem extends SubsystemBase {
   }
 
   // Comands
-  public Command ShootAtSpeed() {
+  public Command shootAtSpeedCommand() {
     return Commands.runEnd(() -> this.setSpeed(Constants.Shooter.SHOOT_FOR_AUTO), this::stop, this);
   }
 
@@ -108,7 +107,7 @@ public class ShooterSubsystem extends SubsystemBase {
   public void periodic() {
     DogLog.log("Doglog/shooter/targetSpeed", targetSpeed);
     DogLog.log("Doglog/shooter/isAtSpeed", isAtSpeed());
-    DogLog.log("Doglog.shooter/currentSpeed", getCurrentSpeed());
+    DogLog.log("Doglog/shooter/currentSpeed", getCurrentSpeed());
   }
 
   @Override

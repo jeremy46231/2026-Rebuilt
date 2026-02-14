@@ -466,9 +466,11 @@ public final class Constants {
   }
 
   public static final class Shooter {
-    public static final MotorConstants warmUpMotor1 = new MotorConstants(35); // TODO
-    public static final MotorConstants warmUpMotor2 = new MotorConstants(34); // TODO
-    public static final MotorConstants warmUpMotor3 = new MotorConstants(32); // TODO
+    public static final int WARMUP_1_ID = 35; // TODO
+    public static final int WARMUP_2_ID = 34; // TODO
+    public static final int WARMUP_3_ID = 32; // TODO
+
+    private double SHOOTER_TOLERANCE_SPEED = 5; // rps
 
     public static final double SHOOTER_KP = 0.0; // TODO
     public static final double SHOOTER_KI = 0.0; // TODO
