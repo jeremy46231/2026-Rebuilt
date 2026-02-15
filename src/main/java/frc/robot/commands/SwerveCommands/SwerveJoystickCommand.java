@@ -12,13 +12,11 @@ import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
 public class SwerveJoystickCommand extends Command {
-  protected final DoubleSupplier xSpdFunction,
-      ySpdFunction,
-      turningSpdFunction;
+  protected final DoubleSupplier xSpdFunction, ySpdFunction, turningSpdFunction;
 
-protected DoubleSupplier angleToTarget;
+  protected DoubleSupplier angleToTarget;
 
-protected final DoubleSupplier speedControlFunction;
+  protected final DoubleSupplier speedControlFunction;
 
   protected final BooleanSupplier fieldRelativeFunction;
 
@@ -150,7 +148,9 @@ protected final DoubleSupplier speedControlFunction;
     // 5. Applying the drive request on the swerve drivetrain
     // Uses SwerveRequestFieldCentric (from java.frc.robot.util to apply module optimization)
     if (fixedRotation.getAsBoolean()) {
-      turn = swerveDrivetrain.calculateRequiredRotationalRate(new Rotation2d(angleToTarget.getAsDouble()));
+      turn =
+          swerveDrivetrain.calculateRequiredRotationalRate(
+              new Rotation2d(angleToTarget.getAsDouble()));
     }
 
     DogLog.log("Commands/joystickCommand/turnReq", turn);

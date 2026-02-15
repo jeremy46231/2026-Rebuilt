@@ -25,9 +25,12 @@ public class ShootWithWarning extends ParallelCommandGroup {
       BooleanSupplier redside,
       Joystick joystick) {
 
-    double distMeters = Vector3.subtract(new Vector3(swerveDriveTrain.getCurrentState().Pose), new Vector3(target)).magnitude();
+    double distMeters =
+        Vector3.subtract(new Vector3(swerveDriveTrain.getCurrentState().Pose), new Vector3(target))
+            .magnitude();
     addCommands(
-        new ArcAroundAndShoot(swerveDriveTrain, shooter, intake, hopper, tangentialVel, target, redside),
+        new ArcAroundAndShoot(
+            swerveDriveTrain, shooter, intake, hopper, tangentialVel, target, redside),
         new InstantCommand(
             () ->
                 joystick.setRumble(

@@ -12,7 +12,6 @@ import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.HopperSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
-
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
@@ -41,10 +40,12 @@ public class ArcAroundAndShoot extends ParallelCommandGroup {
             (DoubleSupplier) (() -> targetAngle(target)),
             drivetrain,
             redside),
-            
-        new Shoot(shootingSpeed(target, Constants.Shooter.TARGETING_CALCULATION_PRECISION), () -> pointingAtTarget(), shooter, intake, hopper)
-        
-    );
+        new Shoot(
+            shootingSpeed(target, Constants.Shooter.TARGETING_CALCULATION_PRECISION),
+            () -> pointingAtTarget(),
+            shooter,
+            intake,
+            hopper));
   }
 
   public ArcAroundAndShoot(
@@ -54,16 +55,15 @@ public class ArcAroundAndShoot extends ParallelCommandGroup {
       HopperSubsystem hopper,
       DoubleSupplier tangentialVelocitySupplier,
       BooleanSupplier redside) {
-        this(
-            drivetrain,
-            shooter,
-            intake,
-            hopper,
-            tangentialVelocitySupplier,
-            redside.getAsBoolean() ? Landmarks.RED_HUB : Landmarks.BLUE_HUB,
-            redside
-        );
-    }
+    this(
+        drivetrain,
+        shooter,
+        intake,
+        hopper,
+        tangentialVelocitySupplier,
+        redside.getAsBoolean() ? Landmarks.RED_HUB : Landmarks.BLUE_HUB,
+        redside);
+  }
 
   public double targetAngle(Pose3d targetNoOffset) {
     Vector3 target =

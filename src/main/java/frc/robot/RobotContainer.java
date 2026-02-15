@@ -124,7 +124,11 @@ public class RobotContainer {
     drivetrain.setDefaultCommand(swerveJoystickCommand);
 
     if (Constants.shooterOnRobot) {
-      joystick.leftTrigger().whileTrue(new ArcAroundAndShoot(drivetrain, lebron, intakeSubsystem, hopperSubsystem, speedFunction, redside));
+      joystick
+          .leftTrigger()
+          .whileTrue(
+              new ArcAroundAndShoot(
+                  drivetrain, lebron, intakeSubsystem, hopperSubsystem, speedFunction, redside));
     }
 
     joystick.a().whileTrue(drivetrain.applyRequest(() -> brake));
