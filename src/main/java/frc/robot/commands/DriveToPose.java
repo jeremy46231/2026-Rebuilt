@@ -177,7 +177,7 @@ public class DriveToPose extends Command {
                     pose.getRotation().getRadians(), path.getRotation().getRadians()));
 
     //   feedforwards = null;
-    if (dt > 0.0001) {
+    if (dt > 0.0001 && dt < 0.02) {
       feedforwards = wheelForceCalculator.calculate(dt, prev, targetSpeeds);
     }
 

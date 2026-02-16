@@ -89,15 +89,6 @@ public final class Constants {
     }
   }
 
-<<<<<<< HEAD
-=======
-  public final class FeatureFlags {
-    public static final boolean NEW_SHOOTER_LOGIC = false;
-    public static final boolean USE_VISION = true;
-    public static final boolean EXPERIMENTAL_AUTO = false;
-  }
-
->>>>>>> 35a3797825f72c8ff8ed193581ee7edb68ff941b
   public static class Swerve {
     public static final SwerveType WHICH_SWERVE_ROBOT = SwerveType.COBRA;
 
