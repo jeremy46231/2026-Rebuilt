@@ -15,7 +15,7 @@ import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Distance;
 
 public final class Constants {
-  
+
   // Make sure to update these for the current robot configuration
   public static final boolean hopperOnRobot = false;
   public static final boolean intakeOnRobot = false;
