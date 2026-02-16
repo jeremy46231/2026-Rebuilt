@@ -81,32 +81,35 @@ public class RobotContainer {
   private final AutoChooser autoChooser = new AutoChooser();
 
   public RobotContainer() {
-
     // paths without marker
     autoFactory = drivetrain.createAutoFactory();
 
-    Command redClimb =
-        autoFactory
-            .resetOdometry("RedClimb.traj")
-            .andThen(autoFactory.trajectoryCmd("RedClimb.traj"));
-    Command redDepot =
-        autoFactory
-            .resetOdometry("RedDepot.traj")
-            .andThen(autoFactory.trajectoryCmd("RedDepot.traj"));
-    Command redOutpost =
-        autoFactory
-            .resetOdometry("RedOutpost.traj")
-            .andThen(autoFactory.trajectoryCmd("RedOutpost.traj"));
-    Command moveForward =
-        autoFactory
-            .resetOdometry("MoveForward.traj")
-            .andThen(autoFactory.trajectoryCmd("MoveForward.traj"));
-    Command niceAndLongPath =
-        autoFactory
-            .resetOdometry("NiceAndLongPath.traj")
-            .andThen(autoFactory.trajectoryCmd("NiceAndLongPath.traj"));
+    Command Drake = autoFactory.resetOdometry("Drake1.traj").andThen(autoFactory.trajectoryCmd("Drake1.traj"));
+
+    // Fake paths
+    // Command redClimb =
+    //     autoFactory
+    //         .resetOdometry("RedClimb.traj")
+    //         .andThen(autoFactory.trajectoryCmd("RedClimb.traj"));
+    // Command redDepot =
+    //     autoFactory
+    //         .resetOdometry("RedDepot.traj")
+    //         .andThen(autoFactory.trajectoryCmd("RedDepot.traj"));
+    // Command redOutpost =
+    //     autoFactory
+    //         .resetOdometry("RedOutpost.traj")
+    //         .andThen(autoFactory.trajectoryCmd("RedOutpost.traj"));
+    // Command moveForward =
+    //     autoFactory
+    //         .resetOdometry("MoveForward.traj")
+    //         .andThen(autoFactory.trajectoryCmd("MoveForward.traj"));
+    // Command niceAndLongPath =
+    //     autoFactory
+    //         .resetOdometry("NiceAndLongPath.traj")
+    //         .andThen(autoFactory.trajectoryCmd("NiceAndLongPath.traj"));
 
     // paths with marker
+    //Drake (outpost intake, shoot, climb)
     autoRoutine = autoFactory.newRoutine("MoveForwardStop.traj");
     AutoTrajectory moveForwardStopTraj = autoRoutine.trajectory("MoveForwardStop.traj");
 
@@ -119,13 +122,18 @@ public class RobotContainer {
 
     Command moveForwardStop = autoRoutine.cmd();
 
-    autoChooser.addCmd("redClimb", () -> redClimb);
-    autoChooser.addCmd("redDepot", () -> redDepot);
-    autoChooser.addCmd("redOutpost", () -> redOutpost);
-    autoChooser.addCmd("moveForward", () -> moveForward);
-    autoChooser.addCmd("niceLongPath", () -> niceAndLongPath);
 
+
+
+    
     autoChooser.addCmd("moveForwardStop", () -> moveForwardStop);
+
+    // autoChooser.addCmd("redClimb", () -> redClimb);
+    // autoChooser.addCmd("redDepot", () -> redDepot);
+    // autoChooser.addCmd("redOutpost", () -> redOutpost);
+    // autoChooser.addCmd("moveForward", () -> moveForward);
+    // autoChooser.addCmd("niceLongPath", () -> niceAndLongPath);
+
 
     SmartDashboard.putData("Auto Chooser", autoChooser);
 
