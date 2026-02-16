@@ -41,6 +41,8 @@ public class Robot extends TimedRobot {
     if (Constants.visionOnRobot) {
       visionRight = VisionSubsystem.getInstance(Constants.Vision.Cameras.RIGHT_CAM);
       visionLeft = VisionSubsystem.getInstance(Constants.Vision.Cameras.LEFT_CAM);
+      // visionRearRight = VisionSubsystem.getInstance(Constants.Vision.Cameras.REAR_RIGHT_CAM);
+      // visionRearLeft = VisionSubsystem.getInstance(Constants.Vision.Cameras.REAR_LEFT_CAM);
       visionColor = FuelGaugeDetection.getInstance(Constants.Vision.Cameras.COLOR_CAM);
       visionSwerve = m_robotContainer.getDrivetrain();
 
@@ -78,6 +80,8 @@ public class Robot extends TimedRobot {
     if (Constants.visionOnRobot) {
       visionRight.addFilteredPose(visionSwerve);
       visionLeft.addFilteredPose(visionSwerve);
+      // visionRearRight.addFilteredPose(visionSwerve);
+      // visionRearLeft.addFilteredPose(visionSwerve);
     }
   }
 
