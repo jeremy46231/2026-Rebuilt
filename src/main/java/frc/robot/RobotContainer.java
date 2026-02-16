@@ -20,12 +20,17 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
+import frc.robot.commandGroups.ClimbCommands.L1Climb;
+import frc.robot.commandGroups.ClimbCommands.L2Climb;
+import frc.robot.commandGroups.ClimbCommands.L3Climb;
+import frc.robot.commandGroups.WarmUpAndShoot;
 import frc.robot.commands.DriveToPose;
 import frc.robot.commands.Shoot;
 import frc.robot.commands.SwerveCommands.SwerveJoystickCommand;
@@ -240,15 +245,7 @@ public class RobotContainer {
     }
 
     public Command getAutonomousCommand() {
-        return autoShoot();
-        // return autoChooser.selectedCommand();
-    }
-
-    public Command autoShoot() {
-        return new SequentialCommandGroup(
-                shooter.ShootAtSpeed(),
-                new WaitUntilCommand(() -> shooter.isAtSpeed()),
-                hopper.RunHopper(Constants.Hopper.TARGET_PULLEY_SPEED_M_PER_SEC).withTimeout(6.7),
-                Commands.runOnce(() -> shooter.stop()));
+        //return autoShoot();
+        return autoChooser.selectedCommand();
     }
 }
