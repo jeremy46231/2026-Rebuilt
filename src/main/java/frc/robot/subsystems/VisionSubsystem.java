@@ -284,24 +284,6 @@ public class VisionSubsystem extends SubsystemBase {
     int effectiveTags = Math.min(tagCount, 4);
     double tagFactor = 1d / Math.sqrt(effectiveTags);
 
-    // distance term (d^2)
-    // Changed from last year: Purely distrust based on distance (as opposed to
-    // capping distrust for
-    // closer tags)
-    // double distanceFactor =
-    // baseNoise + distanceExponentialCoefficient *
-    // Math.pow(distanceExponentialBase, distance);
-
-    // double distanceFactor =
-    //     (distance < (17.548 + 0.67))
-    //         ? Math.min(
-    //             baseNoise
-    //                 + distanceExponentialCoefficient * Math.pow(distanceExponentialBase,
-    // distance),
-    //             1.167)
-    //         : (baseNoise
-    //             + distanceExponentialCoefficient * Math.pow(distanceExponentialBase, distance));
-
     double distanceFactor =
         baseNoise + distanceExponentialCoefficient * Math.pow(distanceExponentialBase, distance);
 
