@@ -31,7 +31,7 @@ public class ArcAroundAndShoot extends ParallelCommandGroup {
             (DoubleSupplier) (() -> Targeting.targetAngle(target, drivetrain)),
             drivetrain,
             redside),
-        new Shoot(
+        new ShootBasic(
             Targeting.shootingSpeed(
                 target, drivetrain, Constants.Shooter.TARGETING_CALCULATION_PRECISION),
             () -> Targeting.pointingAtTarget(target, drivetrain),

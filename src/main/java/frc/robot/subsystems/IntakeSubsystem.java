@@ -10,6 +10,7 @@ import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfigurator;
 import com.ctre.phoenix6.controls.PositionVoltage;
+import com.ctre.phoenix6.controls.TorqueCurrentFOC;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
@@ -192,6 +193,10 @@ public class IntakeSubsystem extends SubsystemBase {
     // armMotor.setControl(m_positionRequest.withPosition(targetMotorRotations));
   }
 
+  public void powerRetract() {
+    armMotor.setControl(new TorqueCurrentFOC(Constants.Intake.Arm.POWER_RETRACT_TORQUE_CURRENT_FOC));
+  }
+
   public Rotation2d getArmAbsolutePosition() {
     return new Rotation2d(
         (Units.rotationsToRadians(
@@ -232,6 +237,14 @@ public class IntakeSubsystem extends SubsystemBase {
         () -> {
           targetAngleDeg = degrees;
           this.setArmDegrees(degrees);
+        },
+        this);
+  }
+
+  public Command powerRetractCommand() {
+    return Commands.runOnce(
+        () -> {
+          powerRetract();
         },
         this);
   }

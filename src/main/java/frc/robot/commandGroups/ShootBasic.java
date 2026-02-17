@@ -7,8 +7,8 @@ import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 import java.util.function.BooleanSupplier;
 
-public class Shoot extends ParallelCommandGroup {
-  public Shoot(
+public class ShootBasic extends ParallelCommandGroup {
+  public ShootBasic(
       double speed,
       BooleanSupplier readyToShoot,
       ShooterSubsystem shooterSubsystem,
@@ -16,6 +16,6 @@ public class Shoot extends ParallelCommandGroup {
       HopperSubsystem hopperSubsystem) {
     addCommands(
         new WarmUpAndShoot(speed, readyToShoot, shooterSubsystem, hopperSubsystem),
-        intakeSubsystem.armToDegrees(Constants.Intake.Arm.ARM_POS_RETRACTED));
+        intakeSubsystem.powerRetractCommand());
   }
 }

@@ -80,6 +80,8 @@ public final class Constants {
 
       public static final double POSITION_TOLERANCE_DEGREES = 1.0;
 
+      public static final double POWER_RETRACT_TORQUE_CURRENT_FOC = 0f; //TODO: get val
+
       // Simulation
       public static final double SIM_MOI_KG_M2 = 0.1;
     }
