@@ -24,10 +24,6 @@ import org.photonvision.targeting.PhotonTrackedTarget;
 
 public class VisionSubsystem extends SubsystemBase {
 
-  // static member that contains array of all VisionSubsytem cameras
-  private static VisionSubsystem[] cameraList =
-      new VisionSubsystem[Constants.Vision.Cameras.values().length];
-
   private final Constants.Vision.Cameras cameraID;
 
   private String cameraTitle;
@@ -76,12 +72,6 @@ public class VisionSubsystem extends SubsystemBase {
 
     cameraTitle = cameraID.getLoggingName();
     latestVisionResult = null;
-  }
-
-  public static VisionSubsystem getInstance(Constants.Vision.Cameras cameraID) {
-    int index = cameraID.ordinal();
-    if (cameraList[index] == null) cameraList[index] = new VisionSubsystem(cameraID);
-    return cameraList[index];
   }
 
   @Override

@@ -14,9 +14,6 @@ import org.photonvision.targeting.PhotonTrackedTarget;
 
 public class FuelGaugeDetection extends SubsystemBase {
 
-  private static FuelGaugeDetection[] cameraList =
-      new FuelGaugeDetection[Constants.Vision.Cameras.values().length];
-
   private static ArrayList<Double> latestRawMeasurements = new ArrayList<>();
   private static ArrayList<Double> latestMultipleMeasurements = new ArrayList<>();
 
