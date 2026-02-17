@@ -13,6 +13,7 @@ import frc.robot.subsystems.ClimberSubsystem;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.FuelGaugeDetection;
 import frc.robot.subsystems.VisionSubsystem;
+import frc.robot.util.LoggedTalonFX;
 
 /**
  * The methods in this class are called automatically corresponding to each mode, as described in
@@ -88,6 +89,7 @@ public class Robot extends TimedRobot {
       // visionRearRight.addFilteredPose(visionSwerve);
       // visionRearLeft.addFilteredPose(visionSwerve);
     }
+    LoggedTalonFX.periodic_static();
   }
 
   /** This function is called once each time the robot enters Disabled mode. */
