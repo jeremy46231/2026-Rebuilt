@@ -71,7 +71,8 @@ public class FuelGaugeDetection extends SubsystemBase {
           DogLog.log("Subsystems/FuelGauge/Area/MultipleBallsArea", avgMultipleBalls);
           DogLog.log("Subsystems/FuelGauge/Area/SmoothedMultipleBallsArea", smoothedMultipleBalls);
 
-          fuelGaugeStateSetAndLog(rawArea, smoothedRawArea, avgMultipleBalls, smoothedMultipleBalls);
+          fuelGaugeStateSetAndLog(
+              rawArea, smoothedRawArea, avgMultipleBalls, smoothedMultipleBalls);
         },
         () -> DogLog.log("Subsystems/FuelGauge/BallPresent", false));
   }
