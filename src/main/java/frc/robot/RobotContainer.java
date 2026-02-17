@@ -23,13 +23,11 @@ import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
+import frc.robot.commandGroups.ArcAroundAndShoot;
 import frc.robot.commandGroups.ClimbCommands.L1Climb;
 import frc.robot.commandGroups.ClimbCommands.L2Climb;
 import frc.robot.commandGroups.ClimbCommands.L3Climb;
-import frc.robot.commandGroups.ArcAroundAndShoot;
 import frc.robot.commandGroups.WarmUpAndShoot;
-import frc.robot.commands.Shoot;
 import frc.robot.commands.SwerveCommands.SwerveJoystickCommand;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.ClimberSubsystem;
@@ -171,7 +169,16 @@ public class RobotContainer {
 
     if (Constants.shooterOnRobot) {
       lebron.setDefaultCommand(Commands.run(lebron::stopShooter, lebron));
-      joystick.rightTrigger().whileTrue(new ArcAroundAndShoot(drivetrain, lebron, intakeSubsystem, hopperSubsystem, leftRightFunction, redside));
+      joystick
+          .rightTrigger()
+          .whileTrue(
+              new ArcAroundAndShoot(
+                  drivetrain,
+                  lebron,
+                  intakeSubsystem,
+                  hopperSubsystem,
+                  leftRightFunction,
+                  redside));
     }
 
     joystick.a().whileTrue(drivetrain.applyRequest(() -> brake));
