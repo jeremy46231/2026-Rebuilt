@@ -572,16 +572,16 @@ public final class Constants {
     public static final double REAR_RIGHT_X = Units.inchesToMeters(6.70);
     public static final double REAR_RIGHT_Y = Units.inchesToMeters(-4.125);
     public static final double REAR_RIGHT_Z = Units.inchesToMeters(40.875);
-    public static final double REAR_RIGHT_ROLL = Units.degreesToRadians(180); // 180
+    public static final double REAR_RIGHT_ROLL = Units.degreesToRadians(0.0); // 180
     public static final double REAR_RIGHT_PITCH = Units.degreesToRadians(171.5); // 171.5
-    public static final double REAR_RIGHT_YAW = Units.degreesToRadians(0.0);
+    public static final double REAR_RIGHT_YAW = Units.degreesToRadians(180.0);
 
     public static final double REAR_LEFT_X = Units.inchesToMeters(6.70);
     public static final double REAR_LEFT_Y = Units.inchesToMeters(4.125);
     public static final double REAR_LEFT_Z = Units.inchesToMeters(40.875);
-    public static final double REAR_LEFT_ROLL = Units.degreesToRadians(180);
+    public static final double REAR_LEFT_ROLL = Units.degreesToRadians(0.0);
     public static final double REAR_LEFT_PITCH = Units.degreesToRadians(171.5);
-    public static final double REAR_LEFT_YAW = Units.degreesToRadians(0.0);
+    public static final double REAR_LEFT_YAW = Units.degreesToRadians(180.0);
 
     public static final double COLOR_X = Units.inchesToMeters(8.867);
     public static final double COLOR_Y = Units.inchesToMeters(12.478);
