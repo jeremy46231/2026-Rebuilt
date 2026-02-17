@@ -176,10 +176,7 @@ public class FuelGaugeDetection extends SubsystemBase {
   }
 
   public boolean GaugeLessThanEqualTo(GaugeCalculationType type, FuelGauge target) {
-    return getGauge(type).ordinal() <= target.ordinal();
-
-    // Use this alternative when changing the enum for safety.
-    // return getGauge(type).getThreshold() <= target.getThreshold();
+    return getGauge(type).getThreshold() <= target.getThreshold();
   }
 
   public double getLargestBallsAvg(int numBalls) {
