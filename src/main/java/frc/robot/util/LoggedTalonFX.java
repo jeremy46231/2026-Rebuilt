@@ -94,6 +94,7 @@ public class LoggedTalonFX extends TalonFX {
     this.reference = name + "/closedloop/reference";
     this.rotorPosition = name + "/closedloop/rotorPosition";
 
+    TalonFXConfiguration motorConfiguration = new TalonFXConfiguration();
     // Applying current limits
     CurrentLimitsConfigs clc =
         new CurrentLimitsConfigs()
@@ -102,7 +103,9 @@ public class LoggedTalonFX extends TalonFX {
             .withSupplyCurrentLimitEnable(true)
             .withSupplyCurrentLimit(40);
     // WITH A HIGH POWER MECHANISM, MAKE SURE TO INCREASE THE CURRENT LIMITS
-    this.getConfigurator().apply(clc);
+
+    motorConfiguration.CurrentLimits = clc;
+    this.getConfigurator().apply(motorConfiguration);
   }
 
   public void updateCurrentLimits(double statorCurrentLimit, double supplyCurrentLimit) {
@@ -112,7 +115,6 @@ public class LoggedTalonFX extends TalonFX {
             .withStatorCurrentLimit(statorCurrentLimit)
             .withSupplyCurrentLimitEnable(true)
             .withSupplyCurrentLimit(supplyCurrentLimit);
-
     this.getConfigurator().apply(clc);
   }
 
