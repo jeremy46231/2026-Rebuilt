@@ -732,5 +732,4 @@ public final class Constants {
     public static Pose3d RED_HUB =
         new Pose3d(11.917659759521484, 4.032095909118652, 0, new Rotation3d());
   }
-
 }
