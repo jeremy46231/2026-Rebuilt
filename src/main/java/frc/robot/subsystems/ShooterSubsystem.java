@@ -194,7 +194,7 @@ public class ShooterSubsystem extends SubsystemBase {
     // 4) Battery sag model
     // Sum the supply current from all three motors
     double loadedBatteryVoltageVolts =
-        BatterySim.calculateDefaultBatteryLoadedVoltage(shooterSimState.getSupplyCurrent());
+        BatterySim.calculateDefaultBatteryLoadedVoltage(shooterSimState.getSupplyCurrent()*3);
     RoboRioSim.setVInVoltage(loadedBatteryVoltageVolts);
   }
 }
