@@ -195,7 +195,6 @@ public class VisionSubsystem extends SubsystemBase {
     int tagCount = tags.size();
     DogLog.log("Subsystems/Vision/tagCount", tagCount);
 
-    // TODO: Replace with real swerve speed
     double currentSpeed = Math.hypot(swerve.vxMetersPerSecond(), swerve.vyMetersPerSecond());
 
     // Compute noise model
