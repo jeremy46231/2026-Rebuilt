@@ -14,6 +14,7 @@ import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import dev.doglog.DogLog;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.jni.DAREJNI;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -81,17 +82,20 @@ public class RobotContainer {
         .andThen(() -> new Intake(intakeSubsystem))
         .andThen(autoFactory.resetOdometry("Drake2.traj").andThen(autoFactory.trajectoryCmd("Drake2.traj")))
         .andThen(() -> new frc.robot.commandGroups.Shoot(lebron, intakeSubsystem, hopperSubsystem))
-        .andThen(autoFactory.resetOdometry("Drake3.traj").andThen(autoFactory.trajectoryCmd("Drake3.traj")));
+        .andThen(autoFactory.resetOdometry("Drake3.traj").andThen(autoFactory.trajectoryCmd("Drake3.traj")))
+        .andThen(() -> new L1Climb(climberSubsystem, drivetrain));
 
     Command Pedri = autoFactory.resetOdometry("Pedri1.traj").andThen(autoFactory.trajectoryCmd("Pedri1.traj"))
         .andThen(() -> new frc.robot.commandGroups.Shoot(lebron, intakeSubsystem, hopperSubsystem))
-        .andThen(autoFactory.resetOdometry("Pedri2.traj").andThen(autoFactory.trajectoryCmd("Pedri2.traj")));
+        .andThen(autoFactory.resetOdometry("Pedri2.traj").andThen(autoFactory.trajectoryCmd("Pedri2.traj")))
+        .andThen(() -> new L1Climb(climberSubsystem, drivetrain));
 
     Command Fermin = autoFactory.resetOdometry("Fermin1.traj").andThen(autoFactory.trajectoryCmd("Fermin1.traj"))
         .andThen(() -> new Intake(intakeSubsystem))
         .andThen(autoFactory.resetOdometry("Fermin2.traj").andThen(autoFactory.trajectoryCmd("Fermin2.traj")))
         .andThen(() -> new frc.robot.commandGroups.Shoot(lebron, intakeSubsystem, hopperSubsystem))
-        .andThen(autoFactory.resetOdometry("Fermin3.traj").andThen(autoFactory.trajectoryCmd("Fermin3.traj")));
+        .andThen(autoFactory.resetOdometry("Fermin3.traj").andThen(autoFactory.trajectoryCmd("Fermin3.traj")))
+        .andThen(() -> new L1Climb(climberSubsystem, drivetrain));
 
     // Fake paths
     // Command redClimb =
@@ -129,13 +133,12 @@ public class RobotContainer {
 
     Command moveForwardStop = autoRoutine.cmd();
 
-    autoChooser.addCmd("moveForwardStop", () -> moveForwardStop);
 
-    // autoChooser.addCmd("redClimb", () -> redClimb);
-    // autoChooser.addCmd("redDepot", () -> redDepot);
-    // autoChooser.addCmd("redOutpost", () -> redOutpost);
-    // autoChooser.addCmd("moveForward", () -> moveForward);
-    // autoChooser.addCmd("niceLongPath", () -> niceAndLongPath);
+    autoChooser.addCmd("Drake", () -> Drake);
+    autoChooser.addCmd("Pedri", () -> Pedri);
+    autoChooser.addCmd("Fermin", () -> Fermin);
+    // autoChooser.addCmd("moveForwardStop", () -> moveForwardStop);
+
 
     SmartDashboard.putData("Auto Chooser", autoChooser);
 
