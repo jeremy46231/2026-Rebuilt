@@ -202,7 +202,7 @@ public class ClimberSubsystem extends SubsystemBase {
     stopMuscleUp();
   }
 
-  //Zeroing climb functions (only pull up because it doesn't have an encoder):
+  // Zeroing climb functions (only pull up because it doesn't have an encoder):
 
   public void reduceCurrentLimits() {
     pullUpMotorR.updateCurrentLimits(30, 10);
@@ -223,14 +223,13 @@ public class ClimberSubsystem extends SubsystemBase {
   }
 
   public void resetCurrentLimits() {
-    pullUpMotorR.updateCurrentLimits(Constants.Climber.DEFAULT_SUPPLY_CURRENT, Constants.Climber.DEFAULT_STATOR_CURRENT);
+    pullUpMotorR.updateCurrentLimits(
+        Constants.Climber.DEFAULT_SUPPLY_CURRENT, Constants.Climber.DEFAULT_STATOR_CURRENT);
   }
 
   public void resetPullUpPositionToZero() {
     pullUpMotorR.setPosition(0);
   }
-
-
 
   // Comands
   public Command brakeCommand() {
@@ -250,7 +249,6 @@ public class ClimberSubsystem extends SubsystemBase {
   public Command SitUpCommand(double angle) {
     return Commands.runOnce(() -> setSitUpPosition(angle), this).until(() -> isSitUpAtPosition());
   }
-
 
   // separate command groups to incorporate driveToPose
 

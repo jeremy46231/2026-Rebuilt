@@ -5,7 +5,6 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.ClimberSubsystem;
 
 // temp drivetoPos so I can do auton L1 Climb
@@ -34,7 +33,7 @@ public class ZeroPullUp extends Command {
   @Override
   public void end(boolean interrupted) {
     if (!interrupted) {
-        climberSubsystem.resetPullUpPositionToZero();
+      climberSubsystem.resetPullUpPositionToZero();
     }
     climberSubsystem.resetCurrentLimits();
   }
@@ -43,10 +42,9 @@ public class ZeroPullUp extends Command {
   @Override
   public boolean isFinished() {
     if (climberSubsystem.checkCurrent()) {
-        timesExceededCurrent++;
-    }
-    else {
-        timesExceededCurrent = 0;
+      timesExceededCurrent++;
+    } else {
+      timesExceededCurrent = 0;
     }
     return timesExceededCurrent >= 10;
   }

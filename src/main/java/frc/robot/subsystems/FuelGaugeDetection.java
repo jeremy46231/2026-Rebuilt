@@ -44,9 +44,9 @@ public class FuelGaugeDetection extends SubsystemBase {
     for (var result : results) latestVisionResult = result;
 
     if (latestVisionResult == null) {
-          DogLog.log("Subsystems/FuelGauge/BallPresent", false);
-          return;
-      }
+      DogLog.log("Subsystems/FuelGauge/BallPresent", false);
+      return;
+    }
 
     Optional<PhotonTrackedTarget> ball = getLargestBall();
     ball.ifPresentOrElse(

@@ -23,7 +23,6 @@ import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.commandGroups.ClimbCommands.L1Climb;
 import frc.robot.commandGroups.ClimbCommands.L2Climb;
 import frc.robot.commandGroups.ClimbCommands.L3Climb;
