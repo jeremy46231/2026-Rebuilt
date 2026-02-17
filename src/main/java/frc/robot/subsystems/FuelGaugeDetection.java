@@ -5,7 +5,6 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.FuelGaugeDetection.FuelGauge;
 import frc.robot.Constants.FuelGaugeDetection.GaugeCalculationType;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -101,10 +100,11 @@ public class FuelGaugeDetection extends SubsystemBase {
     return smoothedArea;
   }
 
-  private void fuelGaugeState(double rawArea, double smoothedArea, double avgMultipleBalls, double smoothedMultipleBalls) {
+  private void fuelGaugeState(
+      double rawArea, double smoothedArea, double avgMultipleBalls, double smoothedMultipleBalls) {
 
-    latestRawGauge = setFuelGauge(rawArea);    
-    
+    latestRawGauge = setFuelGauge(rawArea);
+
     latestSmoothedGauge = setFuelGauge(smoothedArea);
 
     latestMultipleBallsGauge = setFuelGauge(avgMultipleBalls);
@@ -114,7 +114,9 @@ public class FuelGaugeDetection extends SubsystemBase {
     DogLog.log("Subsystems/FuelGauge/RawGaugeLevel", latestRawGauge.toString());
     DogLog.log("Subsystems/FuelGauge/SmoothedGaugeLevel", latestSmoothedGauge.toString());
     DogLog.log("Subsystems/FuelGauge/MultipleBallsGaugeLevel", latestMultipleBallsGauge.toString());
-    DogLog.log("Subsystems/FuelGauge/SmoothedMultipleBallsGaugeLevel", latestSmoothedMultipleBallsGauge.toString());
+    DogLog.log(
+        "Subsystems/FuelGauge/SmoothedMultipleBallsGaugeLevel",
+        latestSmoothedMultipleBallsGauge.toString());
   }
 
   private FuelGauge setFuelGauge(double area) {
@@ -141,8 +143,8 @@ public class FuelGaugeDetection extends SubsystemBase {
     return targets.stream().max((a, b) -> Double.compare(a.getArea(), b.getArea()));
   }
 
-   public double getArea(GaugeCalculationType type) {
-    switch(type) {
+  public double getArea(GaugeCalculationType type) {
+    switch (type) {
       case RAW:
         return latestRawArea;
       case SMOOTHED:
@@ -157,7 +159,7 @@ public class FuelGaugeDetection extends SubsystemBase {
   }
 
   public FuelGauge getGauge(GaugeCalculationType type) {
-    switch(type) {
+    switch (type) {
       case RAW:
         return latestRawGauge;
       case SMOOTHED:
