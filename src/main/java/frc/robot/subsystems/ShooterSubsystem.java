@@ -154,10 +154,6 @@ public class ShooterSubsystem extends SubsystemBase {
     return Commands.runEnd(() -> this.setBallSpeed(ballSpeed), this::stopShooter, this);
   }
 
-  public Command shootAtSpeed(double speed) {
-    return Commands.runEnd(() -> this.setBallSpeed(speed), this::stopShooter, this);
-  }
-
   @Override
   public void periodic() {
     DogLog.log("Subsystems/Shooter/TargetSpeed", targetBallSpeed);
