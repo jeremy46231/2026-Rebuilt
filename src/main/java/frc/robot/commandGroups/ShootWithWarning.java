@@ -1,6 +1,7 @@
 package frc.robot.commandGroups;
 
 import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -44,8 +45,8 @@ public class ShootWithWarning extends ParallelCommandGroup {
             () ->
                 joystick.setRumble(
                     RumbleType.kBothRumble,
-                    (distMeters > Constants.Shooter.MAX_DIST_FT
-                            || distMeters < Constants.Shooter.MIN_DIST_FT)
+                    (Units.metersToFeet(distMeters) > Constants.Shooter.MAX_DIST_FT
+                            || Units.metersToFeet(distMeters) < Constants.Shooter.MIN_DIST_FT)
                         ? .5d
                         : 0d)),
         new Shoot(
