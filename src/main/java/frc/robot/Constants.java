@@ -524,6 +524,13 @@ public final class Constants {
     public static final double MAX_DETECTABLE_FUEL_AREA_PERCENTAGE = 60.00;
     public static final double REALISTIC_MAX_DETECTABLE_AREA_PERCENTAGE = 15.00;
 
+    public static enum GaugeCalculationType {
+      RAW(),
+      SMOOTHED(),
+      MULTIPLE_BALLS(),
+      SMOOTHED_MULTIPLE_BALLS();
+    }
+
     public static enum FuelGauge { // LAST: 20, 50, 70, 100
       EMPTY(2.0),
       LOW(9.0),

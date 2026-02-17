@@ -4,6 +4,8 @@ import dev.doglog.DogLog;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.FuelGaugeDetection.FuelGauge;
+import frc.robot.Constants.FuelGaugeDetection.GaugeCalculationType;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -28,10 +30,12 @@ public class FuelGaugeDetection extends SubsystemBase {
   private double latestRawArea;
   private double latestSmoothedArea;
   private double latestMultipleBallsArea;
+  private double latestSmoothedMultipleBallsArea;
 
   private FuelGauge latestRawGauge;
   private FuelGauge latestSmoothedGauge;
   private FuelGauge latestMultipleBallsGauge;
+  private FuelGauge latestSmoothedMultipleBallsGauge;
 
   public FuelGaugeDetection(Constants.Vision.Cameras cameraID) {
     this.cameraID = cameraID;
@@ -64,13 +68,15 @@ public class FuelGaugeDetection extends SubsystemBase {
 
           latestRawArea = rawArea;
           latestSmoothedArea = smoothedRawArea;
-          latestMultipleBallsArea = smoothedMultipleBalls;
+          latestMultipleBallsArea = avgMultipleBalls;
+          latestSmoothedMultipleBallsArea = smoothedMultipleBalls;
 
           DogLog.log("Subsystems/FuelGauge/RawArea", rawArea);
           DogLog.log("Subsystems/FuelGauge/SmoothedRawArea", smoothedRawArea);
-          DogLog.log("Subsystems/FuelGauge/MultipleBallsArea", smoothedMultipleBalls);
+          DogLog.log("Subsystems/FuelGauge/MultipleBallsArea", avgMultipleBalls);
+          DogLog.log("Subsystems/FuelGauge/SmoothedMultipleBallsArea", smoothedMultipleBalls);
 
-          fuelGaugeState(smoothedRawArea, rawArea, smoothedMultipleBalls);
+          fuelGaugeState(rawArea, smoothedRawArea, avgMultipleBalls, smoothedMultipleBalls);
         },
         () -> DogLog.log("Subsystems/FuelGauge/BlobPresent", false));
   }
@@ -95,17 +101,20 @@ public class FuelGaugeDetection extends SubsystemBase {
     return smoothedArea;
   }
 
-  public void fuelGaugeState(double smoothedArea, double rawArea, double smoothedMultipleBalls) {
+  private void fuelGaugeState(double rawArea, double smoothedArea, double avgMultipleBalls, double smoothedMultipleBalls) {
 
+    latestRawGauge = setFuelGauge(rawArea);    
+    
     latestSmoothedGauge = setFuelGauge(smoothedArea);
 
-    latestRawGauge = setFuelGauge(rawArea);
+    latestMultipleBallsGauge = setFuelGauge(avgMultipleBalls);
 
-    latestMultipleBallsGauge = setFuelGauge(smoothedMultipleBalls);
+    latestSmoothedMultipleBallsGauge = setFuelGauge(smoothedMultipleBalls);
 
-    DogLog.log("Subsystems/FuelGauge/SmoothedGaugeLevel", latestSmoothedGauge.toString());
     DogLog.log("Subsystems/FuelGauge/RawGaugeLevel", latestRawGauge.toString());
+    DogLog.log("Subsystems/FuelGauge/SmoothedGaugeLevel", latestSmoothedGauge.toString());
     DogLog.log("Subsystems/FuelGauge/MultipleBallsGaugeLevel", latestMultipleBallsGauge.toString());
+    DogLog.log("Subsystems/FuelGauge/SmoothedMultipleBallsGaugeLevel", latestSmoothedMultipleBallsGauge.toString());
   }
 
   private FuelGauge setFuelGauge(double area) {
@@ -132,12 +141,34 @@ public class FuelGaugeDetection extends SubsystemBase {
     return targets.stream().max((a, b) -> Double.compare(a.getArea(), b.getArea()));
   }
 
-  public double getMultipleBallsArea() {
-    return latestMultipleBallsArea;
+   public double getArea(GaugeCalculationType type) {
+    switch(type) {
+      case RAW:
+        return latestRawArea;
+      case SMOOTHED:
+        return latestSmoothedArea;
+      case MULTIPLE_BALLS:
+        return latestMultipleBallsArea;
+      case SMOOTHED_MULTIPLE_BALLS:
+        return latestSmoothedMultipleBallsArea;
+      default:
+        return latestRawArea;
+    }
   }
 
-  public FuelGauge getMultipleBallsGauge() {
-    return latestMultipleBallsGauge;
+  public FuelGauge getGauge(GaugeCalculationType type) {
+    switch(type) {
+      case RAW:
+        return latestRawGauge;
+      case SMOOTHED:
+        return latestSmoothedGauge;
+      case MULTIPLE_BALLS:
+        return latestMultipleBallsGauge;
+      case SMOOTHED_MULTIPLE_BALLS:
+        return latestSmoothedMultipleBallsGauge;
+      default:
+        return latestRawGauge;
+    }
   }
 
   public double getLargestBallsAvg(int numBalls) {
