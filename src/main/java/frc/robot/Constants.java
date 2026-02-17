@@ -36,16 +36,22 @@ public final class Constants {
     public static final class Arm {
       public static final double ARM_LENGTH_METERS = 0.35;
 
-      public static final int CAN_ID = -1; // TODO: VERIFY
-      public static final int ENCODER_PORT = 0; // TODO: VERIFY
+      public static final int CAN_ID = 14; // TODO: VERIFY
+      public static final int ENCODER_PORT = 16; // TODO: VERIFY
 
       public static final double MOTOR_ROTS_PER_ARM_ROTS = (700.0 / 9.0);
       public static final double ARM_ROTS_PER_MOTOR_ROTS = 1.0 / MOTOR_ROTS_PER_ARM_ROTS;
 
-      public static final double MOTOR_ROTS_PER_ARM_DEGREES =
-          Units.rotationsToDegrees(ARM_ROTS_PER_MOTOR_ROTS);
+      public static final double ARM_DEGREES_PER_MOTOR_ROTS = 360.0 / MOTOR_ROTS_PER_ARM_ROTS;
+      // = 360 / 77.777 = 4.629 degrees per motor rotation
 
-      public static final double ARM_DEGREES_PER_MOTOR_ROTS = 1.0 / MOTOR_ROTS_PER_ARM_DEGREES;
+      public static final double MOTOR_ROTS_PER_ARM_DEGREES = MOTOR_ROTS_PER_ARM_ROTS / 360.0;
+
+      // = 77.777 / 360 = 0.216 motor rotations per degree
+      // public static final double MOTOR_ROTS_PER_ARM_DEGREES =
+      //     Units.degreesToRotations(ARM_ROTS_PER_MOTOR_ROTS);
+
+      // public static final double ARM_DEGREES_PER_MOTOR_ROTS = 1.0 / MOTOR_ROTS_PER_ARM_DEGREES;
 
       /** Absolute encoder ratio: 2.666:1 between encoder and axle */
       public static final double CANCODER_ROTS_PER_ARM_ROTS = (8.0 / 3.0);
@@ -55,10 +61,11 @@ public final class Constants {
 
       // Control Constants (Position closed-loop and torque control)
       // Note: MRD specifies <insert> for most values - these need characterization/tuning
-      public static final double KV = 0.12; // V*s/rot - TODO: Verify on new robot
-      public static final double KP = 0.0; // V/rot - TODO: Verify on new robot
+      public static final double KV = 0.01; // V*s/rot - TODO: Verify on new robot
+      public static final double KP = 80.0; // V/rot - TODO: Verify on new robot
       public static final double KI = 0.0;
       public static final double KD = 0.0; // V*s/rot - TODO: Verify on new robot
+      public static final double KG = 0.15; // TODO: verify
 
       // Current Limits
       public static final double STATOR_CURRENT_LIMIT = 40.0; // Amps - TODO: Verify with team
@@ -74,13 +81,13 @@ public final class Constants {
       public static final double POSITION_TOLERANCE_DEGREES = 1.0;
 
       // Simulation
-      public static final double SIM_MOI_KG_M2 = 0.0025;
+      public static final double SIM_MOI_KG_M2 = 0.1;
     }
 
     /** Constants for the intake roller wheels */
     public static final class Rollers {
       // Hardware Configuration
-      public static final int CAN_ID = -1; // TODO: Get CAN ID from MRD table (currently blank)
+      public static final int CAN_ID = 11; // TODO: Get CAN ID from MRD table (currently blank)
 
       // Gear Ratios & Conversions
       /**
@@ -116,14 +123,14 @@ public final class Constants {
       public static final double TARGET_MOTOR_RPS = TARGET_ROLLER_RPS * MOTOR_ROTS_PER_ROLLERS_ROTS;
 
       // Control Constants (Kraken x60, velocity closed-loop)
-      public static final double KV = 0.14; // V*s/rps - from MRD
-      public static final double KP = 0.5; // TODO: MRD shows <insert>
-      public static final double KI = 0.0; // TODO: MRD shows <insert>
-      public static final double KD = 0.0; // TODO: MRD shows <insert>
+      public static final double KV = 0.14; // from MRDs
+      public static final double KP = 0.0; // TODO: MRD shows <insert>
+      public static final double KI = 0; // TODO: MRD shows <insert>
+      public static final double KD = 0; // TODO: MRD shows <insert>
 
       // Current Limits
-      public static final double STATOR_CURRENT_LIMIT = 40.0; // Amps - TODO: Verify with team
-      public static final double SUPPLY_CURRENT_LIMIT = 30.0; // Amps - TODO: Verify with team
+      public static final double STATOR_CURRENT_LIMIT = 80.0; // Amps - TODO: Verify with team
+      public static final double SUPPLY_CURRENT_LIMIT = 80.0; // Amps - TODO: Verify with team
 
       // Ball Detection (monitors roller current to estimate ball intake)
       /** Current threshold indicating balls are being intaken */
@@ -134,7 +141,7 @@ public final class Constants {
       public static final double BALL_DETECTION_DEBOUNCE_SEC = 0.1; // TODO: Tune
 
       public static final double SIM_MOI_KG_M2 =
-          0.01; // TODO: BETTER ESTIMATION CAN BE MADE USING DESIGN
+          0.0003; // TODO: BETTER ESTIMATION CAN BE MADE USING DESIGN
 
       public static final double TOLERANCE_MOTOR_ROTS_PER_SEC = 0.3; // TODO: OBSERVE BEHAVIOR
     }
@@ -153,7 +160,7 @@ public final class Constants {
   }
 
   public static class Swerve {
-    public static final SwerveType WHICH_SWERVE_ROBOT = SwerveType.COBRA;
+    public static final SwerveType WHICH_SWERVE_ROBOT = SwerveType.JAMES_HARDEN;
 
     public static final double targetPositionError = 0.05;
     public static final double targetAngleError = 0.02;
@@ -388,19 +395,26 @@ public final class Constants {
     public static final double DEFAULT_SUPPLY_CURRENT = 30.0;
     public static final double DEFAULT_STATOR_CURRENT = 30.0;
 
+    public static final int BRAKE_PORT = 7; // TODO
+    public static final double BRAKE_ANGLE = 30.0;
+
     public static class MuscleUp {
       public static final double MUSCLE_UP_TOLERANCE = 0.1;
 
       public static final double MOTOR_ROTS_TO_ARM_ROTS = 1d / 250d;
       public static final double MOTOR_ROTS_PER_DEGREES_OF_ARM_ROT = MOTOR_ROTS_TO_ARM_ROTS * 360d;
 
-      public static final double MUSCLE_UP_FORWARD = 0; // TODO: get vals
+      // As I understand it, resting postion would probably always be consistent
+      public static final double L1_MUSCLE_UP_FORWARD = 0; // TODO: get vals
+      public static final double L2_MUSCLE_UP_FORWARD = 0; // TODO: get vals
+      public static final double L3_MUSCLE_UP_FORWARD = 0; // TODO: get vals
       public static final double MUSCLE_UP_BACK = 0; // TODO: get vals
 
       public static final int MOTOR_PORT = -1; // TODO: get vals
 
       public static final int ENCODER_PORT = -1; // TODO: get vals
       public static final int ENCODER_ROTATIONS_TO_ARM_ROTATIONS = 0;
+      public static final int ENCODER_OFFSET = 0; // TODO: get vals
     }
 
     public static class SitUp {
@@ -419,6 +433,7 @@ public final class Constants {
 
       public static final int ENCODER_PORT = -1; // TODO: get vals
       public static final int ENCODER_ROTATIONS_TO_ARM_ROTATIONS = 0;
+      public static final int ENCODER_OFFSET = 0; // TODO: get vals
     }
 
     public static class PullUp {
@@ -429,7 +444,10 @@ public final class Constants {
       public static final double MOTOR_ROTS_PER_METERS_OF_BELT_TRAVERSAL =
           MOTOR_ROTS_TO_PULLEY_ROTS * PULLEY_BELT_LENGTH_M;
 
-      public static final double REACH_POS = 0; // TODO: get vals
+      // As I understand it, resting postion would probably always be consistent
+      public static final double L1_REACH_POS = 0; // TODO: get vals
+      public static final double L2_REACH_POS = 0; // TODO: get vals
+      public static final double L3_REACH_POS = 0; // TODO: get vals
       public static final double PULL_DOWN_POS = 0; // TODO: get vals
 
       public static final int MOTOR_PORT_L = -1; // TODO: get vals
@@ -474,10 +492,10 @@ public final class Constants {
     public static final int MOTOR_PORT = 9;
 
     // --- Closed-loop velocity gains (Phoenix Slot0) ---
-    public static final double kP = 0.07;
+    public static final double kP = 0.01;
     public static final double kI = 0.0;
     public static final double kD = 0.0;
-    public static final double kV = 0.12;
+    public static final double kV = 0.124;
 
     // --- Current limits ---
     public static final double HOPPER_STATOR_LIMIT_AMPS = 30.0;
@@ -487,41 +505,18 @@ public final class Constants {
     public static final double HOPPER_VELOCITY_TOLERANCE_ROTATIONS_PER_SECOND = 0.1;
 
     // --- Simulation ---
-    public static final double HOPPER_SIM_MECHANISM_MOI_KG_M2 = 0.0012;
+    public static final double HOPPER_SIM_MECHANISM_MOI_KG_M2 = 0.0008;
   }
-
-  // public static class Hopper {
-  //   public static final double MOTOR_ROTATIONS_PER_PULLEY_ROTATION = 5.0; // MRD
-  //   private static final double PULLEY_LENGTH_MM = 220d * 5d; // 220 teeth, 5mm per
-  //   private static final double PULLEY_LENGTH_M = PULLEY_LENGTH_MM / 1000d;
-  //   public static final double MOTOR_ROTS_TO_METERS_OF_PULLEY_TRAVERSAL =
-  //       MOTOR_ROTS_TO_PULLEY_ROTS * PULLEY_LENGTH_M;
-
-  //   public static final double TARGET_PULLEY_SPEED_FT_PER_SEC = 6d;
-  //   public static final double TARGET_PULLEY_SPEED_M_PER_SEC =
-  //       Units.feetToMeters(TARGET_PULLEY_SPEED_FT_PER_SEC);
-
-  //   public static final int MOTOR_PORT = 9; // TODO: put actual port
-
-  //   public static final double kP = .07; // TODO: get actual vals
-  //   public static final double kI = 0;
-  //   public static final double kD = 0;
-  //   public static final double kV = 0.12;
-
-  //   public static final double HOPPER_STATOR_LIMIT = 30.0;
-  //   public static final double HOPPER_SUPPLY_LIMIT = 30.0;
-
-  //   public static final double TOLERANCE_MOTOR_ROTS_PER_SEC = .1;
-
-  //   public static final double ESTIMATED_HOPPER_MOI_KG_M2 = 0.0012;
-  // }
 
   public static class Vision {
 
     // initializes cameras for use in VisionSubsystem
     public static enum Cameras {
-      RIGHT_CAM("rightCam"),
-      LEFT_CAM("leftCam");
+      RIGHT_CAM("frontRightCam"),
+      LEFT_CAM("frontLeftCam"),
+      REAR_RIGHT_CAM("rearRightCam"),
+      REAR_LEFT_CAM("rearLeftCam"),
+      COLOR_CAM("colorCam");
 
       private String loggingName;
 
@@ -551,56 +546,114 @@ public final class Constants {
     public static final double SPEED_COEFFICIENT_Y = 0.5;
     public static final double SPEED_COEFFICIENT_THETA = 0.5;
 
-    // placeholder constants for now; will be updated once robot is delivered
-    public static final double RIGHT_X = Units.inchesToMeters(8.867);
-    public static final double RIGHT_Y = Units.inchesToMeters(-12.4787);
-    public static final double RIGHT_Z = Units.inchesToMeters(6.158);
-    public static final double RIGHT_ROLL = Units.degreesToRadians(0.0);
-    public static final double RIGHT_PITCH = Units.degreesToRadians(-12.5);
-    public static final double RIGHT_YAW = Units.degreesToRadians(40);
+    // TODO: SID: update all vals
+    public static final double FRONT_RIGHT_X = Units.inchesToMeters(6.70);
+    public static final double FRONT_RIGHT_Y = Units.inchesToMeters(-4.125);
+    public static final double FRONT_RIGHT_Z = Units.inchesToMeters(40.875);
+    public static final double FRONT_RIGHT_ROLL = Units.degreesToRadians(180); // 180
+    public static final double FRONT_RIGHT_PITCH = Units.degreesToRadians(171.5); // 171.5
+    public static final double FRONT_RIGHT_YAW = Units.degreesToRadians(0.0);
 
-    public static final double LEFT_X = Units.inchesToMeters(8.867);
-    public static final double LEFT_Y = Units.inchesToMeters(12.478);
-    public static final double LEFT_Z = Units.inchesToMeters(6.158);
-    public static final double LEFT_ROLL = Units.degreesToRadians(0.0);
-    public static final double LEFT_PITCH = Units.degreesToRadians(-12.5);
-    public static final double LEFT_YAW = Units.degreesToRadians(-40);
+    public static final double FRONT_LEFT_X = Units.inchesToMeters(6.70);
+    public static final double FRONT_LEFT_Y = Units.inchesToMeters(4.125);
+    public static final double FRONT_LEFT_Z = Units.inchesToMeters(40.875);
+    public static final double FRONT_LEFT_ROLL = Units.degreesToRadians(180);
+    public static final double FRONT_LEFT_PITCH = Units.degreesToRadians(171.5);
+    public static final double FRONT_LEFT_YAW = Units.degreesToRadians(0.0);
+
+    public static final double REAR_RIGHT_X = Units.inchesToMeters(6.70);
+    public static final double REAR_RIGHT_Y = Units.inchesToMeters(-4.125);
+    public static final double REAR_RIGHT_Z = Units.inchesToMeters(40.875);
+    public static final double REAR_RIGHT_ROLL = Units.degreesToRadians(180); // 180
+    public static final double REAR_RIGHT_PITCH = Units.degreesToRadians(171.5); // 171.5
+    public static final double REAR_RIGHT_YAW = Units.degreesToRadians(0.0);
+
+    public static final double REAR_LEFT_X = Units.inchesToMeters(6.70);
+    public static final double REAR_LEFT_Y = Units.inchesToMeters(4.125);
+    public static final double REAR_LEFT_Z = Units.inchesToMeters(40.875);
+    public static final double REAR_LEFT_ROLL = Units.degreesToRadians(180);
+    public static final double REAR_LEFT_PITCH = Units.degreesToRadians(171.5);
+    public static final double REAR_LEFT_YAW = Units.degreesToRadians(0.0);
+
+    public static final double COLOR_X = Units.inchesToMeters(8.867);
+    public static final double COLOR_Y = Units.inchesToMeters(12.478);
+    public static final double COLOR_Z = Units.inchesToMeters(6.158);
+    public static final double COLOR_ROLL = Units.degreesToRadians(0.0);
+    public static final double COLOR_PITCH = Units.degreesToRadians(8.7);
+    public static final double COLOR_YAW = Units.degreesToRadians(0.0);
 
     // initializing Transform3d for use in future field visualization
     public static Transform3d getCameraTransform(Cameras camera) {
       switch (camera) {
-        case RIGHT_CAM:
+        case RIGHT_CAM: // TODO: SID: rename FRONT_RIGHT_CAM
           return new Transform3d(
-              new Translation3d(RIGHT_X, RIGHT_Y, RIGHT_Z),
-              new Rotation3d(RIGHT_ROLL, RIGHT_PITCH, RIGHT_YAW));
-        case LEFT_CAM:
+              new Translation3d(FRONT_RIGHT_X, FRONT_RIGHT_Y, FRONT_RIGHT_Z),
+              new Rotation3d(FRONT_RIGHT_ROLL, FRONT_RIGHT_PITCH, FRONT_RIGHT_YAW));
+
+        case LEFT_CAM: // TODO: SID: rename FRONT_LEFT_CAM
           return new Transform3d(
-              new Translation3d(LEFT_X, LEFT_Y, LEFT_Z),
-              new Rotation3d(LEFT_ROLL, LEFT_PITCH, LEFT_YAW));
+              new Translation3d(FRONT_LEFT_X, FRONT_LEFT_Y, FRONT_LEFT_Z),
+              new Rotation3d(FRONT_LEFT_ROLL, FRONT_LEFT_PITCH, FRONT_LEFT_YAW));
+
+        case REAR_RIGHT_CAM:
+          return new Transform3d(
+              new Translation3d(REAR_RIGHT_X, REAR_RIGHT_Y, REAR_RIGHT_Z),
+              new Rotation3d(REAR_RIGHT_ROLL, REAR_RIGHT_PITCH, REAR_RIGHT_YAW));
+
+        case REAR_LEFT_CAM:
+          return new Transform3d(
+              new Translation3d(REAR_LEFT_X, REAR_LEFT_Y, REAR_LEFT_Z),
+              new Rotation3d(REAR_LEFT_ROLL, REAR_LEFT_PITCH, REAR_LEFT_YAW));
+
+        case COLOR_CAM:
+          return new Transform3d(
+              new Translation3d(COLOR_X, COLOR_Y, COLOR_Z),
+              new Rotation3d(COLOR_ROLL, COLOR_PITCH, COLOR_YAW));
         default:
           throw new IllegalArgumentException("Unknown camera ID: " + camera);
       }
     }
   }
 
+  public static class FuelGaugeDetection {
+    public static final int BALLS_TO_AVG = 3;
+    public static final int MAX_FUEL_GAUGE_MEASUREMENTS = 33;
+    public static final double MAX_DETECTABLE_FUEL_AREA_PERCENTAGE = 60.00;
+    public static final double REALISTIC_MAX_DETECTABLE_AREA_PERCENTAGE = 15.00;
+
+    public static enum FuelGauge { // LAST: 20, 50, 70, 100
+      EMPTY(2.0),
+      LOW(9.0),
+      MEDIUM(12.0),
+      FULL(100.0);
+
+      private double threshold;
+
+      FuelGauge(double threshold) {
+        this.threshold = threshold;
+      }
+
+      public double getThreshold() {
+        return threshold;
+      }
+    }
+  }
+
   public static final class Shooter {
-    public static final int WARMUP_MOTOR_1_ID = 35; // TODO CHANGE WHEN GET NEW ROBOT
-    public static final int WARMUP_MOTOR_2_ID = 34; // / TODO CHANGE WHEN GETTING NEW ROBOT
-    public static final int WARMUP_MOTOR_3_ID = 32; // TODO CHANGE WHEN GETTING NEW ROBOT
+    public static final int WARMUP_1_ID = 35; // TODO
+    public static final int WARMUP_2_ID = 34; // TODO
+    public static final int WARMUP_3_ID = 32; // TODO
 
-    public static final double SHOOTER_SPEED_TOLERANCE_RPS = 5.0; // rps
-
-    public static final double KP = 0.35; // TODO
-    public static final double KI = 0.0; // TODO
-    public static final double KD = 0.0; // TODO
-    public static final double KV = 0.123; // TODO
-    public static final double KA = 0.0; // TODO
-
+    public static final double SHOOTER_KP = 0.5; // TODO
+    public static final double SHOOTER_KI = 0.0; // TODO
+    public static final double SHOOTER_KD = 0.0; // TODO
+    public static final double SHOOTER_KV = 0.12; // TODO
+    public static final double SHOOTER_KA = 0.0; // TODO
     public static final double STATOR_CURRENT_LIMIT = 30.0;
     public static final double SUPPLY_CURRENT_LIMIT = 30.0;
 
-    public static final double MOTOR_ROTS_PER_SHOOTER_ROTS = 1.25;
-    public static final double SHOOTER_WHEEL_DIAMETER_IN = 3.0;
+    public static final double MOTOR_ROTS_PER_WHEEL_ROTS = 1.25;
+    public static final double SHOOTER_WHEEL_DIAMETER = 3.0;
     public static final double SHOOT_FOR_AUTO = 104.72;
 
     public static final Pose3d OFFSET_FROM_ROBOT_CENTER = new Pose3d();
@@ -613,23 +666,7 @@ public final class Constants {
 
     public static final int TARGETING_CALCULATION_PRECISION = 5;
 
-    public static final double MOTOR_ROTS_PER_WARMUP_1_ROTS = 1.125;
-
-    /** Motor to middle warm-up roller: 16t→24t pulley = 24/16 = 1.5:1 */
-    public static final double MOTOR_ROTS_PER_WARMUP_2_ROTS = 1.5;
-
-    /** Motor to bottom warm-up roller: 12t→24t pulley = 24/12 = 2.0:1 */
-    public static final double MOTOR_ROTS_PER_WARMUP_3_ROTS = 2.0;
-
-    // Moment of Inertia (needs to be calculated - MRD doesn't provide)
-    /** 2" polycarbonate roller with silicone casing - TODO: Calculate / FIND actual MOI */
-    public static final double WARMUP_1_MOI_KG_M2 = 0.0008;
-
-    /** 2" polycarbonate roller with silicone casing - TODO: Calculate / FIND actual MOI */
-    public static final double WARMUP_2_MOI_KG_M2 = 0.0008;
-
-    /** 2" polycarbonate roller with silicone casing - TODO: Calculate / FIND actual MOI */
-    public static final double WARMUP_3_MOI_KG_M2 = 0.0008;
+    public static final double SHOOTER_SIM_MOI_KG_M2 = 0.0015;
   }
 
   public static class OI {

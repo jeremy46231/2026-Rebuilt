@@ -9,7 +9,11 @@ import dev.doglog.DogLogOptions;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.subsystems.ClimberSubsystem;
+import frc.robot.subsystems.CommandSwerveDrivetrain;
+import frc.robot.subsystems.FuelGaugeDetection;
 import frc.robot.subsystems.VisionSubsystem;
+import frc.robot.util.LoggedTalonFX;
 
 /**
  * The methods in this class are called automatically corresponding to each mode, as described in
@@ -22,6 +26,12 @@ public class Robot extends TimedRobot {
   private final RobotContainer m_robotContainer;
 
   private VisionSubsystem visionRight, visionLeft;
+  private FuelGaugeDetection visionColor;
+
+  // TODO: verify this implementation of swerve
+  private CommandSwerveDrivetrain visionSwerve;
+
+  private final ClimberSubsystem climberSubsystem;
 
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -33,13 +43,21 @@ public class Robot extends TimedRobot {
     m_robotContainer = new RobotContainer();
 
     if (Constants.visionOnRobot) {
-      visionRight = VisionSubsystem.getInstance(Constants.Vision.Cameras.RIGHT_CAM, () -> true);
-      visionLeft = VisionSubsystem.getInstance(Constants.Vision.Cameras.LEFT_CAM, () -> true);
+      visionRight = VisionSubsystem.getInstance(Constants.Vision.Cameras.RIGHT_CAM);
+      visionLeft = VisionSubsystem.getInstance(Constants.Vision.Cameras.LEFT_CAM);
+      // visionRearRight = VisionSubsystem.getInstance(Constants.Vision.Cameras.REAR_RIGHT_CAM);
+      // visionRearLeft = VisionSubsystem.getInstance(Constants.Vision.Cameras.REAR_LEFT_CAM);
+      visionColor = FuelGaugeDetection.getInstance(Constants.Vision.Cameras.COLOR_CAM);
+      visionSwerve = m_robotContainer.getDrivetrain();
 
     } else {
       visionRight = null;
       visionLeft = null;
+      visionColor = null;
+      visionSwerve = null;
     }
+
+    climberSubsystem = Constants.climberOnRobot ? new ClimberSubsystem() : null;
   }
 
   @Override
@@ -66,9 +84,12 @@ public class Robot extends TimedRobot {
     CommandScheduler.getInstance().run();
 
     if (Constants.visionOnRobot) {
-      visionRight.addFilteredPose();
-      visionLeft.addFilteredPose();
+      visionRight.addFilteredPose(visionSwerve);
+      visionLeft.addFilteredPose(visionSwerve);
+      // visionRearRight.addFilteredPose(visionSwerve);
+      // visionRearLeft.addFilteredPose(visionSwerve);
     }
+    LoggedTalonFX.periodic_static();
   }
 
   /** This function is called once each time the robot enters Disabled mode. */
@@ -102,6 +123,11 @@ public class Robot extends TimedRobot {
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
     }
+
+    // // stow climber
+    // new ZeroPullUp(climberSubsystem);
+    // climberSubsystem.SitUpCommand(Constants.Climber.SitUp.SIT_BACK_ANGLE);
+    // climberSubsystem.MuscleUpCommand(Constants.Climber.MuscleUp.MUSCLE_UP_BACK);
   }
 
   /** This function is called periodically during operator control. */

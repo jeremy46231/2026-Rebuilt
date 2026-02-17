@@ -9,7 +9,7 @@ import com.ctre.phoenix6.configs.MagnetSensorConfigs;
 import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfigurator;
-import com.ctre.phoenix6.controls.PositionTorqueCurrentFOC;
+import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
@@ -41,6 +41,7 @@ public class IntakeSubsystem extends SubsystemBase {
   private LoggedTalonFX armMotor, rollersMotor;
   private CANcoder cancoder;
   private double targetAngleDeg;
+  private double targetRollersRPS;
 
   // Simulation objects
   private TalonFXSimState rollersMotorSimState;
@@ -49,10 +50,14 @@ public class IntakeSubsystem extends SubsystemBase {
   private DCMotorSim rollersMechanismSim;
   private SingleJointedArmSim armMechanismSim;
 
+  private final VelocityVoltage m_velocityRequest = new VelocityVoltage(0);
+  private final PositionVoltage m_positionRequest = new PositionVoltage(0);
+
   public IntakeSubsystem() {
     rollersMotor = new LoggedTalonFX(Constants.Intake.Rollers.CAN_ID);
     armMotor = new LoggedTalonFX(Constants.Intake.Arm.CAN_ID);
     targetAngleDeg = Constants.Intake.Arm.ARM_POS_RETRACTED;
+    targetRollersRPS = 0;
 
     Slot0Configs rollersSlot0Configs =
         new Slot0Configs()
@@ -66,7 +71,8 @@ public class IntakeSubsystem extends SubsystemBase {
             .withKV(Constants.Intake.Arm.KV)
             .withKP(Constants.Intake.Arm.KP)
             .withKI(Constants.Intake.Arm.KI)
-            .withKD(Constants.Intake.Arm.KD);
+            .withKD(Constants.Intake.Arm.KD)
+            .withKG(Constants.Intake.Arm.KG);
 
     CurrentLimitsConfigs rollersCurrentLimitsConfigs =
         new CurrentLimitsConfigs()
@@ -76,17 +82,6 @@ public class IntakeSubsystem extends SubsystemBase {
     CurrentLimitsConfigs armCurrentLimitsConfigs =
         new CurrentLimitsConfigs()
             .withStatorCurrentLimit(Constants.Intake.Arm.STATOR_CURRENT_LIMIT);
-
-    TalonFXConfigurator armMotorConfig = armMotor.getConfigurator();
-    TalonFXConfigurator rollersMotorConfig = rollersMotor.getConfigurator();
-
-    armMotorConfig.apply(armSlot0Configs);
-    armMotorConfig.apply(armCurrentLimitsConfigs);
-    armMotorConfig.apply(new MotorOutputConfigs().withNeutralMode(NeutralModeValue.Brake));
-    rollersMotorConfig.apply(rollersSlot0Configs);
-    rollersMotorConfig.apply(rollersCurrentLimitsConfigs);
-    rollersMotorConfig.apply(
-        new MotorOutputConfigs().withInverted(InvertedValue.CounterClockwise_Positive));
 
     // creates a FusedCANcoder, which combines data from the CANcoder and the arm
     // motor's encoder
@@ -107,9 +102,29 @@ public class IntakeSubsystem extends SubsystemBase {
             .withFeedbackRemoteSensorID(cancoder.getDeviceID())
             .withFeedbackSensorSource(FeedbackSensorSourceValue.FusedCANcoder)
             .withSensorToMechanismRatio(Constants.Intake.Arm.CANCODER_ROTS_PER_ARM_ROTS)
-            .withRotorToSensorRatio(Constants.Intake.Arm.ARM_DEGREES_PER_MOTOR_ROTS);
+            .withRotorToSensorRatio(
+                Constants.Intake.Arm.MOTOR_ROTS_PER_ARM_ROTS
+                    / Constants.Intake.Arm.CANCODER_ROTS_PER_ARM_ROTS);
 
-    armMotorConfig.apply(feedbackConfigs);
+    // Apply full TalonFXConfiguration objects to ensure factory defaults
+    TalonFXConfiguration rollersConfig = new TalonFXConfiguration();
+    rollersConfig.Slot0 = rollersSlot0Configs;
+    rollersConfig.CurrentLimits = rollersCurrentLimitsConfigs;
+    rollersConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
+    rollersConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
+
+    TalonFXConfiguration armConfig = new TalonFXConfiguration();
+    armConfig.Slot0 = armSlot0Configs;
+    armConfig.CurrentLimits = armCurrentLimitsConfigs;
+    armConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+    armConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive; // changed side
+    armConfig.Feedback = feedbackConfigs;
+
+    TalonFXConfigurator armMotorConfig = armMotor.getConfigurator();
+    TalonFXConfigurator rollersMotorConfig = rollersMotor.getConfigurator();
+
+    armMotorConfig.apply(armConfig);
+    rollersMotorConfig.apply(rollersConfig);
 
     if (RobotBase.isSimulation()) {
       setupSimulation();
@@ -145,36 +160,43 @@ public class IntakeSubsystem extends SubsystemBase {
             Constants.Intake.Arm.MOTOR_ROTS_PER_ARM_ROTS,
             Constants.Intake.Arm.SIM_MOI_KG_M2,
             Constants.Intake.Arm.ARM_LENGTH_METERS,
-            Units.degreesToRadians(Constants.Intake.Arm.SIM_ARM_POS_MIN),
+            Units.degreesToRadians(0.0),
             Units.degreesToRadians(Constants.Intake.Arm.SIM_ARM_POS_MAX),
             true,
             Units.degreesToRadians(Constants.Intake.Arm.ARM_POS_RETRACTED));
   }
 
-  public void run(double speedRollersRotationsPerSecond) {
+  public void runRollers(double speedRollersRotationsPerSecond) {
+    targetRollersRPS = speedRollersRotationsPerSecond;
     rollersMotor.setControl(
-        new VelocityVoltage(
-            speedRollersRotationsPerSecond * Constants.Intake.Rollers.MOTOR_ROTS_PER_ROLLERS_ROTS));
+        m_velocityRequest.withVelocity(
+            targetRollersRPS * Constants.Intake.Rollers.MOTOR_ROTS_PER_ROLLERS_ROTS));
   }
 
-  public void stop() {
-    rollersMotor.setControl(new VelocityVoltage(0));
+  public void stopRollers() {
+    targetRollersRPS = 0;
+    rollersMotor.setControl(
+        m_velocityRequest.withVelocity(
+            targetRollersRPS * Constants.Intake.Rollers.MOTOR_ROTS_PER_ROLLERS_ROTS));
   }
 
   public void setArmDegrees(double angleDeg) {
     targetAngleDeg =
         MathUtil.clamp(
             angleDeg, Constants.Intake.Arm.ARM_POS_MIN, Constants.Intake.Arm.ARM_POS_MAX);
+    double targetArmRotations = targetAngleDeg / 360.0;
+    armMotor.setControl(m_positionRequest.withPosition(targetArmRotations));
 
-    double targetMotorRotations = targetAngleDeg * Constants.Intake.Arm.ARM_DEGREES_PER_MOTOR_ROTS;
+    // double targetMotorRotations = targetAngleDeg /
+    // Constants.Intake.Arm.ARM_DEGREES_PER_MOTOR_ROTS;
 
-    armMotor.setControl(new PositionTorqueCurrentFOC(targetMotorRotations));
+    // armMotor.setControl(m_positionRequest.withPosition(targetMotorRotations));
   }
 
   public Rotation2d getArmAbsolutePosition() {
     return new Rotation2d(
         (Units.rotationsToRadians(
-            getCancoderPositionRaw() * Constants.Intake.Arm.CANCODER_ROTS_PER_ARM_ROTS)));
+            getCancoderPositionRaw() * Constants.Intake.Arm.ARM_ROTS_PER_CANCODER_ROTS)));
   }
 
   public double getCancoderPositionRaw() {
@@ -184,35 +206,73 @@ public class IntakeSubsystem extends SubsystemBase {
   public boolean atTargetSpeed() {
     return Math.abs(
             rollersMotor.getVelocity().getValueAsDouble()
-                - Constants.Intake.Rollers.TARGET_MOTOR_RPS)
+                - targetRollersRPS * Constants.Intake.Rollers.MOTOR_ROTS_PER_ROLLERS_ROTS)
         <= Constants.Intake.Rollers.TOLERANCE_MOTOR_ROTS_PER_SEC;
   }
 
-  // Commands
-  public Command runIntake() {
-    return Commands.runEnd(
-        () -> this.run(Constants.Intake.Rollers.TARGET_MOTOR_RPS), this::stop, this);
+  public Command runRollersCommand() {
+    return Commands.startEnd(
+        () -> {
+          this.runRollers(Constants.Intake.Rollers.TARGET_ROLLER_RPS);
+        },
+        this::stopRollers,
+        this);
+  }
+
+  public Command runRollersCommand(double targetRollers_RPS) {
+    return Commands.startEnd(
+        () -> {
+          this.runRollers(targetRollers_RPS);
+        },
+        this::stopRollers,
+        this);
   }
 
   public Command armToDegrees(double degrees) {
-    return Commands.runOnce(() -> this.setArmDegrees(degrees), this);
+    return Commands.runOnce(
+        () -> {
+          targetAngleDeg = degrees;
+          this.setArmDegrees(degrees);
+        },
+        this);
   }
 
   @Override
   public void periodic() {
+    // keep arm at current pos
+    setArmDegrees(targetAngleDeg);
+    DogLog.log(
+        "Subsystems/Intake/Rollers/currentMotorRPS", rollersMotor.getVelocity().getValueAsDouble());
+    DogLog.log(
+        "Subsystems/Intake/Rollers/motorVolts", rollersMotor.getMotorVoltage().getValueAsDouble());
+    DogLog.log(
+        "Subsystems/Intake/Rollers/setpoint",
+        rollersMotor.getClosedLoopReference().getValueAsDouble());
+
+    DogLog.log(
+        "Subsystems/Intake/Arm/absoluteEncoderDegrees", getArmAbsolutePosition().getDegrees());
+    DogLog.log("Subsystems/Intake/Arm/absoluteEncoderRaw", getCancoderPositionRaw());
+
+    DogLog.log("Subsystems/Intake/Arm/currentMotorPos", armMotor.getPosition().getValueAsDouble());
+    DogLog.log("Subsystems/Intake/Arm/motorVolts", armMotor.getMotorVoltage().getValueAsDouble());
+    DogLog.log(
+        "Subsystems/Intake/Arm/setpoint", armMotor.getClosedLoopReference().getValueAsDouble());
     // rollers
-    DogLog.log("Subsystems/Intake/Rollers/At target speed", atTargetSpeed());
-    DogLog.log(
-        "Subsystems/Intake/Rollers/Motor Velocity (rots/s)",
-        rollersMotor.getVelocity().getValueAsDouble());
-    DogLog.log(
-        "Subsystems/Intake/Rollers/Motor Position (rots)",
-        rollersMotor.getPosition().getValueAsDouble());
-    // arm
-    DogLog.log("Subsystems/Intake/Arm/CANcoder Position (raw)", getCancoderPositionRaw());
-    DogLog.log(
-        "Subsystems/Intake/Arm/AbsolutePosition (degrees)", getArmAbsolutePosition().getDegrees());
-    DogLog.log("Subsystems/Intake/Arm/TargetAngleDeg", targetAngleDeg);
+    // DogLog.log("Subsystems/Intake/Rollers/At target speed", atTargetSpeed());
+    // DogLog.log("Subsystems/Intake/Rollers/Target Speed (rps)",
+    // Constants.Intake.Rollers.TARGET_MOTOR_RPS);
+    // DogLog.log(
+    //     "Subsystems/Intake/Rollers/Motor Velocity (rots/s)",
+    //     rollersMotor.getVelocity().getValueAsDouble());
+    // DogLog.log(
+    //     "Subsystems/Intake/Rollers/Motor Position (rots)",
+    //     rollersMotor.getPosition().getValueAsDouble());
+    // // arm
+    // DogLog.log("Subsystems/Intake/Arm/CANcoder Position (raw)", getCancoderPositionRaw());
+    // DogLog.log(
+    //     "Subsystems/Intake/Arm/AbsolutePosition (degrees)",
+    // getArmAbsolutePosition().getDegrees());
+    // DogLog.log("Subsystems/Intake/Arm/TargetAngleDeg", targetAngleDeg);
   }
 
   @Override
@@ -265,23 +325,24 @@ public class IntakeSubsystem extends SubsystemBase {
     armMotorSimState.setRotorVelocity(armRotorVelRps);
 
     // 4) Keep CANcoder sim in sync with arm mechanism position/velocity
-    armCancoderSimState.setRawPosition(armMechPosRot);
-    armCancoderSimState.setVelocity(armMechVelRps);
+    armCancoderSimState.setRawPosition(
+        armMechPosRot * Constants.Intake.Arm.CANCODER_ROTS_PER_ARM_ROTS);
+    armCancoderSimState.setVelocity(
+        armMechVelRps * Constants.Intake.Arm.CANCODER_ROTS_PER_ARM_ROTS);
 
     // 5) Battery sag from total simulated current draw
-    double totalCurrentAmps =
-        rollersMechanismSim.getCurrentDrawAmps() + armMechanismSim.getCurrentDrawAmps();
-    double loadedBatteryV = BatterySim.calculateDefaultBatteryLoadedVoltage(totalCurrentAmps);
-    RoboRioSim.setVInVoltage(loadedBatteryV);
+    // double totalCurrentAmps = rollersMechanismSim.getCurrentDrawAmps() +
+    // armMechanismSim.getCurrentDrawAmps();
+    // double loadedBatteryV = BatterySim.calculateDefaultBatteryLoadedVoltage(totalCurrentAmps);
+    // RoboRioSim.setVInVoltage(loadedBatteryV);
 
-    DogLog.log("Subsystems/Intake/Sim/IntakeAppliedVolts", rollersAppliedVolts);
-    DogLog.log("Subsystems/Intake/Sim/ArmAppliedVolts", armAppliedVolts);
-    DogLog.log("Subsystems/Intake/Sim/IntakeMechVelRps", rollersMechVelRps);
-    DogLog.log("Subsystems/Intake/Sim/ArmMechVelRps", armMechVelRps);
-    DogLog.log("Subsystems/Intake/Sim/IntakeRotorVelRps", rollersRotorVelRps);
-    DogLog.log("Subsystems/Intake/Sim/ArmRotorVelRps", armRotorVelRps);
-    DogLog.log("Subsystems/Intake/Sim/TotalCurrentAmps", totalCurrentAmps);
-    DogLog.log("Subsystems/Intake/Sim/LoadedBatteryVolts", loadedBatteryV);
-    DogLog.log("Subsystems/Intake/Sim/ArmMechAngleDeg", Math.toDegrees(armMechAngleRad));
+    double rollersSupplyCurrentAmps = rollersMotorSimState.getSupplyCurrent();
+    double armSupplyCurrentAmps = armMotorSimState.getSupplyCurrent();
+    double totalSupplyCurrentAmps = rollersSupplyCurrentAmps + armSupplyCurrentAmps;
+
+    // Calculate what the battery voltage should be with this load
+    double targetBatteryV = BatterySim.calculateDefaultBatteryLoadedVoltage(totalSupplyCurrentAmps);
+
+    RoboRioSim.setVInVoltage(targetBatteryV);
   }
 }
