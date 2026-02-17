@@ -12,12 +12,12 @@ import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.MotorAlignmentValue;
+import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.sim.ChassisReference;
 import com.ctre.phoenix6.sim.TalonFXSimState;
 import dev.doglog.DogLog;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.simulation.BatterySim;
@@ -59,7 +59,9 @@ public class ShooterSubsystem extends SubsystemBase {
             .withSupplyCurrentLimit(Constants.Shooter.SUPPLY_CURRENT_LIMIT);
 
     MotorOutputConfigs motorOutputConfigs =
-        new MotorOutputConfigs().withInverted(InvertedValue.CounterClockwise_Positive);
+        new MotorOutputConfigs()
+            .withInverted(InvertedValue.CounterClockwise_Positive)
+            .withNeutralMode(NeutralModeValue.Coast); 
 
     // Apply full TalonFXConfiguration to ensure factory defaults
     TalonFXConfiguration config = new TalonFXConfiguration();
