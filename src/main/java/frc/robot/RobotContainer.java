@@ -13,7 +13,6 @@ import choreo.auto.AutoTrajectory;
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -39,8 +38,6 @@ import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
-
-import javax.management.timer.Timer;
 
 public class RobotContainer {
 
@@ -108,7 +105,7 @@ public class RobotContainer {
         autoFactory
             .resetOdometry("Drake1.traj")
             .andThen(autoFactory.trajectoryCmd("Drake1.traj"))
-            .andThen(new WaitCommand(5)) //how long should you wait to intake at outpost?
+            .andThen(new WaitCommand(5)) // how long should you wait to intake at outpost?
             .andThen(
                 autoFactory
                     .resetOdometry("Drake2.traj")
