@@ -13,21 +13,15 @@ import choreo.auto.AutoTrajectory;
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import dev.doglog.DogLog;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.robot.commandGroups.ClimbCommands.L1Climb;
-import frc.robot.commandGroups.ClimbCommands.L2Climb;
 import frc.robot.commandGroups.ClimbCommands.L3Climb;
-import frc.robot.commandGroups.WarmUpAndShoot;
-import frc.robot.commands.Shoot;
 import frc.robot.commands.SwerveCommands.SwerveJoystickCommand;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.ClimberSubsystem;
@@ -149,6 +143,7 @@ public class RobotContainer {
   }
 
   private void configureBindings() {
+    // Swerve bindings - left joystick for translation, right joystick for rotation
     Trigger leftTrigger = joystick.leftTrigger();
     DoubleSupplier frontBackFunction = () -> -joystick.getLeftY(),
         leftRightFunction = () -> -joystick.getLeftX(),
@@ -164,85 +159,54 @@ public class RobotContainer {
             frontBackFunction,
             leftRightFunction,
             rotationFunction,
-            speedFunction, // slowmode when left shoulder is pressed, otherwise fast
-            (BooleanSupplier) (() -> joystick.leftTrigger().getAsBoolean()),
+            speedFunction,
+            joystick.leftTrigger()::getAsBoolean,
             redside,
-            (BooleanSupplier)
-                (() -> joystick.rightTrigger().getAsBoolean()), // must be same as shoot cmd binding
+            joystick.rightTrigger()::getAsBoolean, // must be same as shoot cmd binding
             drivetrain);
 
     drivetrain.setDefaultCommand(swerveJoystickCommand);
 
-    if (Constants.shooterOnRobot && Constants.hopperOnRobot) {
-      joystick.rightBumper().onTrue(new WarmUpAndShoot(lebron, hopperSubsystem));
-    }
+    // x -> zero swerve
+    joystick.x().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
 
-    if (Constants.climberOnRobot) {
-      joystick.povUp().onTrue(new L3Climb(climberSubsystem, drivetrain));
-      joystick.povRight().onTrue(new L2Climb(climberSubsystem, drivetrain));
-      joystick.povDown().onTrue(new L1Climb(climberSubsystem, drivetrain));
+    if (Constants.intakeOnRobot) {
+      // left bumper -> run intake
+      joystick.leftBumper().whileTrue(intakeSubsystem.extendArmAndRunRollers());
+
+      // intake default command - retract arm if hopper is empty, idle if not
+      if (Constants.hopperOnRobot && Constants.visionOnRobot) {
+        intakeSubsystem.setDefaultCommand(
+            new ConditionalCommand(
+                intakeSubsystem.armToDegrees(Constants.Intake.Arm.ARM_POS_RETRACTED),
+                intakeSubsystem.armToDegrees(Constants.Intake.Arm.ARM_POS_IDLE),
+                () -> hopperSubsystem.isHopperSufficientlyEmpty(visionFuelGauge)));
+      }
     }
 
     if (Constants.shooterOnRobot) {
-      lebron.setDefaultCommand(Commands.run(lebron::stopShooter, lebron));
-      joystick.rightTrigger().whileTrue(new Shoot(drivetrain, lebron, hopperSubsystem, redside));
-      joystick.x().whileTrue(lebron.shootAtSpeedCommand());
+      // shooter default command - stop shooter
+      lebron.setDefaultCommand(lebron.run(lebron::stopShooter));
     }
 
-    joystick.a().whileTrue(drivetrain.applyRequest(() -> brake));
-    joystick
-        .b()
-        .whileTrue(
-            drivetrain.applyRequest(
-                () ->
-                    point.withModuleDirection(
-                        new Rotation2d(-joystick.getLeftY(), -joystick.getLeftX()))));
+    if (Constants.climberOnRobot) {
+      // y -> initiate climb
+      // TODO: verify that command is correct
+      joystick.y().whileTrue(new L3Climb(climberSubsystem, drivetrain));
 
-    // Run SysId routines when holding back/start and X/Y.
-    // Note that each routine should be run exactly once in a single log.
-    // joystick.back().and(joystick.y()).whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
-    // joystick.back().and(joystick.x()).whileTrue(drivetrain.sysIdDynamic(Direction.kReverse));
-    // joystick.start().and(joystick.y()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
-    // joystick.start().and(joystick.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
-
-    // reset the field-centric heading on left bumper press
-    joystick.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
-
-    // INTAKE COMMANDS
-    // right bumper -> run intake
-    if (Constants.intakeOnRobot) {
-      joystick.x().whileTrue(intakeSubsystem.armToDegrees(35.0));
-      joystick.y().whileTrue(intakeSubsystem.armToDegrees(0.0));
-      intakeSubsystem.setDefaultCommand(
-          new ConditionalCommand(
-              intakeSubsystem.armToDegrees(Constants.Intake.Arm.ARM_POS_RETRACTED),
-              intakeSubsystem.armToDegrees(Constants.Intake.Arm.ARM_POS_IDLE),
-              () -> hopperSubsystem.isHopperSufficientlyEmpty(visionFuelGauge)));
-
-      // left trigger + x -> arm to initial pos (0)
-      //   joystick
-      //       .leftTrigger()
-      //       .and(joystick.x())
-      //       .onTrue(intakeSubsystem.armToDegrees(Constants.Intake.Arm.ARM_POS_RETRACTED));
-
-      // left trigger + a -> arm to extended pos (15)
-      //   joystick
-      //       .leftTrigger()
-      //       .and(joystick.a())
-      //       .onTrue(intakeSubsystem.armToDegrees(Constants.Intake.Arm.ARM_POS_EXTENDED));
-
-      //   // left trigger + b -> arm to idle pos (45)
-      //   joystick
-      //       .leftTrigger()
-      //       .and(joystick.b())
-      //       .onTrue(intakeSubsystem.armToDegrees(Constants.Intake.Arm.ARM_POS_IDLE));
-
-      //   // left trigger + y -> arm to retracted pos (90)
-      //   joystick
-      //       .leftTrigger()
-      //       .and(joystick.y())
-      //       .onTrue(intakeSubsystem.armToDegrees(Constants.Intake.Arm.ARM_POS_RETRACTED));
+      // a -> zero climber
+      joystick.a().onTrue(climberSubsystem.runOnce(climberSubsystem::resetPullUpPositionToZero));
     }
+
+    // TODO: left trigger -> run LockOnCommand (not yet defined)
+    // joystick.leftTrigger().whileTrue(new LockOnCommand(....));
+
+    // TODO: right trigger -> shoot + arc lock (arc lock not yet defined)
+    // verify command is correct and that sequential is correct type of commandgroup
+    // joystick.rightTrigger().whileTrue(new SequentialCommandGroup(
+    //    new Shoot(drivetrain, lebron, hopperSubsystem, redside),
+    //    new ArcLock(.....)
+    // ));
 
     // Auto sequence: choreo forward
     Command trajCommand =
@@ -251,10 +215,6 @@ public class RobotContainer {
             .andThen(autoFactory.trajectoryCmd("MoveForward.traj"));
 
     // joystick.x().whileTrue(trajCommand);
-
-    if (Constants.hopperOnRobot) {
-      //   joystick.x().whileTrue(hopperSubsystem.runHopperCommand(4.0));
-    }
 
     drivetrain.registerTelemetry(logger::telemeterize);
   }
