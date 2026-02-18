@@ -204,11 +204,11 @@ public class AutoRoutines {
       case "RedRightClimb":
         traj = routine.trajectory("RedRightClimb.traj");
         break;
-      
+
       case "BlueLeftClimb":
         traj = routine.trajectory("BlueLeftClimb.traj");
         break;
-      
+
       case "BlueRightClimb":
         traj = routine.trajectory("BlueRightClimb.traj");
         break;
