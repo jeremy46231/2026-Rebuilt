@@ -95,7 +95,7 @@ public class RobotContainer {
   // Constants.visionOnRobot ? new VisionSubsystem(Constants.Vision.Cameras.REAR_LEFT_CAM) : null;
   public final FuelGaugeDetection visionFuelGauge =
       Constants.visionOnRobot
-          ? new FuelGaugeDetection(Constants.Vision.VisionCamera.COLOR_CAM)
+          ? new FuelGaugeDetection(Constants.FuelGaugeDetection.FuelGaugeCamera.FUEL_GAUGE_CAM)
           : null;
 
   public RobotContainer() {

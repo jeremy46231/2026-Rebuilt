@@ -515,9 +515,8 @@ public final class Constants {
       FRONT_RIGHT_CAM("frontRightCam"),
       FRONT_LEFT_CAM("frontLeftCam"),
       REAR_RIGHT_CAM("rearRightCam"),
-      REAR_LEFT_CAM("rearLeftCam"),
-      COLOR_CAM("colorCam");
-
+      REAR_LEFT_CAM("rearLeftCam");
+      
       private String loggingName;
 
       VisionCamera(String name) {
@@ -575,13 +574,6 @@ public final class Constants {
     public static final double REAR_LEFT_PITCH = Units.degreesToRadians(171.5);
     public static final double REAR_LEFT_YAW = Units.degreesToRadians(180.0);
 
-    public static final double COLOR_X = Units.inchesToMeters(8.867);
-    public static final double COLOR_Y = Units.inchesToMeters(12.478);
-    public static final double COLOR_Z = Units.inchesToMeters(6.158);
-    public static final double COLOR_ROLL = Units.degreesToRadians(0.0);
-    public static final double COLOR_PITCH = Units.degreesToRadians(8.7);
-    public static final double COLOR_YAW = Units.degreesToRadians(0.0);
-
     // initializing Transform3d for use in future field visualization
     public static Transform3d getCameraTransform(VisionCamera camera) {
       switch (camera) {
@@ -604,11 +596,6 @@ public final class Constants {
           return new Transform3d(
               new Translation3d(REAR_LEFT_X, REAR_LEFT_Y, REAR_LEFT_Z),
               new Rotation3d(REAR_LEFT_ROLL, REAR_LEFT_PITCH, REAR_LEFT_YAW));
-
-        case COLOR_CAM:
-          return new Transform3d(
-              new Translation3d(COLOR_X, COLOR_Y, COLOR_Z),
-              new Rotation3d(COLOR_ROLL, COLOR_PITCH, COLOR_YAW));
         default:
           throw new IllegalArgumentException("Unknown camera ID: " + camera);
       }
