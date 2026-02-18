@@ -62,7 +62,7 @@ public class VisionSubsystem extends SubsystemBase {
 
     this.cameraID = cameraID;
     photonCamera = new PhotonCamera(cameraID.toString());
-    Transform3d robotToCamera = Constants.Vision.getCameraTransform(cameraID);
+    Transform3d robotToCamera = cameraID.getCameraTransform();
 
     // load field layout
     this.fieldLayout = AprilTagFieldLayout.loadField(AprilTagFields.k2026RebuiltWelded);

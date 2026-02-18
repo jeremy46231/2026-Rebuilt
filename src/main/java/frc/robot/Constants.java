@@ -510,24 +510,6 @@ public final class Constants {
 
   public static class Vision {
 
-    // initializes cameras for use in VisionSubsystem
-    public static enum VisionCamera {
-      FRONT_RIGHT_CAM("frontRightCam"),
-      FRONT_LEFT_CAM("frontLeftCam"),
-      REAR_RIGHT_CAM("rearRightCam"),
-      REAR_LEFT_CAM("rearLeftCam");
-      
-      private String loggingName;
-
-      VisionCamera(String name) {
-        loggingName = name;
-      }
-
-      public String getLoggingName() {
-        return loggingName;
-      }
-    }
-
     // Constants for noise calculation
     public static final double DISTANCE_EXPONENTIAL_COEFFICIENT_X = 0.00046074;
     public static final double DISTANCE_EXPONENTIAL_BASE_X = 2.97294;
@@ -574,30 +556,47 @@ public final class Constants {
     public static final double REAR_LEFT_PITCH = Units.degreesToRadians(171.5);
     public static final double REAR_LEFT_YAW = Units.degreesToRadians(180.0);
 
-    // initializing Transform3d for use in future field visualization
-    public static Transform3d getCameraTransform(VisionCamera camera) {
-      switch (camera) {
-        case FRONT_RIGHT_CAM:
-          return new Transform3d(
+    // initializes cameras for use in VisionSubsystem
+    public static enum VisionCamera {
+      
+      FRONT_RIGHT_CAM(
+          "frontRightCam",
+          new Transform3d(
               new Translation3d(FRONT_RIGHT_X, FRONT_RIGHT_Y, FRONT_RIGHT_Z),
-              new Rotation3d(FRONT_RIGHT_ROLL, FRONT_RIGHT_PITCH, FRONT_RIGHT_YAW));
+              new Rotation3d(FRONT_RIGHT_ROLL, FRONT_RIGHT_PITCH, FRONT_RIGHT_YAW))),
 
-        case FRONT_LEFT_CAM:
-          return new Transform3d(
+      FRONT_LEFT_CAM(
+          "frontLeftCam",
+          new Transform3d(
               new Translation3d(FRONT_LEFT_X, FRONT_LEFT_Y, FRONT_LEFT_Z),
-              new Rotation3d(FRONT_LEFT_ROLL, FRONT_LEFT_PITCH, FRONT_LEFT_YAW));
+              new Rotation3d(FRONT_LEFT_ROLL, FRONT_LEFT_PITCH, FRONT_LEFT_YAW))),
 
-        case REAR_RIGHT_CAM:
-          return new Transform3d(
+      REAR_RIGHT_CAM(
+          "rearRightCam",
+          new Transform3d(
               new Translation3d(REAR_RIGHT_X, REAR_RIGHT_Y, REAR_RIGHT_Z),
-              new Rotation3d(REAR_RIGHT_ROLL, REAR_RIGHT_PITCH, REAR_RIGHT_YAW));
+              new Rotation3d(REAR_RIGHT_ROLL, REAR_RIGHT_PITCH, REAR_RIGHT_YAW))),
 
-        case REAR_LEFT_CAM:
-          return new Transform3d(
+      REAR_LEFT_CAM(
+          "rearLeftCam",
+          new Transform3d(
               new Translation3d(REAR_LEFT_X, REAR_LEFT_Y, REAR_LEFT_Z),
-              new Rotation3d(REAR_LEFT_ROLL, REAR_LEFT_PITCH, REAR_LEFT_YAW));
-        default:
-          throw new IllegalArgumentException("Unknown camera ID: " + camera);
+              new Rotation3d(REAR_LEFT_ROLL, REAR_LEFT_PITCH, REAR_LEFT_YAW)));
+
+      private String loggingName;
+      private Transform3d cameraTransform;
+
+      VisionCamera(String name, Transform3d transform) {
+        loggingName = name;
+        cameraTransform = transform;
+      }
+
+      public String getLoggingName() {
+        return loggingName;
+      }
+
+      public Transform3d getCameraTransform() {
+        return cameraTransform;
       }
     }
   }
@@ -608,20 +607,6 @@ public final class Constants {
     public static final double MAX_DETECTABLE_FUEL_AREA_PERCENTAGE = 60.00;
     public static final double REALISTIC_MAX_DETECTABLE_AREA_PERCENTAGE = 15.00;
 
-    public static enum FuelGaugeCamera {
-      FUEL_GAUGE_CAM("fuelGaugeCam");
-
-      private String loggingName;
-
-      FuelGaugeCamera(String name) {
-        loggingName = name;
-      }
-
-      public String getLoggingName() {
-        return loggingName;
-      }
-    }
-
     public static final double FUEL_GAUGE_X = Units.inchesToMeters(8.867);
     public static final double FUEL_GAUGE_Y = Units.inchesToMeters(12.478);
     public static final double FUEL_GAUGE_Z = Units.inchesToMeters(6.158);
@@ -629,14 +614,27 @@ public final class Constants {
     public static final double FUEL_GAUGE_PITCH = Units.degreesToRadians(8.7);
     public static final double FUEL_GAUGE_YAW = Units.degreesToRadians(0.0);
 
-    public static Transform3d getCameraTransform(FuelGaugeCamera camera) {
-      switch (camera) {
-        case FUEL_GAUGE_CAM:
-          return new Transform3d(
+    public static enum FuelGaugeCamera {
+      FUEL_GAUGE_CAM(
+          "fuelGaugeCam",
+          new Transform3d(
               new Translation3d(FUEL_GAUGE_X, FUEL_GAUGE_Y, FUEL_GAUGE_Z),
-              new Rotation3d(FUEL_GAUGE_ROLL, FUEL_GAUGE_PITCH, FUEL_GAUGE_YAW));
-        default:
-          throw new IllegalArgumentException("Unknown FuelGaugeCamera id: " + camera);
+              new Rotation3d(FUEL_GAUGE_ROLL, FUEL_GAUGE_PITCH, FUEL_GAUGE_YAW)));
+
+      private String loggingName;
+      private Transform3d cameraTransform;
+
+      FuelGaugeCamera(String name, Transform3d transform) {
+        loggingName = name;
+        cameraTransform = transform;
+      }
+
+      public String getLoggingName() {
+        return loggingName;
+      }
+
+      public Transform3d getCameraTransform() {
+        return cameraTransform;
       }
     }
 
