@@ -207,6 +207,6 @@
   "splits":[0]
  },
  "events":[
-   {"name":"Marker", "from":{"target":0, "targetTimestamp":0.0, "offset":{"exp":"0 s", "val":0.0}}, "event":null},
-   {"name":"Marker", "from":{"target":6, "targetTimestamp":2.75359, "offset":{"exp":"0 s", "val":0.0}}, "event":null}]
+   {"name":"IntakeDown", "from":{"target":0, "targetTimestamp":0.0, "offset":{"exp":"0 s", "val":0.0}}, "event":{"type":"named", "data":{"name":"IntakeDown"}}},
+   {"name":"IntakeUp", "from":{"target":6, "targetTimestamp":2.75359, "offset":{"exp":"0 s", "val":0.0}}, "event":{"type":"named", "data":{"name":"IntakeUp"}}}]
 }
