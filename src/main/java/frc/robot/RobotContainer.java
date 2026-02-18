@@ -23,7 +23,6 @@ import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.commandGroups.ClimbCommands.L1Climb;
 import frc.robot.commandGroups.ClimbCommands.L2Climb;
 import frc.robot.commandGroups.ClimbCommands.L3Climb;
@@ -133,6 +132,10 @@ public class RobotContainer {
     configureBindings();
   }
 
+  public CommandSwerveDrivetrain getDrivetrain() {
+    return drivetrain;
+  }
+
   private void configureBindings() {
     Trigger leftTrigger = joystick.leftTrigger();
     DoubleSupplier frontBackFunction = () -> -joystick.getLeftY(),
@@ -169,8 +172,9 @@ public class RobotContainer {
     }
 
     if (Constants.shooterOnRobot) {
-      lebron.setDefaultCommand(Commands.run(lebron::stop, lebron));
+      lebron.setDefaultCommand(Commands.run(lebron::stopShooter, lebron));
       joystick.rightTrigger().whileTrue(new Shoot(drivetrain, lebron, hopperSubsystem, redside));
+      joystick.x().whileTrue(lebron.shootAtSpeedCommand());
     }
 
     joystick.a().whileTrue(drivetrain.applyRequest(() -> brake));
