@@ -32,9 +32,11 @@ import frc.robot.commands.SwerveCommands.SwerveJoystickCommand;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.ClimberSubsystem;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
+import frc.robot.subsystems.FuelGaugeDetection;
 import frc.robot.subsystems.HopperSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
+import frc.robot.subsystems.VisionSubsystem;
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
@@ -78,6 +80,17 @@ public class RobotContainer {
   public final AutoRoutine autoRoutine; // with markers
 
   private final AutoChooser autoChooser = new AutoChooser();
+
+  public final VisionSubsystem visionRight =
+      Constants.visionOnRobot ? new VisionSubsystem(Constants.Vision.Cameras.RIGHT_CAM) : null;
+  public final VisionSubsystem visionLeft =
+      Constants.visionOnRobot ? new VisionSubsystem(Constants.Vision.Cameras.LEFT_CAM) : null;
+  // public final VisionSubsystem visionRearRight =
+  // Constants.visionOnRobot ? new VisionSubsystem(Constants.Vision.Cameras.REAR_RIGHT_CAM) : null;
+  // public final VisionSubsystem visionRearLeft =
+  // Constants.visionOnRobot ? new VisionSubsystem(Constants.Vision.Cameras.REAR_LEFT_CAM) : null;
+  public final FuelGaugeDetection visionFuelGauge =
+      Constants.visionOnRobot ? new FuelGaugeDetection(Constants.Vision.Cameras.COLOR_CAM) : null;
 
   public RobotContainer() {
 
@@ -204,7 +217,7 @@ public class RobotContainer {
           new ConditionalCommand(
               intakeSubsystem.armToDegrees(Constants.Intake.Arm.ARM_POS_RETRACTED),
               intakeSubsystem.armToDegrees(Constants.Intake.Arm.ARM_POS_IDLE),
-              hopperSubsystem::isHopperSufficientlyEmpty));
+              () -> hopperSubsystem.isHopperSufficientlyEmpty(visionFuelGauge)));
 
       // left trigger + x -> arm to initial pos (0)
       //   joystick
@@ -244,6 +257,16 @@ public class RobotContainer {
     }
 
     drivetrain.registerTelemetry(logger::telemeterize);
+  }
+
+  public void visionPeriodic() {
+    if (!Constants.visionOnRobot || visionRight == null || visionLeft == null
+    /*|| visionRearRight == null
+    || visionRearLeft == null */ ) return;
+    visionRight.addFilteredPose(drivetrain);
+    visionLeft.addFilteredPose(drivetrain);
+    // visionRearRight.addFilteredPose(drivetrain);
+    // visionRearLeft.addFilteredPose(drivetrain);
   }
 
   public static void setAlliance() {
