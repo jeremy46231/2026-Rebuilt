@@ -105,8 +105,10 @@ public class AutoRoutines {
         break;
     }
 
-    traj.atTime("IntakeDown").onTrue(new ExtendIntake(intakeSubsystem));
-    traj.atTime("IntakeUp").onTrue(new RetractIntake(intakeSubsystem));
+    if (traj != null) {
+      traj.atTime("IntakeDown").onTrue(new ExtendIntake(intakeSubsystem));
+      traj.atTime("IntakeUp").onTrue(new RetractIntake(intakeSubsystem));
+    }
 
     return traj;
   }
@@ -150,14 +152,14 @@ public class AutoRoutines {
   }
 
   public Command Pedri(String maneuverType, String intakeType, String shootType, String climbType) {
-    AutoRoutine routine = factory.newRoutine("DrakeFlexible");
+    AutoRoutine routine = factory.newRoutine("CristianoRonaldo.chor");
 
     AutoTrajectory maneuver = maneuver(routine, maneuverType);
     AutoTrajectory intake = intake(routine, intakeType);
     AutoTrajectory shootPositioning = shootPositioning(routine, shootType);
     AutoTrajectory climbPositioning = climbPositioning(routine, climbType);
 
-    // add dtp length
+    // add proper dtp
     routine
         .active()
         .onTrue(

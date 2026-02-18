@@ -73,58 +73,21 @@ public class RobotContainer {
       Constants.intakeOnRobot ? new IntakeSubsystem() : null;
   public final ShooterSubsystem lebron = Constants.shooterOnRobot ? new ShooterSubsystem() : null;
 
-  private final AutoFactory autoFactory; // no marker
+//   private final AutoFactory autoFactory; // no marker
 
-  public final AutoRoutine autoRoutine; // with markers
+//   public final AutoRoutine autoRoutine; // with markers
+
+  private final AutoFactory autoFactory;
+  private final AutoRoutines autoRoutines;
 
   private final AutoChooser autoChooser = new AutoChooser();
 
   public RobotContainer() {
-
-    // paths without marker
     autoFactory = drivetrain.createAutoFactory();
+    autoRoutines = new AutoRoutines(autoFactory, intakeSubsystem, lebron, hopperSubsystem, drivetrain, climberSubsystem);
 
-    Command redClimb =
-        autoFactory
-            .resetOdometry("RedClimb.traj")
-            .andThen(autoFactory.trajectoryCmd("RedClimb.traj"));
-    Command redDepot =
-        autoFactory
-            .resetOdometry("RedDepot.traj")
-            .andThen(autoFactory.trajectoryCmd("RedDepot.traj"));
-    Command redOutpost =
-        autoFactory
-            .resetOdometry("RedOutpost.traj")
-            .andThen(autoFactory.trajectoryCmd("RedOutpost.traj"));
-    Command moveForward =
-        autoFactory
-            .resetOdometry("MoveForward.traj")
-            .andThen(autoFactory.trajectoryCmd("MoveForward.traj"));
-    Command niceAndLongPath =
-        autoFactory
-            .resetOdometry("NiceAndLongPath.traj")
-            .andThen(autoFactory.trajectoryCmd("NiceAndLongPath.traj"));
-
-    // paths with marker
-    autoRoutine = autoFactory.newRoutine("MoveForwardStop.traj");
-    AutoTrajectory moveForwardStopTraj = autoRoutine.trajectory("MoveForwardStop.traj");
-
-    autoRoutine
-        .active()
-        .onTrue(moveForwardStopTraj.resetOdometry().andThen(moveForwardStopTraj.cmd()));
-    moveForwardStopTraj
-        .atTime("waitPlease")
-        .onTrue(new InstantCommand(() -> DogLog.log("reached marker", true)));
-
-    Command moveForwardStop = autoRoutine.cmd();
-
-    autoChooser.addCmd("redClimb", () -> redClimb);
-    autoChooser.addCmd("redDepot", () -> redDepot);
-    autoChooser.addCmd("redOutpost", () -> redOutpost);
-    autoChooser.addCmd("moveForward", () -> moveForward);
-    autoChooser.addCmd("niceLongPath", () -> niceAndLongPath);
-
-    autoChooser.addCmd("moveForwardStop", () -> moveForwardStop);
+    // Add all autos here
+    autoChooser.addCmd("Pedri - Left Side", () -> autoRoutines.Pedri(null, "LeftIntakeL", "LeftShootPositioning", "LeftClimbPositioning"));
 
     SmartDashboard.putData("Auto Chooser", autoChooser);
 
