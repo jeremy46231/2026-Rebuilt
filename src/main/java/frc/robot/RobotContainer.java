@@ -173,7 +173,7 @@ public class RobotContainer {
         new ConditionalCommand(
             intakeSubsystem.armToDegrees(Constants.Intake.Arm.ARM_POS_RETRACTED),
             intakeSubsystem.armToDegrees(Constants.Intake.Arm.ARM_POS_IDLE),
-            hopperSubsystem::isHopperSufficientlyEmpty));
+            () -> hopperSubsystem.isHopperSufficientlyEmpty(visionFuelGauge)));
 
     // shooter default command - stop shooter
     lebron.setDefaultCommand(lebron.run(lebron::stopShooter));
