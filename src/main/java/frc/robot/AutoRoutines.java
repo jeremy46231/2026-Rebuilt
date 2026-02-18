@@ -17,7 +17,7 @@ import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 
 public class AutoRoutines {
-  private final AutoFactory factory;
+  private final AutoFactory autoFactory;
   private final IntakeSubsystem intakeSubsystem;
   private final ShooterSubsystem lebronShooterSubsystem;
   private final HopperSubsystem hopperSubsystem;
@@ -32,14 +32,14 @@ public class AutoRoutines {
       HopperSubsystem hopper,
       CommandSwerveDrivetrain swerve,
       ClimberSubsystem climber) {
-    this.factory = factory;
+    this.autoFactory = factory;
     this.intakeSubsystem = intake;
     this.lebronShooterSubsystem = lebron;
     this.hopperSubsystem = hopper;
     this.swerveSubsystem = swerve;
     this.climberSubsystem = climber;
 
-    routine = factory.newRoutine("CristianoRonaldo.chor");
+    routine = autoFactory.newRoutine("CristianoRonaldo.chor");
   }
 
   private AutoTrajectory maneuver(String name) {
