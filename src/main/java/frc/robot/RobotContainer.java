@@ -160,10 +160,9 @@ public class RobotContainer {
             leftRightFunction,
             rotationFunction,
             speedFunction,
-            (BooleanSupplier) (() -> joystick.leftTrigger().getAsBoolean()),
+            joystick.leftTrigger()::getAsBoolean,
             redside,
-            (BooleanSupplier)
-                (() -> joystick.rightTrigger().getAsBoolean()), // must be same as shoot cmd binding
+            joystick.rightTrigger()::getAsBoolean, // must be same as shoot cmd binding
             drivetrain);
 
     drivetrain.setDefaultCommand(swerveJoystickCommand);
@@ -176,11 +175,13 @@ public class RobotContainer {
       joystick.leftBumper().whileTrue(intakeSubsystem.extendArmAndRunRollers());
 
       // intake default command - retract arm if hopper is empty, idle if not
-      intakeSubsystem.setDefaultCommand(
-          new ConditionalCommand(
-              intakeSubsystem.armToDegrees(Constants.Intake.Arm.ARM_POS_RETRACTED),
-              intakeSubsystem.armToDegrees(Constants.Intake.Arm.ARM_POS_IDLE),
-              () -> hopperSubsystem.isHopperSufficientlyEmpty(visionFuelGauge)));
+      if (Constants.intakeOnRobot && Constants.hopperOnRobot) {
+        intakeSubsystem.setDefaultCommand(
+            new ConditionalCommand(
+                intakeSubsystem.armToDegrees(Constants.Intake.Arm.ARM_POS_RETRACTED),
+                intakeSubsystem.armToDegrees(Constants.Intake.Arm.ARM_POS_IDLE),
+                () -> hopperSubsystem.isHopperSufficientlyEmpty(visionFuelGauge)));
+      }
     }
 
     if (Constants.shooterOnRobot) {
