@@ -91,6 +91,8 @@ public class RobotContainer {
             autoRoutines.Pedri(
                 null, "LeftIntakeL", "LeftShootPositioning", "LeftClimbPositioning"));
 
+    autoChooser.addCmd("Trial Path", () -> autoRoutines.trialPath());
+
     SmartDashboard.putData("Auto Chooser", autoChooser);
 
     configureBindings();
