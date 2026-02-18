@@ -34,7 +34,7 @@ public class VisionSubsystem extends SubsystemBase {
   private double maxDistance = 15.0; // meters, beyond which readings are dropped
 
   // normalization maximums
-  private double maximumRobotSpeed = 5d;
+  private double maximumRobotSpeed = Constants.Swerve.PHYSICAL_MAX_SPEED_METERS_PER_SECOND;
 
   // Noise parameters
   private double calibrationFactor = 1d; // constant multiplier to everything
@@ -124,7 +124,6 @@ public class VisionSubsystem extends SubsystemBase {
             .average()
             .orElse(Double.NaN);
     DogLog.log("Subsystems/Vision/averageTagDistance", averageDistance);
-
 
     // creates a list of all detected tags and logs for debugging
     List<PhotonTrackedTarget> tags =
@@ -253,8 +252,6 @@ public class VisionSubsystem extends SubsystemBase {
 
     swerve.addVisionMeasurement(measuredPose, finalTimestamp, noiseVector);
   }
-
-  // prev. year had isTagOnActiveSide but not relevant this year
 
   private boolean acceptableYaw(double yaw) {
     boolean yawIsAcceptable = Math.abs(yaw) < acceptableYawThreshold;
