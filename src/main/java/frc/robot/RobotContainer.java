@@ -274,43 +274,46 @@ public class RobotContainer {
 
     // debug these
     if (Constants.climberOnRobot) {
-        // L1 Commands
-        debugJoystick
-            .povDown()
-            .and(debugJoystick.a())
-            .onTrue(climberSubsystem.PullUpCommand(Constants.Climber.PullUp.L1_REACH_POS));
-        debugJoystick
-            .povDown()
-            .and(debugJoystick.b())
-            .onTrue(climberSubsystem.MuscleUpCommand(Constants.Climber.MuscleUp.L1_MUSCLE_UP_FORWARD));
-        // L2 Commands
-        debugJoystick
-            .povRight()
-            .and(debugJoystick.a())
-            .onTrue(climberSubsystem.PullUpCommand(Constants.Climber.PullUp.L2_REACH_POS));
-        debugJoystick
-            .povRight()
-            .and(debugJoystick.b())
-            .onTrue(climberSubsystem.MuscleUpCommand(Constants.Climber.MuscleUp.L2_MUSCLE_UP_FORWARD));
-        // L3 Commands
-        debugJoystick
-            .povUp()
-            .and(debugJoystick.a())
-            .onTrue(climberSubsystem.PullUpCommand(Constants.Climber.PullUp.L3_REACH_POS));
-        debugJoystick
-            .povUp()
-            .and(debugJoystick.b())
-            .onTrue(climberSubsystem.MuscleUpCommand(Constants.Climber.MuscleUp.L3_MUSCLE_UP_FORWARD));
-        debugJoystick
-            .povUp()
-            .and(debugJoystick.a().negate())
-            .and(debugJoystick.b().negate())
-            .onTrue(climberSubsystem.SitUpCommand(Constants.Climber.SitUp.SIT_UP_ANGLE));
-        debugJoystick
-            .povDown()
-            .and(debugJoystick.a().negate())
-            .and(debugJoystick.b().negate())
-            .onTrue(climberSubsystem.SitUpCommand(Constants.Climber.SitUp.SIT_BACK_ANGLE));
+      // L1 Commands
+      debugJoystick
+          .povDown()
+          .and(debugJoystick.a())
+          .onTrue(climberSubsystem.PullUpCommand(Constants.Climber.PullUp.L1_REACH_POS));
+      debugJoystick
+          .povDown()
+          .and(debugJoystick.b())
+          .onTrue(
+              climberSubsystem.MuscleUpCommand(Constants.Climber.MuscleUp.L1_MUSCLE_UP_FORWARD));
+      // L2 Commands
+      debugJoystick
+          .povRight()
+          .and(debugJoystick.a())
+          .onTrue(climberSubsystem.PullUpCommand(Constants.Climber.PullUp.L2_REACH_POS));
+      debugJoystick
+          .povRight()
+          .and(debugJoystick.b())
+          .onTrue(
+              climberSubsystem.MuscleUpCommand(Constants.Climber.MuscleUp.L2_MUSCLE_UP_FORWARD));
+      // L3 Commands
+      debugJoystick
+          .povUp()
+          .and(debugJoystick.a())
+          .onTrue(climberSubsystem.PullUpCommand(Constants.Climber.PullUp.L3_REACH_POS));
+      debugJoystick
+          .povUp()
+          .and(debugJoystick.b())
+          .onTrue(
+              climberSubsystem.MuscleUpCommand(Constants.Climber.MuscleUp.L3_MUSCLE_UP_FORWARD));
+      debugJoystick
+          .povUp()
+          .and(debugJoystick.a().negate())
+          .and(debugJoystick.b().negate())
+          .onTrue(climberSubsystem.SitUpCommand(Constants.Climber.SitUp.SIT_UP_ANGLE));
+      debugJoystick
+          .povDown()
+          .and(debugJoystick.a().negate())
+          .and(debugJoystick.b().negate())
+          .onTrue(climberSubsystem.SitUpCommand(Constants.Climber.SitUp.SIT_BACK_ANGLE));
     }
 
     drivetrain.registerTelemetry(logger::telemeterize);
