@@ -168,18 +168,34 @@ public class RobotContainer {
 
     drivetrain.setDefaultCommand(swerveJoystickCommand);
 
-    // intake default command - retract arm if hopper is empty, idle if not
-    intakeSubsystem.setDefaultCommand(
-        new ConditionalCommand(
-            intakeSubsystem.armToDegrees(Constants.Intake.Arm.ARM_POS_RETRACTED),
-            intakeSubsystem.armToDegrees(Constants.Intake.Arm.ARM_POS_IDLE),
-            () -> hopperSubsystem.isHopperSufficientlyEmpty(visionFuelGauge)));
+    // x -> zero swerve
+    joystick.x().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
 
-    // shooter default command - stop shooter
-    lebron.setDefaultCommand(lebron.run(lebron::stopShooter));
+    if (Constants.intakeOnRobot) {
+      // left bumper -> run intake
+      joystick.leftBumper().whileTrue(intakeSubsystem.extendArmAndRunRollers());
 
-    // left bumper -> run intake
-    joystick.leftBumper().whileTrue(intakeSubsystem.extendArmAndRunRollers());
+      // intake default command - retract arm if hopper is empty, idle if not
+      intakeSubsystem.setDefaultCommand(
+          new ConditionalCommand(
+              intakeSubsystem.armToDegrees(Constants.Intake.Arm.ARM_POS_RETRACTED),
+              intakeSubsystem.armToDegrees(Constants.Intake.Arm.ARM_POS_IDLE),
+              () -> hopperSubsystem.isHopperSufficientlyEmpty(visionFuelGauge)));
+    }
+
+    if (Constants.shooterOnRobot) {
+      // shooter default command - stop shooter
+      lebron.setDefaultCommand(lebron.run(lebron::stopShooter));
+    }
+
+    if (Constants.climberOnRobot) {
+      // y -> initiate climb
+      // TODO: verify that command is correct
+      joystick.y().whileTrue(new L3Climb(climberSubsystem, drivetrain));
+
+      // a -> zero climber
+      joystick.a().onTrue(climberSubsystem.runOnce(climberSubsystem::resetPullUpPositionToZero));
+    }
 
     // TODO: left trigger -> run LockOnCommand (not yet defined)
     // joystick.leftTrigger().whileTrue(new LockOnCommand(....));
@@ -190,16 +206,6 @@ public class RobotContainer {
     //    new Shoot(drivetrain, lebron, hopperSubsystem, redside),
     //    new ArcLock(.....)
     // ));
-
-    // y -> initiate climb
-    // TODO: verify that command is correct
-    joystick.y().whileTrue(new L3Climb(climberSubsystem, drivetrain));
-
-    // x -> zero swerve
-    joystick.x().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
-
-    // a -> zero climber
-    joystick.a().onTrue(climberSubsystem.runOnce(climberSubsystem::resetPullUpPositionToZero));
 
     // Auto sequence: choreo forward
     Command trajCommand =
