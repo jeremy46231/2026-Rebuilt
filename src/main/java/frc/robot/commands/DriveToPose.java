@@ -131,7 +131,7 @@ public class DriveToPose extends Command {
     pathState = path.calculate(currTime, pathState, targetPose);
 
     // Generate the next speeds for the robot
-      // Generate the next speeds for the robot
+    // Generate the next speeds for the robot
     ChassisSpeeds speeds =
         new ChassisSpeeds(
             pathState.speeds.vxMetersPerSecond
