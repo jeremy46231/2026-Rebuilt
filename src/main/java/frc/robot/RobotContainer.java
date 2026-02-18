@@ -81,10 +81,12 @@ public class RobotContainer {
 
   private final AutoChooser autoChooser = new AutoChooser();
 
-  public final VisionSubsystem visionRight =
-      Constants.visionOnRobot ? new VisionSubsystem(Constants.Vision.Cameras.RIGHT_CAM) : null;
-  public final VisionSubsystem visionLeft =
-      Constants.visionOnRobot ? new VisionSubsystem(Constants.Vision.Cameras.LEFT_CAM) : null;
+  public final VisionSubsystem visionFrontRight =
+      Constants.visionOnRobot
+          ? new VisionSubsystem(Constants.Vision.Cameras.FRONT_RIGHT_CAM)
+          : null;
+  public final VisionSubsystem visionFrontLeft =
+      Constants.visionOnRobot ? new VisionSubsystem(Constants.Vision.Cameras.FRONT_LEFT_CAM) : null;
   // public final VisionSubsystem visionRearRight =
   // Constants.visionOnRobot ? new VisionSubsystem(Constants.Vision.Cameras.REAR_RIGHT_CAM) : null;
   // public final VisionSubsystem visionRearLeft =
@@ -260,11 +262,11 @@ public class RobotContainer {
   }
 
   public void visionPeriodic() {
-    if (!Constants.visionOnRobot || visionRight == null || visionLeft == null
+    if (!Constants.visionOnRobot || visionFrontRight == null || visionFrontLeft == null
     /*|| visionRearRight == null
     || visionRearLeft == null */ ) return;
-    visionRight.addFilteredPose(drivetrain);
-    visionLeft.addFilteredPose(drivetrain);
+    visionFrontRight.addFilteredPose(drivetrain);
+    visionFrontLeft.addFilteredPose(drivetrain);
     // visionRearRight.addFilteredPose(drivetrain);
     // visionRearLeft.addFilteredPose(drivetrain);
 
