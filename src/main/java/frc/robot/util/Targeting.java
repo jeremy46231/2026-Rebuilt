@@ -1,7 +1,5 @@
 package frc.robot.util;
 
-import java.util.function.DoubleSupplier;
-
 import dev.doglog.DogLog;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
@@ -11,9 +9,11 @@ import frc.robot.Constants;
 import frc.robot.MathUtils.MiscMath;
 import frc.robot.MathUtils.Vector3;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
+import java.util.function.DoubleSupplier;
 
 public class Targeting {
-  public static boolean pointingAtTarget(Pose3d targetNoOffset, CommandSwerveDrivetrain drivetrain) {
+  public static boolean pointingAtTarget(
+      Pose3d targetNoOffset, CommandSwerveDrivetrain drivetrain) {
     double desiredRobotHullAngle =
         (targetAngle(targetNoOffset, drivetrain) + (2 * Math.PI)) % (2 * Math.PI);
 
@@ -72,7 +72,8 @@ public class Targeting {
                 Math.toRadians(Constants.Shooter.SHOOTER_ANGLE_FROM_HORIZONTAL_DEGREES) * 2));
   }
 
-  public static Vector3 positionToTarget(Pose3d target, CommandSwerveDrivetrain drivetrain, int precision) {
+  public static Vector3 positionToTarget(
+      Pose3d target, CommandSwerveDrivetrain drivetrain, int precision) {
     double timeOfFlight =
         2
             * shootingSpeed(target, drivetrain, precision)

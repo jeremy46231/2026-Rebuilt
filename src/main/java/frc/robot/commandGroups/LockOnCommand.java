@@ -35,7 +35,10 @@ public class LockOnCommand extends ParallelCommandGroup {
             () -> Targeting.targetAngle(target, drivetrain),
             drivetrain),
         Commands.runEnd( // do this
-            () -> joystick.setRumble(RumbleType.kBothRumble, (Targeting.amtToRumble(drivetrain, target).getAsDouble())),
+            () ->
+                joystick.setRumble(
+                    RumbleType.kBothRumble,
+                    (Targeting.amtToRumble(drivetrain, target).getAsDouble())),
             () -> joystick.setRumble(RumbleType.kBothRumble, (0d))),
         shooter.shootAtSpeedCommand(
             () ->

@@ -38,14 +38,18 @@ public class ArcAroundAndShoot extends ParallelCommandGroup {
             drivetrain,
             redside),
         Commands.runEnd(
-            () -> joystick.setRumble(RumbleType.kBothRumble, (Targeting.amtToRumble(drivetrain, target).getAsDouble())),
+            () ->
+                joystick.setRumble(
+                    RumbleType.kBothRumble,
+                    (Targeting.amtToRumble(drivetrain, target).getAsDouble())),
             () -> joystick.setRumble(RumbleType.kBothRumble, (0d))),
         new ShootBasic(
             () ->
                 Units.metersToFeet(
                     Targeting.shootingSpeed(
                         target, drivetrain, Constants.Shooter.TARGETING_CALCULATION_PRECISION)),
-            (BooleanSupplier) () -> (Targeting.pointingAtTarget(target, drivetrain) && shooter.isAtSpeed()),
+            (BooleanSupplier)
+                () -> (Targeting.pointingAtTarget(target, drivetrain) && shooter.isAtSpeed()),
             shooter,
             intake,
             hopper));
