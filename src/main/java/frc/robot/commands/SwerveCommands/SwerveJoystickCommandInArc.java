@@ -66,8 +66,8 @@ public class SwerveJoystickCommandInArc extends Command {
     // 1. Get real-time joystick inputs
     double thetaFromCentre =
         Math.atan2(
-            Vector3.subtract(new Vector3(centre), new Vector3(swerveDrivetrain.getState().Pose)).y,
-            Vector3.subtract(new Vector3(centre), new Vector3(swerveDrivetrain.getState().Pose)).x);
+            Vector3.subtract(new Vector3(swerveDrivetrain.getState().Pose), new Vector3(centre)).y,
+            Vector3.subtract(new Vector3(swerveDrivetrain.getState().Pose), new Vector3(centre)).x);
     double tangentialSpeed = tangentSpdFunction.getAsDouble();
     tangentialSpeed =
         Math.abs(tangentialSpeed) > Constants.OI.LEFT_JOYSTICK_DEADBAND ? tangentialSpeed : 0.0;
