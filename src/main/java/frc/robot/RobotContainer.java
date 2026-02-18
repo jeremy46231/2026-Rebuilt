@@ -13,6 +13,7 @@ import choreo.auto.AutoTrajectory;
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import dev.doglog.DogLog;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -21,8 +22,6 @@ import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.robot.commandGroups.ClimbCommands.L1Climb;
-import frc.robot.commandGroups.ClimbCommands.L2Climb;
 import frc.robot.commandGroups.ClimbCommands.L3Climb;
 import frc.robot.commands.SwerveCommands.SwerveJoystickCommand;
 import frc.robot.generated.TunerConstants;
@@ -83,9 +82,11 @@ public class RobotContainer {
   public final VisionSubsystem visionLeft =
       Constants.visionOnRobot ? new VisionSubsystem(Constants.Vision.Cameras.LEFT_CAM) : null;
   // public final VisionSubsystem visionRearRight =
-  // Constants.visionOnRobot ? new VisionSubsystem(Constants.Vision.Cameras.REAR_RIGHT_CAM) : null;
+  // Constants.visionOnRobot ? new
+  // VisionSubsystem(Constants.Vision.Cameras.REAR_RIGHT_CAM) : null;
   // public final VisionSubsystem visionRearLeft =
-  // Constants.visionOnRobot ? new VisionSubsystem(Constants.Vision.Cameras.REAR_LEFT_CAM) : null;
+  // Constants.visionOnRobot ? new
+  // VisionSubsystem(Constants.Vision.Cameras.REAR_LEFT_CAM) : null;
   public final FuelGaugeDetection visionFuelGauge =
       Constants.visionOnRobot ? new FuelGaugeDetection(Constants.Vision.Cameras.COLOR_CAM) : null;
 
@@ -234,99 +235,101 @@ public class RobotContainer {
           .leftTrigger()
           .and(joystick.b())
           .onTrue(intakeSubsystem.armToDegrees(Constants.Intake.Arm.ARM_POS_IDLE));
-          
+
       intakeSubsystem.setDefaultCommand(
           new ConditionalCommand(
               intakeSubsystem.armToDegrees(Constants.Intake.Arm.ARM_POS_RETRACTED),
               intakeSubsystem.armToDegrees(Constants.Intake.Arm.ARM_POS_IDLE),
-              hopperSubsystem::isHopperSufficientlyEmpty));
-      
-    if (Constants.climberOnRobot) {
-      // y -> initiate climb
-      // TODO: verify that command is correct
-      joystick.y().whileTrue(new L3Climb(climberSubsystem, drivetrain));
+              () -> hopperSubsystem.isHopperSufficientlyEmpty(visionFuelGauge)));
 
-      // a -> zero climber
-      joystick.x().onTrue(climberSubsystem.runOnce(climberSubsystem::resetPullUpPositionToZero));
+      if (Constants.climberOnRobot) {
+        // y -> initiate climb
+        // TODO: verify that command is correct
+        joystick.y().whileTrue(new L3Climb(climberSubsystem, drivetrain));
+
+        // a -> zero climber
+        joystick.x().onTrue(climberSubsystem.runOnce(climberSubsystem::resetPullUpPositionToZero));
+      }
+
+      // TODO: left trigger -> run LockOnCommand (not yet defined)
+      // joystick.leftTrigger().whileTrue(new LockOnCommand(....));
+
+      // TODO: right trigger -> shoot + arc lock (arc lock not yet defined)
+      // verify command is correct and that sequential is correct type of commandgroup
+      // joystick.rightTrigger().whileTrue(new SequentialCommandGroup(
+      // new Shoot(drivetrain, lebron, hopperSubsystem, redside),
+      // new ArcLock(.....)
+      // ));
+
+      // Auto sequence: choreo forward
+      Command trajCommand =
+          autoFactory
+              .resetOdometry("MoveForward.traj")
+              .andThen(autoFactory.trajectoryCmd("MoveForward.traj"));
+
+      // joystick.x().whileTrue(trajCommand);
+
+      if (Constants.hopperOnRobot) {
+        debugJoystick
+            .rightTrigger()
+            .whileTrue(
+                hopperSubsystem.runHopperCommand(
+                    Constants.Hopper.HOPPER_BELT_TARGET_SPEED_METERS_PER_SECOND));
+      }
+
+      if (Constants.shooterOnRobot) {
+        debugJoystick.leftBumper().whileTrue(lebron.shootAtSpeedCommand());
+      }
+
+      // debug these
+      if (Constants.climberOnRobot) {
+        // L1 commands
+        debugJoystick
+            .povDown()
+            .and(debugJoystick.a())
+            .onTrue(climberSubsystem.PullUpCommand(Constants.Climber.PullUp.L1_REACH_POS));
+        debugJoystick
+            .povDown()
+            .and(debugJoystick.b())
+            .onTrue(
+                climberSubsystem.MuscleUpCommand(Constants.Climber.MuscleUp.L1_MUSCLE_UP_FORWARD));
+        // L2 Commands
+        debugJoystick
+            .povRight()
+            .and(debugJoystick.a())
+            .onTrue(climberSubsystem.PullUpCommand(Constants.Climber.PullUp.L2_REACH_POS));
+        debugJoystick
+            .povRight()
+            .and(debugJoystick.b())
+            .onTrue(
+                climberSubsystem.MuscleUpCommand(Constants.Climber.MuscleUp.L2_MUSCLE_UP_FORWARD));
+        // L3 Commands
+        debugJoystick
+            .povUp()
+            .and(debugJoystick.a())
+            .onTrue(climberSubsystem.PullUpCommand(Constants.Climber.PullUp.L3_REACH_POS));
+        debugJoystick
+            .povUp()
+            .and(debugJoystick.b())
+            .onTrue(
+                climberSubsystem.MuscleUpCommand(Constants.Climber.MuscleUp.L3_MUSCLE_UP_FORWARD));
+        debugJoystick
+            .povUp()
+            .onTrue(climberSubsystem.SitUpCommand(Constants.Climber.SitUp.SIT_UP_ANGLE));
+        debugJoystick
+            .povDown()
+            .onTrue(climberSubsystem.SitUpCommand(Constants.Climber.SitUp.SIT_BACK_ANGLE));
+      }
+
+      drivetrain.registerTelemetry(logger::telemeterize);
     }
-
-    // TODO: left trigger -> run LockOnCommand (not yet defined)
-    // joystick.leftTrigger().whileTrue(new LockOnCommand(....));
-
-    // TODO: right trigger -> shoot + arc lock (arc lock not yet defined)
-    // verify command is correct and that sequential is correct type of commandgroup
-    // joystick.rightTrigger().whileTrue(new SequentialCommandGroup(
-    //    new Shoot(drivetrain, lebron, hopperSubsystem, redside),
-    //    new ArcLock(.....)
-    // ));
-
-    // Auto sequence: choreo forward
-    Command trajCommand =
-        autoFactory
-            .resetOdometry("MoveForward.traj")
-            .andThen(autoFactory.trajectoryCmd("MoveForward.traj"));
-
-    // joystick.x().whileTrue(trajCommand);
-
-    if (Constants.hopperOnRobot) {
-      debugJoystick
-          .rightTrigger()
-          .whileTrue(
-              hopperSubsystem.runHopperCommand(
-                  Constants.Hopper.HOPPER_BELT_TARGET_SPEED_METERS_PER_SECOND));
-    }
-
-    if (Constants.shooterOnRobot) {
-      debugJoystick.leftBumper().whileTrue(lebron.shootAtSpeedCommand());
-    }
-
-    // debug these
-    if (Constants.climberOnRobot) {
-      // L1 commands
-      debugJoystick
-          .povDown()
-          .and(debugJoystick.a())
-          .onTrue(climberSubsystem.PullUpCommand(Constants.Climber.PullUp.L1_REACH_POS));
-      debugJoystick
-          .povDown()
-          .and(debugJoystick.b())
-          .onTrue(
-              climberSubsystem.MuscleUpCommand(Constants.Climber.MuscleUp.L1_MUSCLE_UP_FORWARD));
-      // L2 Commands
-      debugJoystick
-          .povRight()
-          .and(debugJoystick.a())
-          .onTrue(climberSubsystem.PullUpCommand(Constants.Climber.PullUp.L2_REACH_POS));
-      debugJoystick
-          .povRight()
-          .and(debugJoystick.b())
-          .onTrue(
-              climberSubsystem.MuscleUpCommand(Constants.Climber.MuscleUp.L2_MUSCLE_UP_FORWARD));
-      // L3 Commands
-      debugJoystick
-          .povUp()
-          .and(debugJoystick.a())
-          .onTrue(climberSubsystem.PullUpCommand(Constants.Climber.PullUp.L3_REACH_POS));
-      debugJoystick
-          .povUp()
-          .and(debugJoystick.b())
-          .onTrue(
-              climberSubsystem.MuscleUpCommand(Constants.Climber.MuscleUp.L3_MUSCLE_UP_FORWARD));
-      debugJoystick
-          .povUp()
-          .onTrue(climberSubsystem.SitUpCommand(Constants.Climber.SitUp.SIT_UP_ANGLE));
-      debugJoystick
-          .povDown()
-          .onTrue(climberSubsystem.SitUpCommand(Constants.Climber.SitUp.SIT_BACK_ANGLE));
-    }
-
-    drivetrain.registerTelemetry(logger::telemeterize);
   }
 
   public void visionPeriodic() {
-    if (!Constants.visionOnRobot || visionRight == null || visionLeft == null
-    /*|| visionRearRight == null
-    || visionRearLeft == null */ ) return;
+    if (!Constants.visionOnRobot || visionRight == null || visionLeft == null /*
+         * || visionRearRight == null
+         * || visionRearLeft == null
+         */) return;
     visionRight.addFilteredPose(drivetrain);
     visionLeft.addFilteredPose(drivetrain);
     // visionRearRight.addFilteredPose(drivetrain);
