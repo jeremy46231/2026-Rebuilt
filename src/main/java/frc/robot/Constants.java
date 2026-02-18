@@ -511,7 +511,7 @@ public final class Constants {
   public static class Vision {
 
     // initializes cameras for use in VisionSubsystem
-    public static enum Cameras {
+    public static enum VisionCamera {
       FRONT_RIGHT_CAM("frontRightCam"),
       FRONT_LEFT_CAM("frontLeftCam"),
       REAR_RIGHT_CAM("rearRightCam"),
@@ -520,7 +520,7 @@ public final class Constants {
 
       private String loggingName;
 
-      Cameras(String name) {
+      VisionCamera(String name) {
         loggingName = name;
       }
 
@@ -583,7 +583,7 @@ public final class Constants {
     public static final double COLOR_YAW = Units.degreesToRadians(0.0);
 
     // initializing Transform3d for use in future field visualization
-    public static Transform3d getCameraTransform(Cameras camera) {
+    public static Transform3d getCameraTransform(VisionCamera camera) {
       switch (camera) {
         case FRONT_RIGHT_CAM:
           return new Transform3d(
@@ -620,6 +620,38 @@ public final class Constants {
     public static final int MAX_FUEL_GAUGE_MEASUREMENTS = 33;
     public static final double MAX_DETECTABLE_FUEL_AREA_PERCENTAGE = 60.00;
     public static final double REALISTIC_MAX_DETECTABLE_AREA_PERCENTAGE = 15.00;
+
+    public static enum FuelGaugeCamera {
+      FUEL_GAUGE_CAM("fuelGaugeCam");
+
+      private String loggingName;
+
+      FuelGaugeCamera(String name) {
+        loggingName = name;
+      }
+
+      public String getLoggingName() {
+        return loggingName;
+      }
+    }
+
+    public static final double FUEL_GAUGE_X = Units.inchesToMeters(8.867);
+    public static final double FUEL_GAUGE_Y = Units.inchesToMeters(12.478);
+    public static final double FUEL_GAUGE_Z = Units.inchesToMeters(6.158);
+    public static final double FUEL_GAUGE_ROLL = Units.degreesToRadians(0.0);
+    public static final double FUEL_GAUGE_PITCH = Units.degreesToRadians(8.7);
+    public static final double FUEL_GAUGE_YAW = Units.degreesToRadians(0.0);
+
+    public static Transform3d getCameraTransform(FuelGaugeCamera camera) {
+      switch (camera) {
+        case FUEL_GAUGE_CAM:
+          return new Transform3d(
+              new Translation3d(FUEL_GAUGE_X, FUEL_GAUGE_Y, FUEL_GAUGE_Z),
+              new Rotation3d(FUEL_GAUGE_ROLL, FUEL_GAUGE_PITCH, FUEL_GAUGE_YAW));
+        default:
+          throw new IllegalArgumentException("Unknown FuelGaugeCamera id: " + camera);
+      }
+    }
 
     public static enum GaugeCalculationType {
       RAW(),

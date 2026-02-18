@@ -24,7 +24,7 @@ import org.photonvision.targeting.PhotonTrackedTarget;
 
 public class VisionSubsystem extends SubsystemBase {
 
-  private final Constants.Vision.Cameras cameraID;
+  private final Constants.Vision.VisionCamera cameraID;
 
   private String cameraTitle;
 
@@ -57,7 +57,7 @@ public class VisionSubsystem extends SubsystemBase {
   public static final double timestampFPGACorrection = -0.03;
 
   // constructor for VisionSubsystem
-  public VisionSubsystem(Constants.Vision.Cameras cameraID) {
+  public VisionSubsystem(Constants.Vision.VisionCamera cameraID) {
 
     this.cameraID = cameraID;
     photonCamera = new PhotonCamera(cameraID.toString());
