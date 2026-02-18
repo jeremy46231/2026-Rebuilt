@@ -43,7 +43,7 @@ import java.util.function.DoubleSupplier;
 public class RobotContainer {
   // kSpeedAt12Volts desired top speed
   private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
-  // 3/4 of a rotation per second max angular velocity    
+  // 3/4 of a rotation per second max angular velocity
   private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond);
 
   /* Setting up bindings for necessary control of the swerve drive platform */
