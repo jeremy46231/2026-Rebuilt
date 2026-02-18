@@ -30,7 +30,7 @@ import frc.robot.util.LoggedTalonFX;
 
 public class ShooterSubsystem extends SubsystemBase {
   private final LoggedTalonFX warmUpMotor1, warmUpMotor2, warmUpMotor3, shooter;
-  private final VelocityVoltage velocityRequest = new VelocityVoltage(0);
+  private final VelocityVoltage m_velocityRequest = new VelocityVoltage(0);
   private double targetBallSpeed = 0; // this needs to be consistent
   private static final double TOLERANCE_RPS = 2.0; // tolerance in rotations per second
 
@@ -122,7 +122,7 @@ public class ShooterSubsystem extends SubsystemBase {
   // so now max is 104.72 and min is 71.2
   public void setBallSpeed(double ballSpeed) {
     targetBallSpeed = ballSpeed;
-    shooter.setControl(velocityRequest.withVelocity(calculateFtPSToRPS(targetBallSpeed / 2.0)));
+    shooter.setControl(m_velocityRequest.withVelocity(calculateFtPSToRPS(targetBallSpeed / 2.0)));
   }
 
   public void stopShooter() {

@@ -49,8 +49,8 @@ public class IntakeSubsystem extends SubsystemBase {
   private DCMotorSim rollersMechanismSim;
   private SingleJointedArmSim armMechanismSim;
 
-  private final VelocityVoltage velocityRequest = new VelocityVoltage(0);
-  private final PositionVoltage positionRequest = new PositionVoltage(0);
+  private final VelocityVoltage m_velocityRequest = new VelocityVoltage(0);
+  private final PositionVoltage m_positionRequest = new PositionVoltage(0);
 
   public IntakeSubsystem() {
     rollersMotor = new LoggedTalonFX(Constants.Intake.Rollers.CAN_ID);
@@ -166,12 +166,12 @@ public class IntakeSubsystem extends SubsystemBase {
   public void runRollers(double speedRollersRotationsPerSecond) {
     targetRollersRPS = speedRollersRotationsPerSecond;
     rollersMotor.setControl(
-        velocityRequest.withVelocity(
+        m_velocityRequest.withVelocity(
             targetRollersRPS * Constants.Intake.Rollers.MOTOR_ROTS_PER_ROLLERS_ROTS));
   }
 
   public void stopRollers() {
-    rollersMotor.setControl(velocityRequest.withVelocity(0));
+    rollersMotor.setControl(m_velocityRequest.withVelocity(0));
   }
 
   public void setArmDegrees(double angleDeg) {
@@ -179,7 +179,7 @@ public class IntakeSubsystem extends SubsystemBase {
         MathUtil.clamp(
             angleDeg, Constants.Intake.Arm.ARM_POS_MIN, Constants.Intake.Arm.ARM_POS_MAX);
     double targetArmRotations = targetAngleDeg / 360.0;
-    armMotor.setControl(positionRequest.withPosition(targetArmRotations));
+    armMotor.setControl(m_positionRequest.withPosition(targetArmRotations));
   }
 
   public Rotation2d getArmAbsolutePosition() {

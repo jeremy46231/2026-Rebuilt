@@ -33,8 +33,8 @@ public class ClimberSubsystem extends SubsystemBase {
   private final CANcoder muscleUpEncoder, sitUpEncoder;
   private final Servo brake;
 
-  private final VelocityVoltage veclocityRequest = new VelocityVoltage(0);
-  private final MotionMagicVoltage motionMagicRequest = new MotionMagicVoltage(0);
+  private final VelocityVoltage m_veclocityRequest = new VelocityVoltage(0);
+  private final MotionMagicVoltage m_motionMagicRequest = new MotionMagicVoltage(0);
 
   public ClimberSubsystem() {
     CurrentLimitsConfigs regClc =
@@ -134,18 +134,18 @@ public class ClimberSubsystem extends SubsystemBase {
 
   public void setSitUpPosition(double degrees) {
     sitUpTargetDeg = degrees / Constants.Climber.SitUp.MOTOR_ROTS_PER_DEGREES_OF_ARM_ROT;
-    sitUpMotor.setControl(motionMagicRequest.withPosition(sitUpTargetDeg));
+    sitUpMotor.setControl(m_motionMagicRequest.withPosition(sitUpTargetDeg));
   }
 
   public void setMuscleUpPosition(double degrees) {
     muscleUpTargetDeg = degrees / Constants.Climber.MuscleUp.MOTOR_ROTS_PER_DEGREES_OF_ARM_ROT;
-    muscleUpMotor.setControl(motionMagicRequest.withPosition(muscleUpTargetDeg));
+    muscleUpMotor.setControl(m_motionMagicRequest.withPosition(muscleUpTargetDeg));
   }
 
   public void setPullUpPosition(double metersFromZero) {
     pullUpTargetPosition =
         metersFromZero / Constants.Climber.PullUp.MOTOR_ROTS_PER_METERS_OF_BELT_TRAVERSAL;
-    pullUpMotorR.setControl(motionMagicRequest.withPosition(pullUpTargetPosition));
+    pullUpMotorR.setControl(m_motionMagicRequest.withPosition(pullUpTargetPosition));
   }
 
   public boolean isSitUpAtPosition() {
@@ -212,7 +212,7 @@ public class ClimberSubsystem extends SubsystemBase {
   }
 
   public void movePullUpDown() {
-    pullUpMotorR.setControl(veclocityRequest.withVelocity(-5));
+    pullUpMotorR.setControl(m_veclocityRequest.withVelocity(-5));
   }
 
   public boolean checkCurrent() {
