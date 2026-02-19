@@ -30,8 +30,6 @@ public class VisionSubsystem extends SubsystemBase {
 
   private String cameraTitle;
 
-  // NOTE FOR SID/SAKETH: come back to ln 57-70 in 2025 repo
-
   // VISION:
   private double maxDistance = 15.0; // meters, beyond which readings are dropped
 
@@ -48,9 +46,7 @@ public class VisionSubsystem extends SubsystemBase {
   private final PhotonCamera photonCamera;
   private final PhotonPoseEstimator poseEstimator;
   private PhotonPipelineResult latestVisionResult;
-  private Optional<MultiTargetPNPResult> visionResult;
   Optional<EstimatedRobotPose> visionEst;
-  private List<PhotonTrackedTarget> tags;
   private final AprilTagFieldLayout fieldLayout;
   private boolean hasValidMeasurement;
 
@@ -88,10 +84,10 @@ public class VisionSubsystem extends SubsystemBase {
     hasValidMeasurement = false;
 
     List<PhotonPipelineResult> results = photonCamera.getAllUnreadResults();
-    for (PhotonPipelineResult r : results) {
-      latestVisionResult = r;
-      visionEst = poseEstimator.estimateCoprocMultiTagPose(r);
-      if (visionEst.isEmpty()) visionEst = poseEstimator.estimateLowestAmbiguityPose(r);
+    for (PhotonPipelineResult result : results) {
+      latestVisionResult = result;
+      visionEst = poseEstimator.estimateCoprocMultiTagPose(result);
+      if (visionEst.isEmpty()) visionEst = poseEstimator.estimateLowestAmbiguityPose(result);
     }
 
     DogLog.log("Subsystems/Vision/" + cameraTitle + "/CameraConnected", true);
@@ -110,8 +106,16 @@ public class VisionSubsystem extends SubsystemBase {
                 .min()
                 .orElse(Double.NaN);
 
-    DogLog.log("Subsystems/Vision/" + cameraTitle + "/MinDistance", minDist);
+    DogLog.log("Subsystems/Vision/" + cameraTitle + "/closestTagDistance", minDist);
     return minDist;
+  }
+
+  public double getAverageDistance() {
+    double avgDist = (latestVisionResult == null || latestVisionResult.getTargets().isEmpty())
+    ? Double.MAX_VALUE : latestVisionResult.getTargets().stream().mapToDouble(t -> t.getBestCameraToTarget().getTranslation().getNorm()).average().orElse(Double.NaN);
+
+    DogLog.log("Subsystems/Vision/" + cameraTitle + "/averageTagDistance", avgDist);
+    return avgDist;
   }
 
   public void calculateFilteredPose(CommandSwerveDrivetrain swerve) {
@@ -120,32 +124,23 @@ public class VisionSubsystem extends SubsystemBase {
     DogLog.log("Subsystems/Vision/addFilteredPoseworking", true);
 
     if (latestVisionResult == null || latestVisionResult.getTargets().isEmpty()) {
+      DogLog.log("Subsystems/Vision/" + cameraTitle + "/HasResult", false);
+      return;
+    }
+    DogLog.log("Subsystems/Vision/" + cameraTitle + "/HasResult", true);
+
+    // Ensure we have a valid pose estimate and vision result from periodic()
+    if (visionEst.isEmpty()) {
       DogLog.log("Subsystems/Vision/" + cameraTitle + "/HasEstimate", false);
       return;
     }
     DogLog.log("Subsystems/Vision/" + cameraTitle + "/HasEstimate", true);
 
-    // Ensure we have a valid pose estimate and vision result from periodic()
-    if (visionEst.isEmpty()) {
-      return;
-    }
-
     // distance to closest april tag
-    double minDistance =
-        latestVisionResult.getTargets().stream()
-            .mapToDouble(t -> t.getBestCameraToTarget().getTranslation().getNorm())
-            .min()
-            .orElse(Double.NaN);
-
-    DogLog.log("Subsystems/Vision/closestTagDistance", minDistance);
+    double minDistance = getMinDistance();
 
     // average distance to all visible april tags
-    double averageDistance =
-        latestVisionResult.getTargets().stream()
-            .mapToDouble(t -> t.getBestCameraToTarget().getTranslation().getNorm())
-            .average()
-            .orElse(Double.NaN);
-    DogLog.log("Subsystems/Vision/averageTagDistance", averageDistance);
+    double averageDistance = getAverageDistance();
 
     // creates a list of all detected tags and logs for debugging
     List<PhotonTrackedTarget> tags =
