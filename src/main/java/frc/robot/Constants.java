@@ -11,12 +11,10 @@ import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.*;
-import edu.wpi.first.units.measure.Angle;
-import edu.wpi.first.units.measure.Distance;
 
 public final class Constants {
-  public static final boolean hopperOnRobot = false;
-  public static final boolean intakeOnRobot = false;
+  public static final boolean hopperOnRobot = true;
+  public static final boolean intakeOnRobot = true;
   public static final boolean visionOnRobot = false;
   public static final boolean shooterOnRobot = false;
   public static final boolean climberOnRobot = false;
@@ -409,6 +407,7 @@ public final class Constants {
       public static final double L2_MUSCLE_UP_FORWARD = 0; // TODO: get vals
       public static final double L3_MUSCLE_UP_FORWARD = 0; // TODO: get vals
       public static final double MUSCLE_UP_BACK = 0; // TODO: get vals
+      public static final double MUSCLEUP_DOWN_VELOCITY = -1;
 
       public static final int MOTOR_PORT = -1; // TODO: get vals
 
@@ -449,6 +448,7 @@ public final class Constants {
       public static final double L2_REACH_POS = 0; // TODO: get vals
       public static final double L3_REACH_POS = 0; // TODO: get vals
       public static final double PULL_DOWN_POS = 0; // TODO: get vals
+      public static final double PULL_DOWN_VELOCITY = -1;
 
       public static final int MOTOR_PORT_L = -1; // TODO: get vals
       public static final int MOTOR_PORT_R = -1; // TODO: get vals

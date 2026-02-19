@@ -37,21 +37,18 @@ public class ClimberSubsystem extends SubsystemBase {
   private final MotionMagicVoltage m_motionMagicRequest = new MotionMagicVoltage(0);
 
   public ClimberSubsystem() {
-    CurrentLimitsConfigs regClc =
-        new CurrentLimitsConfigs()
-            .withStatorCurrentLimit(Constants.Climber.DEFAULT_STATOR_CURRENT)
-            .withSupplyCurrentLimit(Constants.Climber.DEFAULT_SUPPLY_CURRENT);
+    CurrentLimitsConfigs regClc = new CurrentLimitsConfigs()
+        .withStatorCurrentLimit(Constants.Climber.DEFAULT_STATOR_CURRENT)
+        .withSupplyCurrentLimit(Constants.Climber.DEFAULT_SUPPLY_CURRENT);
 
-    CurrentLimitsConfigs specialClc =
-        new CurrentLimitsConfigs()
-            .withStatorCurrentLimit(Constants.Climber.SitUp.CURRENT_STATOR_LIMIT)
-            .withSupplyCurrentLimit(Constants.Climber.SitUp.CURRENT_SUPPLY_LIMIT);
+    CurrentLimitsConfigs specialClc = new CurrentLimitsConfigs()
+        .withStatorCurrentLimit(Constants.Climber.SitUp.CURRENT_STATOR_LIMIT)
+        .withSupplyCurrentLimit(Constants.Climber.SitUp.CURRENT_SUPPLY_LIMIT);
 
-    Slot0Configs s0c =
-        new Slot0Configs()
-            .withKP(Constants.Climber.KP)
-            .withKI(Constants.Climber.KI)
-            .withKD(Constants.Climber.KD);
+    Slot0Configs s0c = new Slot0Configs()
+        .withKP(Constants.Climber.KP)
+        .withKI(Constants.Climber.KI)
+        .withKD(Constants.Climber.KD);
 
     muscleUpMotor = new LoggedTalonFX(Constants.Climber.MuscleUp.MOTOR_PORT);
 
@@ -69,10 +66,9 @@ public class ClimberSubsystem extends SubsystemBase {
     TalonFXConfigurator pullUpRightConfigurator = pullUpMotorR.getConfigurator();
 
     MotorOutputConfigs moc = new MotorOutputConfigs().withNeutralMode(NeutralModeValue.Brake);
-    MotionMagicConfigs mmc =
-        new MotionMagicConfigs()
-            .withMotionMagicCruiseVelocity(Constants.Climber.mmcV)
-            .withMotionMagicAcceleration(Constants.Climber.mmcA);
+    MotionMagicConfigs mmc = new MotionMagicConfigs()
+        .withMotionMagicCruiseVelocity(Constants.Climber.mmcV)
+        .withMotionMagicAcceleration(Constants.Climber.mmcA);
 
     muscleUpConfigurator.apply(s0c);
     sitUpConfigurator.apply(s0c);
@@ -98,10 +94,9 @@ public class ClimberSubsystem extends SubsystemBase {
     sitUpEncoder = new CANcoder(Constants.Climber.SitUp.ENCODER_PORT);
     muscleUpEncoder = new CANcoder(Constants.Climber.MuscleUp.ENCODER_PORT);
 
-    MagnetSensorConfigs canCoderConfig =
-        new CANcoderConfiguration()
-            .MagnetSensor.withAbsoluteSensorDiscontinuityPoint(Rotations.of(1))
-                .withSensorDirection(SensorDirectionValue.CounterClockwise_Positive);
+    MagnetSensorConfigs canCoderConfig = new CANcoderConfiguration().MagnetSensor
+        .withAbsoluteSensorDiscontinuityPoint(Rotations.of(1))
+        .withSensorDirection(SensorDirectionValue.CounterClockwise_Positive);
 
     sitUpEncoder
         .getConfigurator()
@@ -115,21 +110,19 @@ public class ClimberSubsystem extends SubsystemBase {
                 Rotations.of(Constants.Climber.MuscleUp.ENCODER_OFFSET)));
 
     sitUpConfigurator.apply(
-        new TalonFXConfiguration()
-            .Feedback.withFeedbackRemoteSensorID(sitUpEncoder.getDeviceID())
-                .withFeedbackSensorSource(FeedbackSensorSourceValue.FusedCANcoder)
-                .withSensorToMechanismRatio(
-                    Constants.Climber.SitUp.ENCODER_ROTATIONS_TO_ARM_ROTATIONS)
-                .withRotorToSensorRatio(Constants.Climber.SitUp.MOTOR_ROTS_PER_DEGREES_OF_ARM_ROT));
+        new TalonFXConfiguration().Feedback.withFeedbackRemoteSensorID(sitUpEncoder.getDeviceID())
+            .withFeedbackSensorSource(FeedbackSensorSourceValue.FusedCANcoder)
+            .withSensorToMechanismRatio(
+                Constants.Climber.SitUp.ENCODER_ROTATIONS_TO_ARM_ROTATIONS)
+            .withRotorToSensorRatio(Constants.Climber.SitUp.MOTOR_ROTS_PER_DEGREES_OF_ARM_ROT));
 
     muscleUpConfigurator.apply(
-        new TalonFXConfiguration()
-            .Feedback.withFeedbackRemoteSensorID(muscleUpEncoder.getDeviceID())
-                .withFeedbackSensorSource(FeedbackSensorSourceValue.FusedCANcoder)
-                .withSensorToMechanismRatio(
-                    Constants.Climber.MuscleUp.ENCODER_ROTATIONS_TO_ARM_ROTATIONS)
-                .withRotorToSensorRatio(
-                    Constants.Climber.MuscleUp.MOTOR_ROTS_PER_DEGREES_OF_ARM_ROT));
+        new TalonFXConfiguration().Feedback.withFeedbackRemoteSensorID(muscleUpEncoder.getDeviceID())
+            .withFeedbackSensorSource(FeedbackSensorSourceValue.FusedCANcoder)
+            .withSensorToMechanismRatio(
+                Constants.Climber.MuscleUp.ENCODER_ROTATIONS_TO_ARM_ROTATIONS)
+            .withRotorToSensorRatio(
+                Constants.Climber.MuscleUp.MOTOR_ROTS_PER_DEGREES_OF_ARM_ROT));
   }
 
   public void setSitUpPosition(double degrees) {
@@ -143,33 +136,29 @@ public class ClimberSubsystem extends SubsystemBase {
   }
 
   public void setPullUpPosition(double metersFromZero) {
-    pullUpTargetPosition =
-        metersFromZero / Constants.Climber.PullUp.MOTOR_ROTS_PER_METERS_OF_BELT_TRAVERSAL;
+    pullUpTargetPosition = metersFromZero / Constants.Climber.PullUp.MOTOR_ROTS_PER_METERS_OF_BELT_TRAVERSAL;
     pullUpMotorR.setControl(m_motionMagicRequest.withPosition(pullUpTargetPosition));
   }
 
   public boolean isSitUpAtPosition() {
     return Math.abs(
-            sitUpMotor.getPosition().getValueAsDouble()
-                    * Constants.Climber.SitUp.MOTOR_ROTS_PER_DEGREES_OF_ARM_ROT
-                - sitUpTargetDeg)
-        <= Constants.Climber.SitUp.SIT_UP_TOLERANCE;
+        sitUpMotor.getPosition().getValueAsDouble()
+            * Constants.Climber.SitUp.MOTOR_ROTS_PER_DEGREES_OF_ARM_ROT
+            - sitUpTargetDeg) <= Constants.Climber.SitUp.SIT_UP_TOLERANCE;
   }
 
   public boolean isMuscleUpAtPosition() {
     return Math.abs(
-            muscleUpMotor.getPosition().getValueAsDouble()
-                    * Constants.Climber.SitUp.MOTOR_ROTS_PER_DEGREES_OF_ARM_ROT
-                - muscleUpTargetDeg)
-        <= Constants.Climber.MuscleUp.MUSCLE_UP_TOLERANCE;
+        muscleUpMotor.getPosition().getValueAsDouble()
+            * Constants.Climber.SitUp.MOTOR_ROTS_PER_DEGREES_OF_ARM_ROT
+            - muscleUpTargetDeg) <= Constants.Climber.MuscleUp.MUSCLE_UP_TOLERANCE;
   }
 
   public boolean isPullUpAtPosition() {
     return Math.abs(
-            pullUpMotorR.getPosition().getValueAsDouble()
-                    * Constants.Climber.SitUp.MOTOR_ROTS_PER_DEGREES_OF_ARM_ROT
-                - pullUpTargetPosition)
-        <= Constants.Climber.PullUp.PULL_UP_TOLERANCE;
+        pullUpMotorR.getPosition().getValueAsDouble()
+            * Constants.Climber.SitUp.MOTOR_ROTS_PER_DEGREES_OF_ARM_ROT
+            - pullUpTargetPosition) <= Constants.Climber.PullUp.PULL_UP_TOLERANCE;
   }
 
   public double getMuscleUpPosInRotationsFromEncoder() {
@@ -206,31 +195,57 @@ public class ClimberSubsystem extends SubsystemBase {
 
   // Zeroing climb functions (only pull up because it doesn't have an encoder):
 
-  public void reduceCurrentLimits() {
+  public void reducePullUpCurrentLimits() {
     pullUpMotorR.updateCurrentLimits(30, 10);
     pullUpMotorL.updateCurrentLimits(30, 10);
   }
 
-  public void movePullUpDown() {
-    pullUpMotorR.setControl(m_veclocityRequest.withVelocity(-5));
+  public void reduceMuscleUpCurrentLimits() {
+    // TODO: make sure these current limits are correct
+    muscleUpMotor.updateCurrentLimits(30, 10);
   }
 
-  public boolean checkCurrent() {
+  public void movePullUpDown() {
+    pullUpMotorR.setControl(m_veclocityRequest.withVelocity(Constants.Climber.PullUp.PULL_DOWN_VELOCITY));
+  }
+
+  public void moveMuscleUpDown() {
+    muscleUpMotor.setControl(m_veclocityRequest.withVelocity(Constants.Climber.MuscleUp.MUSCLEUP_DOWN_VELOCITY));
+  }
+
+  public boolean checkPullUpCurrent() {
     double supplyCurrent = Math.abs(pullUpMotorR.getSupplyCurrent().getValue().magnitude());
     double statorCurrent = Math.abs(pullUpMotorR.getStatorCurrent().getValue().magnitude());
 
     return supplyCurrent > 1.0 && statorCurrent > 20.0;
   }
 
-  public void resetCurrentLimits() {
+  public boolean checkMuscleUpCurrent() {
+    double supplyCurrent = Math.abs(muscleUpMotor.getSupplyCurrent().getValue().magnitude());
+    double statorCurrent = Math.abs(muscleUpMotor.getStatorCurrent().getValue().magnitude());
+
+    return supplyCurrent > 1.0 && statorCurrent > 20.0;
+  }
+
+  public void resetPullUpCurrentLimits() {
     pullUpMotorR.updateCurrentLimits(
         Constants.Climber.DEFAULT_SUPPLY_CURRENT, Constants.Climber.DEFAULT_STATOR_CURRENT);
     pullUpMotorL.updateCurrentLimits(
         Constants.Climber.DEFAULT_SUPPLY_CURRENT, Constants.Climber.DEFAULT_STATOR_CURRENT);
   }
 
+  public void resetMuscleUpCurrentLimits() {
+    muscleUpMotor.updateCurrentLimits(Constants.Climber.DEFAULT_SUPPLY_CURRENT,
+        Constants.Climber.DEFAULT_STATOR_CURRENT);
+  }
+
   public void resetPullUpPositionToZero() {
     pullUpMotorR.setPosition(0);
+  }
+
+  public void resetMuscleUpPositionToZero() {
+    muscleUpMotor.setPosition(0);
+    muscleUpEncoder.setPosition(0);
   }
 
   // Comands
