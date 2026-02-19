@@ -20,9 +20,6 @@ public class SwerveJoystickCommandWithPointing extends Command {
 
   protected final BooleanSupplier fieldRelativeFunction;
 
-  // Limits rate of change (in this case x, y, and turning movement)
-  protected final SlewRateLimiter xLimiter, yLimiter, turningLimiter;
-
   protected final CommandSwerveDrivetrain swerveDrivetrain;
   private final SwerveRequest.FieldCentric fieldCentricDrive =
       new SwerveRequest.FieldCentric().withDriveRequestType(DriveRequestType.Velocity);
@@ -40,15 +37,6 @@ public class SwerveJoystickCommandWithPointing extends Command {
     this.ySpdFunction = leftRightFunction;
     this.speedControlFunction = speedControlFunction;
     this.fieldRelativeFunction = fieldRelativeFunction;
-    this.xLimiter =
-        new SlewRateLimiter(
-            Constants.Swerve.TELE_DRIVE_MAX_ACCELERATION_METERS_PER_SECOND_PER_SECOND);
-    this.yLimiter =
-        new SlewRateLimiter(
-            Constants.Swerve.TELE_DRIVE_MAX_ACCELERATION_METERS_PER_SECOND_PER_SECOND);
-    this.turningLimiter =
-        new SlewRateLimiter(
-            Constants.Swerve.TELE_DRIVE_MAX_ANGULAR_ACCELERATION_RADIANS_PER_SECOND_PER_SECOND);
     this.swerveDrivetrain = swerveSubsystem;
     this.angleToTarget = angleToTarget;
     // Adds the subsystem as a requirement (prevents two commands from acting on subsystem at once)
@@ -87,13 +75,12 @@ public class SwerveJoystickCommandWithPointing extends Command {
         (Constants.Swerve.TELE_DRIVE_PERCENT_SPEED_RANGE * (speedControlFunction.getAsDouble()))
             + Constants.Swerve.TELE_DRIVE_SLOW_MODE_SPEED_PERCENT;
 
-    // Applies slew rate limiter
     xSpeed =
-        xLimiter.calculate(xSpeed)
+            xSpeed
             * driveSpeed
             * Constants.Swerve.PHYSICAL_MAX_SPEED_METERS_PER_SECOND;
     ySpeed =
-        yLimiter.calculate(ySpeed)
+            ySpeed
             * driveSpeed
             * Constants.Swerve.PHYSICAL_MAX_SPEED_METERS_PER_SECOND;
 

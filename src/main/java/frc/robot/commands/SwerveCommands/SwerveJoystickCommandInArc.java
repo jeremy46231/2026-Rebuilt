@@ -16,12 +16,9 @@ import java.util.function.DoubleSupplier;
 public class SwerveJoystickCommandInArc extends Command {
   protected final DoubleSupplier tangentSpdFunction, speedControlFunction, angleToPointTo;
 
-  private final Pose3d centre;
+  private final Pose3d center;
 
   protected final BooleanSupplier fieldRelativeFunction;
-
-  // Limits rate of change (in this case x, y, and turning movement)
-  protected final SlewRateLimiter xLimiter, yLimiter, turningLimiter;
 
   protected final CommandSwerveDrivetrain swerveDrivetrain;
   private final SwerveRequest.FieldCentric fieldCentricDrive =
@@ -31,26 +28,17 @@ public class SwerveJoystickCommandInArc extends Command {
   private BooleanSupplier redSide;
 
   public SwerveJoystickCommandInArc(
-      Pose3d centre,
+      Pose3d center,
       DoubleSupplier tangentSpeedFunction,
       DoubleSupplier speedControlFunction,
       BooleanSupplier fieldRelativeFunction,
       DoubleSupplier angleToPointTo,
       CommandSwerveDrivetrain swerveSubsystem,
       BooleanSupplier redside) {
-    this.centre = centre;
+    this.center = center;
     this.tangentSpdFunction = tangentSpeedFunction;
     this.fieldRelativeFunction = fieldRelativeFunction;
     this.speedControlFunction = speedControlFunction;
-    this.xLimiter =
-        new SlewRateLimiter(
-            Constants.Swerve.TELE_DRIVE_MAX_ACCELERATION_METERS_PER_SECOND_PER_SECOND);
-    this.yLimiter =
-        new SlewRateLimiter(
-            Constants.Swerve.TELE_DRIVE_MAX_ACCELERATION_METERS_PER_SECOND_PER_SECOND);
-    this.turningLimiter =
-        new SlewRateLimiter(
-            Constants.Swerve.TELE_DRIVE_MAX_ANGULAR_ACCELERATION_RADIANS_PER_SECOND_PER_SECOND);
     this.angleToPointTo = angleToPointTo;
     this.swerveDrivetrain = swerveSubsystem;
     this.redSide = redside;
@@ -64,10 +52,10 @@ public class SwerveJoystickCommandInArc extends Command {
   @Override
   public void execute() {
     // 1. Get real-time joystick inputs
-    double thetaFromCentre =
+    double thetaFromCenter =
         Math.atan2(
-            Vector3.subtract(new Vector3(swerveDrivetrain.getState().Pose), new Vector3(centre)).y,
-            Vector3.subtract(new Vector3(swerveDrivetrain.getState().Pose), new Vector3(centre)).x);
+            Vector3.subtract(new Vector3(swerveDrivetrain.getState().Pose), new Vector3(center)).y,
+            Vector3.subtract(new Vector3(swerveDrivetrain.getState().Pose), new Vector3(center)).x);
     double tangentialSpeed = tangentSpdFunction.getAsDouble();
     tangentialSpeed =
         Math.abs(tangentialSpeed) > Constants.OI.LEFT_JOYSTICK_DEADBAND ? tangentialSpeed : 0.0;
@@ -76,8 +64,8 @@ public class SwerveJoystickCommandInArc extends Command {
         (Constants.Swerve.TELE_DRIVE_PERCENT_SPEED_RANGE * (speedControlFunction.getAsDouble()))
             + Constants.Swerve.TELE_DRIVE_SLOW_MODE_SPEED_PERCENT;
 
-    double xSpeed = tangentialSpeed * Math.cos(thetaFromCentre + Math.PI / 2f);
-    double ySpeed = tangentialSpeed * Math.sin(thetaFromCentre + Math.PI / 2f);
+    double xSpeed = tangentialSpeed * Math.cos(thetaFromCenter + Math.PI / 2f);
+    double ySpeed = tangentialSpeed * Math.sin(thetaFromCenter + Math.PI / 2f);
 
     // 2. Normalize inputs
     double length = xSpeed * xSpeed + ySpeed * ySpeed; // actually length squared
@@ -98,13 +86,13 @@ public class SwerveJoystickCommandInArc extends Command {
     // This is a double between TELE_DRIVE_SLOW_MODE_SPEED_PERCENT and
     // TELE_DRIVE_FAST_MODE_SPEED_PERCENT
 
-    // Applies slew rate limiter
+
     xSpeed =
-        xLimiter.calculate(xSpeed)
+            xSpeed
             * driveSpeed
             * Constants.Swerve.PHYSICAL_MAX_SPEED_METERS_PER_SECOND;
     ySpeed =
-        yLimiter.calculate(ySpeed)
+            ySpeed
             * driveSpeed
             * Constants.Swerve.PHYSICAL_MAX_SPEED_METERS_PER_SECOND;
 

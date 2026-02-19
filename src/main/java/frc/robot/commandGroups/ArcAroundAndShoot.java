@@ -32,9 +32,9 @@ public class ArcAroundAndShoot extends ParallelCommandGroup {
         new SwerveJoystickCommandInArc(
             target,
             tangentialVelocitySupplier,
-            (DoubleSupplier) (() -> 1f),
-            (BooleanSupplier) (() -> true),
-            (DoubleSupplier) (() -> Targeting.targetAngle(target, drivetrain)),
+            () -> 1f,
+            () -> true,
+            () -> Targeting.targetAngle(target, drivetrain),
             drivetrain,
             redside),
         Commands.runEnd(
@@ -48,8 +48,7 @@ public class ArcAroundAndShoot extends ParallelCommandGroup {
                 Units.metersToFeet(
                     Targeting.shootingSpeed(
                         target, drivetrain, Constants.Shooter.TARGETING_CALCULATION_PRECISION)),
-            (BooleanSupplier)
-                () -> (Targeting.pointingAtTarget(target, drivetrain) && shooter.isAtSpeed()),
+            () -> (Targeting.pointingAtTarget(target, drivetrain) && shooter.isAtSpeed()),
             shooter,
             intake,
             hopper));

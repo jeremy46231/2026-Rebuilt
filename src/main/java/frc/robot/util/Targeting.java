@@ -18,13 +18,15 @@ public class Targeting {
         (targetAngle(targetNoOffset, drivetrain) + (2 * Math.PI)) % (2 * Math.PI);
 
     double robotHullAngle =
-        (drivetrain.getState().Pose.getRotation().getRadians() + (2 * Math.PI)) % (2 * Math.PI);
+        (drivetrain.getCurrentState().Pose.getRotation().getRadians() + (2 * Math.PI)) % (2 * Math.PI);
 
+    double diff = Math.abs(desiredRobotHullAngle - robotHullAngle) % (2 * Math.PI);
+    if (diff > Math.PI) diff = 2 * Math.PI - diff;
     DogLog.log(
         "Subsystems/ShooterSubsystem/Shoot/rotationalErrorRadians",
-        Math.abs(desiredRobotHullAngle - robotHullAngle));
+        diff);
     boolean hullAimed =
-        Math.abs(desiredRobotHullAngle - robotHullAngle)
+        diff
             <= Constants.Shooter.ANGULAR_TOLERANCE_FOR_AUTO_AIM_RAD;
     DogLog.log("Subsystems/ShooterSubsystem/Shoot/pointing", hullAimed);
     return hullAimed;
@@ -43,8 +45,8 @@ public class Targeting {
     Pose3d gunOffset =
         MiscMath.RotatedPosAroundVertical(
             Constants.Shooter.OFFSET_FROM_ROBOT_CENTER,
-            drivetrain.getState().Pose.getRotation().getRadians());
-    Vector3 gunPos = Vector3.add(new Vector3(drivetrain.getState().Pose), new Vector3(gunOffset));
+            drivetrain.getCurrentState().Pose.getRotation().getRadians());
+    Vector3 gunPos = Vector3.add(new Vector3(drivetrain.getCurrentState().Pose), new Vector3(gunOffset));
     Vector3 relativePos = Vector3.subtract(new Vector3(target), gunPos);
 
     Vector3 correctedPos = new Vector3(target);
@@ -100,8 +102,8 @@ public class Targeting {
         positionToTarget(
             targetNoOffset, drivetrain, Constants.Shooter.TARGETING_CALCULATION_PRECISION);
     return Math.atan2(
-            Vector3.subtract(target, new Vector3(drivetrain.getState().Pose)).y,
-            Vector3.subtract(target, new Vector3(drivetrain.getState().Pose)).x)
+            Vector3.subtract(target, new Vector3(drivetrain.getCurrentState().Pose)).y,
+            Vector3.subtract(target, new Vector3(drivetrain.getCurrentState().Pose)).x)
         + (Constants.Shooter.SHOOTS_BACKWARDS ? Math.PI : 0);
   }
 
@@ -111,11 +113,11 @@ public class Targeting {
   }
 
   public static DoubleSupplier amtToRumble(CommandSwerveDrivetrain drivetrain, Pose3d target) {
-    return (() ->
+    return () ->
         (Units.metersToFeet(distMeters(drivetrain, target)) > Constants.Shooter.MAX_DIST_FT
                 || Units.metersToFeet(distMeters(drivetrain, target))
                     < Constants.Shooter.MIN_DIST_FT)
             ? .5d
-            : 0d);
+            : 0d;
   }
 }

@@ -150,7 +150,7 @@ public class RobotContainer {
             leftRightFunction,
             rotationFunction,
             speedFunction, // slowmode when left shoulder is pressed, otherwise fast
-            (BooleanSupplier) (() -> joystick.leftTrigger().getAsBoolean()),
+            () -> joystick.leftTrigger().getAsBoolean(),
             drivetrain);
 
     drivetrain.setDefaultCommand(swerveJoystickCommand);

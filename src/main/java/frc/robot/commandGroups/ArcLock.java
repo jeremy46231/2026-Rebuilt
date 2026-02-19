@@ -30,9 +30,9 @@ public class ArcLock extends ParallelCommandGroup {
         new SwerveJoystickCommandInArc(
             target,
             tangentialVelocitySupplier,
-            (DoubleSupplier) (() -> 1f),
-            (BooleanSupplier) (() -> true),
-            (DoubleSupplier) (() -> Targeting.targetAngle(target, drivetrain)),
+            () -> 1f,
+            () -> true,
+            () -> Targeting.targetAngle(target, drivetrain),
             drivetrain,
             redside),
         Commands.runEnd(
