@@ -85,11 +85,9 @@ public class VisionSubsystem extends SubsystemBase {
     List<PhotonPipelineResult> results = photonCamera.getAllUnreadResults();
     for (PhotonPipelineResult r : results) {
       latestVisionResult = r;
+      visionEst = poseEstimator.estimateCoprocMultiTagPose(r);
+      if (visionEst.isEmpty()) visionEst = poseEstimator.estimateLowestAmbiguityPose(r);
     }
-
-    visionEst = poseEstimator.estimateCoprocMultiTagPose(latestVisionResult);
-    if (visionEst.isEmpty())
-      visionEst = poseEstimator.estimateLowestAmbiguityPose(latestVisionResult);
 
     DogLog.log("Subsystems/Vision/" + cameraTitle + "/CameraConnected", true);
   }

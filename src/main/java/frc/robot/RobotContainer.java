@@ -227,21 +227,21 @@ public class RobotContainer {
     /*|| visionRearRight == null
     || visionRearLeft == null */ ) return;
 
-    VisionSubsystem best = null;
-    double bestDist = Double.MAX_VALUE;
-    boolean cameraAssigned = false;
+    // VisionSubsystem best = null;
+    // double bestDist = Double.MAX_VALUE;
+    // boolean cameraAssigned = false;
 
-    if (visionFrontLeft.getMinDistance() < bestDist) {
-      bestDist = visionFrontLeft.getMinDistance();
-      best = visionFrontLeft;
-      cameraAssigned = true;
-    }
+    // if (visionFrontLeft.getMinDistance() < bestDist) {
+    //   bestDist = visionFrontLeft.getMinDistance();
+    //   best = visionFrontLeft;
+    //   cameraAssigned = true;
+    // }
 
-    if (visionFrontRight.getMinDistance() < bestDist) {
-      bestDist = visionFrontRight.getMinDistance();
-      best = visionFrontRight;
-      cameraAssigned = true;
-    }
+    // if (visionFrontRight.getMinDistance() < bestDist) {
+    //   bestDist = visionFrontRight.getMinDistance();
+    //   best = visionFrontRight;
+    //   cameraAssigned = true;
+    // }
 
     // if (visionRearRight.getMinDistance() < bestDist) {
     //   bestDist = visionRearRight.getMinDistance();
@@ -253,17 +253,17 @@ public class RobotContainer {
     //   best = visionRearLeft;
     // }
 
-    if (!cameraAssigned) {
-      best = visionFrontRight;
-    }
+    // if (!cameraAssigned) {
+    //   best = visionFrontRight;
+    // }
 
     visionFrontLeft.addFilteredPose(drivetrain);
     visionFrontRight.addFilteredPose(drivetrain);
 
-    if (bestDist != Double.MAX_VALUE) {
-      DogLog.log("Subsystems/Vision/PreferredCamera", best.getCamera().getLoggingName());
-      best.addFilteredPose(drivetrain);
-    }
+    // if (bestDist != Double.MAX_VALUE) {
+    //   DogLog.log("Subsystems/Vision/PreferredCamera", best.getCamera().getLoggingName());
+    //   best.addFilteredPose(drivetrain);
+    // }
 
     DogLog.log("Subsystems/Vision/VisionPoseEstimate", drivetrain.getState().Pose);
   }
