@@ -94,7 +94,8 @@ public class Shoot extends Command {
         MiscMath.RotatedPosAroundVertical(
             Constants.Shooter.OFFSET_FROM_ROBOT_CENTER,
             drivetrain.getState().Pose.getRotation().getRadians());
-    Vector3 shooterPos = Vector3.add(new Vector3(drivetrain.getState().Pose), new Vector3(shooterOffset));
+    Vector3 shooterPos =
+        Vector3.add(new Vector3(drivetrain.getState().Pose), new Vector3(shooterOffset));
     Vector3 relativePos = Vector3.subtract(new Vector3(target), shooterPos);
     DogLog.log("Subsystems/ShooterSubsystem/Shoot/distanceToTarget", relativePos.magnitude());
   }
@@ -150,7 +151,8 @@ public class Shoot extends Command {
         MiscMath.RotatedPosAroundVertical(
             Constants.Shooter.OFFSET_FROM_ROBOT_CENTER,
             drivetrain.getState().Pose.getRotation().getRadians());
-    Vector3 shooterPos = Vector3.add(new Vector3(drivetrain.getState().Pose), new Vector3(shooterOffset));
+    Vector3 shooterPos =
+        Vector3.add(new Vector3(drivetrain.getState().Pose), new Vector3(shooterOffset));
     Vector3 relativePos = Vector3.subtract(new Vector3(target), shooterPos);
 
     Vector3 correctedPos = new Vector3(target);
