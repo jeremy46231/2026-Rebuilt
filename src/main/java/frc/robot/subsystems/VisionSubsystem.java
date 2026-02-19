@@ -58,6 +58,11 @@ public class VisionSubsystem extends SubsystemBase {
   public static final double timestampDiffThreshold = 0.5;
   public static final double timestampFPGACorrection = -0.03;
 
+  // addFilteredPose() vals
+  Pose2d latestMeasuredPose;
+  double latestFinalTimestamp;
+  Matrix<N3, N1> latestNoiseVector;
+
   // constructor for VisionSubsystem
   public VisionSubsystem(Constants.Vision.VisionCamera cameraID) {
 
@@ -109,7 +114,7 @@ public class VisionSubsystem extends SubsystemBase {
     return minDist;
   }
 
-  public void addFilteredPose(CommandSwerveDrivetrain swerve) {
+  public void calculateFilteredPose(CommandSwerveDrivetrain swerve) {
     DogLog.log("Subsystems/Vision/addFilteredPoseworking", true);
 
     if (latestVisionResult == null || latestVisionResult.getTargets().isEmpty()) {
@@ -245,8 +250,7 @@ public class VisionSubsystem extends SubsystemBase {
         currentSpeed,
         tagCount,
         estimatedPose.timestampSeconds,
-        noiseVector,
-        swerve);
+        noiseVector);
 
     if (measuredPose == null) {
       DogLog.log("Subsystems/Vision/measuredPoseAvailable", false);
@@ -261,8 +265,7 @@ public class VisionSubsystem extends SubsystemBase {
       double currentSpeed,
       int tagCount,
       double timestamp,
-      Matrix<N3, N1> noiseVector,
-      CommandSwerveDrivetrain swerve) {
+      Matrix<N3, N1> noiseVector) {
 
     // Use vision timestamp if within threshold of FPGA timestamp
     double fpgaTimestamp = Timer.getFPGATimestamp();
@@ -272,8 +275,16 @@ public class VisionSubsystem extends SubsystemBase {
             ? fpgaTimestamp + timestampFPGACorrection
             : timestamp;
 
-    swerve.addVisionMeasurement(measuredPose, finalTimestamp, noiseVector);
+    latestMeasuredPose = measuredPose;
+    latestFinalTimestamp = finalTimestamp;
+    latestNoiseVector = noiseVector;
   }
+
+  public void addFilteredPose(CommandSwerveDrivetrain swerve) {
+    swerve.addVisionMeasurement(latestMeasuredPose, latestFinalTimestamp, latestNoiseVector);
+  }
+
+
 
   private boolean acceptableYaw(double yaw) {
     boolean yawIsAcceptable = Math.abs(yaw) < acceptableYawThreshold;
