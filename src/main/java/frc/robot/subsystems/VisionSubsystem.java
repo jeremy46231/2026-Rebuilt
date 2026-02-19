@@ -52,6 +52,7 @@ public class VisionSubsystem extends SubsystemBase {
   Optional<EstimatedRobotPose> visionEst;
   private List<PhotonTrackedTarget> tags;
   private final AprilTagFieldLayout fieldLayout;
+  private boolean hasValidMeasurement;
 
   public final double acceptableYawThreshold = 60d;
 
@@ -86,6 +87,7 @@ public class VisionSubsystem extends SubsystemBase {
 
     visionEst = Optional.empty();
     latestVisionResult = null;
+    hasValidMeasurement = false;
 
     List<PhotonPipelineResult> results = photonCamera.getAllUnreadResults();
     for (PhotonPipelineResult r : results) {
@@ -115,6 +117,8 @@ public class VisionSubsystem extends SubsystemBase {
   }
 
   public void calculateFilteredPose(CommandSwerveDrivetrain swerve) {
+    hasValidMeasurement = false;
+
     DogLog.log("Subsystems/Vision/addFilteredPoseworking", true);
 
     if (latestVisionResult == null || latestVisionResult.getTargets().isEmpty()) {
