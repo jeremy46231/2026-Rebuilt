@@ -21,6 +21,7 @@ import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.Constants.Vision.VisionCamera;
 import frc.robot.commandGroups.ClimbCommands.L3Climb;
 import frc.robot.commands.SwerveCommands.SwerveJoystickCommand;
 import frc.robot.generated.TunerConstants;
@@ -227,30 +228,41 @@ public class RobotContainer {
     /*|| visionRearRight == null
     || visionRearLeft == null */ ) return;
 
+    VisionCamera fallbackCamera = Constants.Vision.FALLBACK_CAMERA;
+    VisionSubsystem visionFallback;
+    if (fallbackCamera == VisionCamera.FRONT_RIGHT_CAM) visionFallback = visionFrontRight;
+    else visionFallback = visionFrontLeft;
+    // if (fallbackCamera == VisionCamera.REAR_RIGHT_CAM) visionFallback = visionRearRight;
+    // if (fallbackCamera == VisionCamera.REAR_LEFT_CAM) visionFallback = visionRearLeft;
+
     visionFrontRight.calculateFilteredPose(drivetrain);
     visionFrontLeft.calculateFilteredPose(drivetrain);
     // visionRearRight.calculateFilteredPose(drivetrain);
     // visionRearLeft.calculateFilteredPose(drivetrain);
 
-    VisionSubsystem preferredVision = null;
+    VisionSubsystem preferredVision = visionFallback;
     double preferredDistance = Double.MAX_VALUE;
 
-    if (visionFrontRight.getMinDistance() < preferredDistance && visionFrontRight.hasValidMeasurement()) {
+    if (visionFrontRight.getMinDistance() < preferredDistance
+        && visionFrontRight.hasValidMeasurement()) {
       preferredVision = visionFrontRight;
       preferredDistance = visionFrontRight.getMinDistance();
     }
 
-    if (visionFrontLeft.getMinDistance() < preferredDistance && visionFrontLeft.hasValidMeasurement()) {
+    if (visionFrontLeft.getMinDistance() < preferredDistance
+        && visionFrontLeft.hasValidMeasurement()) {
       preferredVision = visionFrontLeft;
       preferredDistance = visionFrontLeft.getMinDistance();
     }
 
-    // if (visionRearRight.getMinDistance() < preferredDistance && visionRearRight.hasValidMeasurement()) {
+    // if (visionRearRight.getMinDistance() < preferredDistance &&
+    // visionRearRight.hasValidMeasurement()) {
     //   preferredVision = visionRearRight;
     //   preferredDistance = visionRearRight.getMinDistance();
     // }
 
-    // if (visionRearLeft.getMinDistance() < preferredDistance && visionRearLeft.hasValidMeasurement()) {
+    // if (visionRearLeft.getMinDistance() < preferredDistance &&
+    // visionRearLeft.hasValidMeasurement()) {
     //   preferredVision = visionRearLeft;
     //   preferredDistance = visionRearLeft.getMinDistance();
     // }
