@@ -289,19 +289,27 @@ public class ClimberSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
     DogLog.log(
-        "Climber/SitUpPositionDeg",
+        "Climber/SitUp/PositionDeg",
         sitUpMotor.getPosition().getValueAsDouble()
             * Constants.Climber.SitUp.MOTOR_ROTS_PER_DEGREES_OF_ARM_ROT);
+    DogLog.log("Climber/SitUp/AtPosition", isSitUpAtPosition());
+    DogLog.log("Climber/SitUp/DesiredPositionDeg", sitUpTargetDeg);
+
     DogLog.log(
-        "Climber/MuscleUpPositionDeg",
+        "Climber/MuscleUp/PositionDeg",
         muscleUpMotor.getPosition().getValueAsDouble()
             * Constants.Climber.MuscleUp.MOTOR_ROTS_PER_DEGREES_OF_ARM_ROT);
+    DogLog.log("Climber/MuscleUp/AtPosition", isMuscleUpAtPosition());
+    DogLog.log("Climber/MuscleUp/DesiredPositionDeg", muscleUpTargetDeg);
+
     DogLog.log(
-        "Climber/PullUpPositionMeter",
+        "Climber/PullUp/PositionMeter",
         pullUpMotorR.getPosition().getValueAsDouble()
             * Constants.Climber.PullUp.MOTOR_ROTS_PER_METERS_OF_BELT_TRAVERSAL);
+    DogLog.log("Climber/PullUp/AtPosition", isPullUpAtPosition());
+    DogLog.log("Climber/PullUp/DesiredPositionMeter", pullUpTargetPosition);
 
-    DogLog.log("Climber/SitUpPositionFromEncoderRots", getSitUpPosInRotationsFromEncoder());
-    DogLog.log("Climber/MuscleUpPositionFromEncoderRots", getMuscleUpPosInRotationsFromEncoder());
+    DogLog.log("Climber/SitUp/PositionFromEncoderRots", getSitUpPosInRotationsFromEncoder());
+    DogLog.log("Climber/MuscleUp/PositionFromEncoderRots", getMuscleUpPosInRotationsFromEncoder());
   }
 }
