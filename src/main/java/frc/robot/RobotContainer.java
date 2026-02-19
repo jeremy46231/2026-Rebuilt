@@ -21,7 +21,6 @@ import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.robot.Constants.Vision.VisionCamera;
 import frc.robot.commandGroups.ClimbCommands.L3Climb;
 import frc.robot.commands.SwerveCommands.SwerveJoystickCommand;
 import frc.robot.generated.TunerConstants;
@@ -73,8 +72,6 @@ public class RobotContainer {
   public final AutoRoutine autoRoutine; // with markers
 
   private final AutoChooser autoChooser = new AutoChooser();
-
-  private VisionCamera preferredCamera;
 
   public final VisionSubsystem visionFrontRight =
       Constants.visionOnRobot
@@ -230,53 +227,10 @@ public class RobotContainer {
     /*|| visionRearRight == null
     || visionRearLeft == null */ ) return;
 
-    setPreferredCamera();
-
-    if (preferredCamera == null) preferredCamera = Constants.Vision.FALLBACK_CAMERA;
-
-    DogLog.log("Subsystems/Vision/PreferredCamera", preferredCamera.getLoggingName());
-
-    switch (preferredCamera) {
-      case FRONT_RIGHT_CAM:
-        visionFrontRight.addFilteredPose(drivetrain);
-        break;
-      case FRONT_LEFT_CAM:
-        visionFrontLeft.addFilteredPose(drivetrain);
-        break;
-      case REAR_RIGHT_CAM:
-        // visionRearRight.addFilteredPose(drivetrain);
-        break;
-      case REAR_LEFT_CAM:
-        // visionRearLeft.addFilteredPose(drivetrain);
-        break;
-    }
+    visionFrontRight.addFilteredPose(drivetrain);
+    visionFrontLeft.addFilteredPose(drivetrain);
 
     DogLog.log("Subsystems/Vision/VisionPoseEstimate", drivetrain.getState().Pose);
-  }
-
-  private void setPreferredCamera() {
-    double frontRightDist = visionFrontRight.getMinDistance();
-    double frontLeftDist = visionFrontLeft.getMinDistance();
-    // double rearRightDist = visionRearRight.getMinDistance();
-    // double rearLeftDist = visionRearLeft.getMinDistance();
-
-    if (frontRightDist
-        < frontLeftDist /* && frontRightDist < rearRightDist && frontLeftDist < rearLeftDist*/) {
-      preferredCamera = visionFrontRight.getCamera();
-    } else if (frontLeftDist
-        < frontRightDist /* && frontLeftDist < rearRightDist && frontLeftDist < rearLeftDist */) {
-      preferredCamera = visionFrontLeft.getCamera();
-    }
-    //  else if (rearRightDist < frontRightDist && rearRightDist < frontLeftDist && rearRightDist <
-    // rearLeftDist) {
-    //     preferredCamera = visionRearRight.getCamera();
-    // } else if (rearLeftDist < frontRightDist && rearLeftDist < frontLeftDist && rearLeftDist <
-    // rearRightDist) {
-    //     preferredCamera = visionRearLeft.getCamera();
-    // }
-    else {
-      preferredCamera = Constants.Vision.FALLBACK_CAMERA;
-    }
   }
 
   public static void setAlliance() {
