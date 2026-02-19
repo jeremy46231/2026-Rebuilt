@@ -33,7 +33,7 @@ public class ClimberSubsystem extends SubsystemBase {
   private final CANcoder sitUpEncoder;
   private final Servo brake;
 
-  private final VelocityVoltage m_veclocityRequest = new VelocityVoltage(0);
+  private final VelocityVoltage m_velocityRequest = new VelocityVoltage(0);
   private final MotionMagicVoltage m_motionMagicRequest = new MotionMagicVoltage(0);
 
   public ClimberSubsystem() {
@@ -197,12 +197,12 @@ public class ClimberSubsystem extends SubsystemBase {
 
   public void movePullUpDown() {
     pullUpMotorR.setControl(
-        m_veclocityRequest.withVelocity(Constants.Climber.PullUp.PULL_DOWN_VELOCITY));
+        m_velocityRequest.withVelocity(Constants.Climber.PullUp.PULL_DOWN_VELOCITY));
   }
 
   public void moveMuscleUpDown() {
     muscleUpMotor.setControl(
-        m_veclocityRequest.withVelocity(Constants.Climber.MuscleUp.MUSCLEUP_DOWN_VELOCITY));
+        m_velocityRequest.withVelocity(Constants.Climber.MuscleUp.MUSCLEUP_DOWN_VELOCITY));
   }
 
   public boolean checkPullUpCurrent() {
