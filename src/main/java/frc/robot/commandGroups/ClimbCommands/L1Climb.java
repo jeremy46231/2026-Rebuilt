@@ -11,7 +11,7 @@ public class L1Climb extends SequentialCommandGroup {
     addCommands(
         climberSubsystem.SitUpCommand(Constants.Climber.SitUp.SIT_UP_ANGLE),
         climberSubsystem.PullUpCommand(Constants.Climber.PullUp.L1_REACH_POS),
-        DriveToPose(swerveDrivetrain, () -> Constants.Landmarks.RED_TOWER),
+        new DriveToPose(swerveDrivetrain, () -> Constants.Landmarks.RED_TOWER_L),
         climberSubsystem.PullUpCommand(Constants.Climber.PullUp.PULL_DOWN_POS_FOR_L1));
   }
 }
