@@ -227,8 +227,33 @@ public class RobotContainer {
     /*|| visionRearRight == null
     || visionRearLeft == null */ ) return;
 
-    visionFrontRight.addFilteredPose(drivetrain);
-    visionFrontLeft.addFilteredPose(drivetrain);
+    VisionSubsystem best = null;
+    double bestDist = Double.MAX_VALUE;
+
+    if (visionFrontRight.getMinDistance() < bestDist) {
+      bestDist = visionFrontRight.getMinDistance();
+      best = visionFrontRight;
+    }
+
+    if (visionFrontLeft.getMinDistance() < bestDist) {
+      bestDist = visionFrontLeft.getMinDistance();
+      best = visionFrontLeft;
+    }
+
+    // if (visionRearRight.getMinDistance() < bestDist) {
+    //   bestDist = visionRearRight.getMinDistance();
+    //   best = visionRearRight;
+    // }
+
+    // if (visionRearLeft.getMinDistance() < bestDist) {
+    //   bestDist = visionRearLeft.getMinDistance();
+    //   best = visionRearLeft;
+    // }
+
+    if (bestDist != Double.MAX_VALUE) {
+      DogLog.log("Subsystems/Vision/PreferredCamera", best.getCamera().getLoggingName());
+      best.addFilteredPose(drivetrain);
+    }
 
     DogLog.log("Subsystems/Vision/VisionPoseEstimate", drivetrain.getState().Pose);
   }
