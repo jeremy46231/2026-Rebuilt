@@ -7,7 +7,6 @@ package frc.robot;
 import static edu.wpi.first.units.Units.*;
 
 import choreo.auto.AutoChooser;
-import choreo.auto.AutoFactory;
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -71,10 +70,8 @@ public class RobotContainer {
       Constants.intakeOnRobot ? new IntakeSubsystem() : null;
   public final ShooterSubsystem lebron = Constants.shooterOnRobot ? new ShooterSubsystem() : null;
 
-  private final AutoFactory autoFactory;
   private final AutoRoutines autoRoutines;
-
-  private final AutoChooser autoChooser = new AutoChooser();
+  private final AutoChooser autoChooser;
 
   public final VisionSubsystem visionRight =
       Constants.visionOnRobot ? new VisionSubsystem(Constants.Vision.Cameras.RIGHT_CAM) : null;
@@ -88,21 +85,10 @@ public class RobotContainer {
       Constants.visionOnRobot ? new FuelGaugeDetection(Constants.Vision.Cameras.COLOR_CAM) : null;
 
   public RobotContainer() {
-    autoFactory = drivetrain.createAutoFactory();
     autoRoutines =
-        new AutoRoutines(
-            autoFactory, intakeSubsystem, lebron, hopperSubsystem, drivetrain, climberSubsystem);
-
-    // Add all autos here
-    autoChooser.addCmd(
-        "Pedri - Left Side",
-        () ->
-            autoRoutines.Pedri(
-                null,
-                Constants.Swerve.Auto.Intake.RedLeftIntakeL,
-                Constants.Swerve.Auto.ShootPos.RedLeftShoot,
-                Constants.Swerve.Auto.ClimbPos.RedLeftClimb));
-    autoChooser.addCmd("Trial Path", () -> autoRoutines.trialPath());
+        new AutoRoutines(intakeSubsystem, lebron, hopperSubsystem, drivetrain, climberSubsystem);
+    
+    autoChooser = autoRoutines.getAutoChooser();
 
     SmartDashboard.putData("Auto Chooser", autoChooser);
 
@@ -232,8 +218,6 @@ public class RobotContainer {
             ? false
             : (DriverStation.getAlliance().get() == Alliance.Red);
   }
-
-  public 
 
   public Command getAutonomousCommand() {
     return autoChooser.selectedCommand();
