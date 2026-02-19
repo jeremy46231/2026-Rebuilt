@@ -191,7 +191,8 @@ public class ClimberSubsystem extends SubsystemBase {
   }
 
   public void movePullUpDown() {
-    pullUpMotorR.setControl(m_veclocityRequest.withVelocity(Constants.Climber.PullUp.PULL_DOWN_VELOCITY));
+    pullUpMotorR.setControl(
+        m_veclocityRequest.withVelocity(Constants.Climber.PullUp.PULL_DOWN_VELOCITY));
   }
 
   public boolean checkCurrent() {

@@ -401,7 +401,8 @@ public final class Constants {
 
       public static final double MOTOR_ROTS_TO_ARM_ROTS = 1d / 250d;
       public static final double MOTOR_ROTS_TO_DEGREES_OF_ARM_ROT = MOTOR_ROTS_TO_ARM_ROTS * 360d;
-      public static final double DEGREES_OF_ARM_ROT_TO_MOTOR_ROTS = 1 / MOTOR_ROTS_TO_DEGREES_OF_ARM_ROT;
+      public static final double DEGREES_OF_ARM_ROT_TO_MOTOR_ROTS =
+          1 / MOTOR_ROTS_TO_DEGREES_OF_ARM_ROT;
 
       // As I understand it, resting postion would probably always be consistent
       public static final double L1_MUSCLE_UP_FORWARD = 0; // TODO: get vals
@@ -417,7 +418,8 @@ public final class Constants {
 
       public static final double MOTOR_ROTS_TO_ARM_ROTS = 1d / 100d;
       public static final double MOTOR_ROTS_TO_DEGREES_OF_ARM_ROT = MOTOR_ROTS_TO_ARM_ROTS * 360d;
-      public static final double DEGREES_OF_ARM_ROT_TO_MOTOR_ROTS = 1 / MOTOR_ROTS_TO_DEGREES_OF_ARM_ROT;
+      public static final double DEGREES_OF_ARM_ROT_TO_MOTOR_ROTS =
+          1 / MOTOR_ROTS_TO_DEGREES_OF_ARM_ROT;
 
       public static final double CURRENT_SUPPLY_LIMIT = 60;
       public static final double CURRENT_STATOR_LIMIT = 100;
@@ -439,7 +441,8 @@ public final class Constants {
       public static final double PULLEY_BELT_LENGTH_M = 1.1;
       public static final double MOTOR_ROTS_TO_METERS_OF_BELT_TRAVERSAL =
           MOTOR_ROTS_TO_PULLEY_ROTS * PULLEY_BELT_LENGTH_M;
-      public static final double METERS_OF_BELT_TRAVERSAL_TO_MOTOR_ROTS = 1 / MOTOR_ROTS_TO_METERS_OF_BELT_TRAVERSAL;
+      public static final double METERS_OF_BELT_TRAVERSAL_TO_MOTOR_ROTS =
+          1 / MOTOR_ROTS_TO_METERS_OF_BELT_TRAVERSAL;
 
       // As I understand it, resting postion would probably always be consistent
       public static final double L1_REACH_POS = 0; // TODO: get vals
